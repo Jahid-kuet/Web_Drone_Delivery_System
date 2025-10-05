@@ -19,6 +19,15 @@
     
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js for charts (optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- Axios for AJAX requests -->
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.0/dist/axios.min.js"></script>
+    
+    <!-- Custom CSS (no build required) -->
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
     @stack('styles')
 </head>
@@ -127,6 +136,135 @@
             </main>
         </div>
     </div>
+
+    <!-- Custom JavaScript (Inline - No Build Required) -->
+    <script>
+        /**
+         * =========================================
+         * DRONE DELIVERY SYSTEM - MAIN SCRIPT
+         * =========================================
+         * Loaded via CDN - No Node.js/npm needed!
+         */
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚁 Drone Delivery System - Ready!');
+            
+            // Initialize features
+            initDeleteConfirmation();
+            initImagePreviews();
+            initTooltips();
+        });
+        
+        /**
+         * Delete Confirmation
+         */
+        function initDeleteConfirmation() {
+            document.querySelectorAll('form[onsubmit*="confirm"]').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    if (!confirm('Are you sure you want to delete this item?')) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        }
+        
+        /**
+         * Image Preview
+         */
+        function initImagePreviews() {
+            document.querySelectorAll('input[type="file"][accept*="image"]').forEach(input => {
+                input.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            let preview = document.querySelector(`#${input.id}-preview`);
+                            if (!preview) {
+                                preview = document.createElement('img');
+                                preview.id = `${input.id}-preview`;
+                                preview.className = 'mt-2 max-w-xs rounded-lg shadow';
+                                input.parentElement.appendChild(preview);
+                            }
+                            preview.src = event.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            });
+        }
+        
+        /**
+         * Tooltips
+         */
+        function initTooltips() {
+            document.querySelectorAll('[title]').forEach(element => {
+                element.addEventListener('mouseenter', function() {
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'fixed z-50 px-3 py-2 text-sm text-white bg-gray-900 rounded shadow-lg';
+                    tooltip.textContent = this.title;
+                    tooltip.id = 'tooltip-' + Math.random();
+                    
+                    document.body.appendChild(tooltip);
+                    
+                    const rect = this.getBoundingClientRect();
+                    tooltip.style.top = (rect.top - tooltip.offsetHeight - 5) + window.scrollY + 'px';
+                    tooltip.style.left = (rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2)) + 'px';
+                    
+                    this.addEventListener('mouseleave', function() {
+                        tooltip.remove();
+                    }, { once: true });
+                });
+            });
+        }
+        
+        /**
+         * Show Notification
+         */
+        function showNotification(message, type = 'info') {
+            const colors = {
+                'success': 'bg-green-500',
+                'error': 'bg-red-500',
+                'warning': 'bg-yellow-500',
+                'info': 'bg-blue-500'
+            };
+            
+            const icons = {
+                'success': 'fa-check-circle',
+                'error': 'fa-exclamation-circle',
+                'warning': 'fa-exclamation-triangle',
+                'info': 'fa-info-circle'
+            };
+            
+            const toast = document.createElement('div');
+            toast.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-xl text-white ${colors[type]} transition-all transform translate-x-full opacity-0`;
+            toast.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <i class="fas ${icons[type]}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-x-full', 'opacity-0');
+            }, 10);
+            
+            setTimeout(() => {
+                toast.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+        
+        // Make functions globally available
+        window.showNotification = showNotification;
+        
+        // Configure Axios if available
+        if (typeof axios !== 'undefined') {
+            axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+            axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
+        }
+    </script>
 
     @stack('scripts')
 </body>
