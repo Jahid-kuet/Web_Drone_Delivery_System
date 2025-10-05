@@ -9,6 +9,9 @@ use App\Http\Controllers\DeliveryRequestController;
 use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\HospitalPortalController;
+use App\Http\Controllers\OperatorPortalController;
 
 // ==================== PUBLIC ROUTES ====================
 
@@ -178,56 +181,38 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('hospital')->name('hospital.')->middleware('role:hospital_admin,hospital_staff')->group(function () {
         
         // Hospital Dashboard
-        Route::get('/dashboard', function () {
-            return view('hospital.dashboard');
-        })->name('dashboard');
+        Route::get('/dashboard', [HospitalPortalController::class, 'dashboard'])->name('dashboard');
         
-        // Delivery Requests (Hospital View)
-        Route::get('/requests', function () {
-            return view('hospital.requests.index');
-        })->name('requests.index');
-        
-        Route::get('/requests/create', function () {
-            return view('hospital.requests.create');
-        })->name('requests.create');
+        // Delivery Requests
+        Route::get('/requests', [HospitalPortalController::class, 'requestsIndex'])->name('requests.index');
+        Route::get('/requests/create', [HospitalPortalController::class, 'requestsCreate'])->name('requests.create');
+        Route::post('/requests', [HospitalPortalController::class, 'requestsStore'])->name('requests.store');
         
         // Track Deliveries
-        Route::get('/deliveries', function () {
-            return view('hospital.deliveries.index');
-        })->name('deliveries.index');
-    });
-    
-    // ==================== DRONE OPERATOR ROUTES ====================
+        Route::get('/deliveries', [HospitalPortalController::class, 'deliveriesIndex'])->name('deliveries.index');
+    });    // ==================== DRONE OPERATOR ROUTES ====================
     Route::prefix('operator')->name('operator.')->middleware('role:drone_operator')->group(function () {
         
         // Operator Dashboard
-        Route::get('/dashboard', function () {
-            return view('operator.dashboard');
-        })->name('dashboard');
+        Route::get('/dashboard', [OperatorPortalController::class, 'dashboard'])->name('dashboard');
         
         // Assigned Deliveries
-        Route::get('/deliveries', function () {
-            return view('operator.deliveries.index');
-        })->name('deliveries.index');
+        Route::get('/deliveries', [OperatorPortalController::class, 'deliveriesIndex'])->name('deliveries.index');
+        Route::get('/deliveries/{delivery}', [OperatorPortalController::class, 'deliveriesShow'])->name('deliveries.show');
         
-        Route::get('/deliveries/{delivery}', function ($delivery) {
-            return view('operator.deliveries.show', compact('delivery'));
-        })->name('deliveries.show');
+        // Delivery Actions
+        Route::post('/deliveries/{delivery}/start', [OperatorPortalController::class, 'startDelivery'])->name('deliveries.start');
+        Route::post('/deliveries/{delivery}/mark-delivered', [OperatorPortalController::class, 'markAsDelivered'])->name('deliveries.mark-delivered');
+        Route::post('/deliveries/{delivery}/cancel', [OperatorPortalController::class, 'cancelDelivery'])->name('deliveries.cancel');
+        Route::post('/deliveries/{delivery}/report-incident', [OperatorPortalController::class, 'reportIncident'])->name('deliveries.report-incident');
     });
     
     // ==================== USER PROFILE ====================
     Route::prefix('profile')->name('profile.')->group(function () {
-        Route::get('/', function () {
-            return view('profile.show');
-        })->name('show');
-        
-        Route::get('/edit', function () {
-            return view('profile.edit');
-        })->name('edit');
-        
-        Route::put('/', function () {
-            // Update profile logic
-        })->name('update');
+        Route::get('/', [ProfileController::class, 'show'])->name('show');
+        Route::get('/edit', [ProfileController::class, 'edit'])->name('edit');
+        Route::put('/', [ProfileController::class, 'update'])->name('update');
+        Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
     });
 });
 
