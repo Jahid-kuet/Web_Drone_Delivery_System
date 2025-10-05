@@ -17,9 +17,19 @@ use App\Http\Controllers\OperatorPortalController;
 
 // Landing Page
 Route::get('/', function () {
-    // If user is logged in, redirect to dashboard
+    // If user is logged in, redirect based on role
     if (auth()->check()) {
-        return redirect()->route('admin.dashboard');
+        $user = auth()->user();
+        
+        // Check user role and redirect accordingly
+        if ($user->hasRole('hospital_admin') || $user->hasRole('hospital_staff')) {
+            return redirect()->route('hospital.dashboard');
+        } elseif ($user->hasRole('drone_operator')) {
+            return redirect()->route('operator.dashboard');
+        } else {
+            // Admin and other roles go to admin dashboard
+            return redirect()->route('admin.dashboard');
+        }
     }
     return view('welcome');
 })->name('home');
@@ -49,6 +59,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/dashboard/realtime-stats', [AdminDashboardController::class, 'realtimeStats'])->name('dashboard.realtime');
         Route::get('/dashboard/export', [AdminDashboardController::class, 'export'])->name('dashboard.export');
         
+        // Reports (Placeholder)
+        Route::get('/reports', function () {
+            return view('admin.reports.index');
+        })->name('reports');
+        
         // ==================== MEDICAL SUPPLIES ====================
         Route::prefix('supplies')->name('supplies.')->group(function () {
             Route::get('/', [MedicalSupplyController::class, 'index'])->name('index');
@@ -67,6 +82,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/alerts/expiring', [MedicalSupplyController::class, 'expiringAlert'])->name('alerts.expiring');
             
             // Export
+            Route::get('/export/csv', [MedicalSupplyController::class, 'export'])->name('export');
+        });
+        
+        // Alias routes for medical-supplies (for backward compatibility with views)
+        Route::prefix('medical-supplies')->name('medical-supplies.')->group(function () {
+            Route::get('/', [MedicalSupplyController::class, 'index'])->name('index');
+            Route::get('/create', [MedicalSupplyController::class, 'create'])->name('create');
+            Route::post('/', [MedicalSupplyController::class, 'store'])->name('store');
+            Route::get('/{supply}', [MedicalSupplyController::class, 'show'])->name('show');
+            Route::get('/{supply}/edit', [MedicalSupplyController::class, 'edit'])->name('edit');
+            Route::put('/{supply}', [MedicalSupplyController::class, 'update'])->name('update');
+            Route::delete('/{supply}', [MedicalSupplyController::class, 'destroy'])->name('destroy');
+            Route::post('/{supply}/adjust-stock', [MedicalSupplyController::class, 'adjustStock'])->name('adjust-stock');
+            Route::get('/alerts/low-stock', [MedicalSupplyController::class, 'lowStockAlert'])->name('alerts.low-stock');
+            Route::get('/alerts/expiring', [MedicalSupplyController::class, 'expiringAlert'])->name('alerts.expiring');
             Route::get('/export/csv', [MedicalSupplyController::class, 'export'])->name('export');
         });
         

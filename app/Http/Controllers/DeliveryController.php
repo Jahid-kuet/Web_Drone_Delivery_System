@@ -77,7 +77,7 @@ class DeliveryController extends Controller
             ->get();
         
         $availableDrones = Drone::available()
-            ->where('battery_level', '>=', 30)
+            ->where('current_battery_level', '>=', 30)
             ->get();
         
         return view('admin.deliveries.create', compact('pendingRequests', 'availableDrones'));

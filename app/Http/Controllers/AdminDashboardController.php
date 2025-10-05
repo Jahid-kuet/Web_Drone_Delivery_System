@@ -54,18 +54,18 @@ class AdminDashboardController extends Controller
             'active_drones' => Drone::where('status', 'in_flight')->count(),
             'maintenance_drones' => Drone::where('status', 'maintenance')->count(),
             'charging_drones' => Drone::where('status', 'charging')->count(),
-            'low_battery_drones' => Drone::where('battery_level', '<', 30)->count(),
+            'low_battery_drones' => Drone::where('current_battery_level', '<', 30)->count(),
             
             // Medical Supply Statistics
             'total_supplies' => MedicalSupply::count(),
-            'low_stock_supplies' => MedicalSupply::where('quantity_in_stock', '<=', DB::raw('minimum_stock_level'))->count(),
-            'out_of_stock_supplies' => MedicalSupply::where('quantity_in_stock', 0)->count(),
+            'low_stock_supplies' => MedicalSupply::where('quantity_available', '<=', DB::raw('minimum_stock_level'))->count(),
+            'out_of_stock_supplies' => MedicalSupply::where('quantity_available', 0)->count(),
             'expiring_soon_supplies' => MedicalSupply::whereBetween('expiry_date', [now(), now()->addDays(30)])->count(),
             'expired_supplies' => MedicalSupply::where('expiry_date', '<', now())->count(),
             
             // Hospital Statistics
             'total_hospitals' => Hospital::count(),
-            'active_hospitals' => Hospital::where('status', 'active')->count(),
+            'active_hospitals' => Hospital::where('is_active', true)->count(),
             
             // User Statistics
             'total_users' => User::count(),
@@ -76,8 +76,8 @@ class AdminDashboardController extends Controller
             
             // Performance Metrics
             'avg_delivery_time' => Delivery::where('status', 'completed')
-                ->whereNotNull('actual_delivery_time')
-                ->avg(DB::raw('TIMESTAMPDIFF(MINUTE, created_at, actual_delivery_time)')),
+                ->whereNotNull('delivery_completed_time')
+                ->avg(DB::raw('TIMESTAMPDIFF(MINUTE, created_at, delivery_completed_time)')),
             'success_rate' => $this->calculateSuccessRate(),
             'on_time_delivery_rate' => $this->calculateOnTimeRate(),
         ];
@@ -101,14 +101,14 @@ class AdminDashboardController extends Controller
     private function calculateOnTimeRate(): float
     {
         $total = Delivery::where('status', 'completed')
-            ->whereNotNull('estimated_delivery_time')
-            ->whereNotNull('actual_delivery_time')
+            ->whereNotNull('estimated_arrival_time')
+            ->whereNotNull('delivery_completed_time')
             ->count();
         
         if ($total === 0) return 100.0;
         
         $onTime = Delivery::where('status', 'completed')
-            ->whereRaw('actual_delivery_time <= estimated_delivery_time')
+            ->whereRaw('delivery_completed_time <= estimated_arrival_time')
             ->count();
         
         return round(($onTime / $total) * 100, 2);

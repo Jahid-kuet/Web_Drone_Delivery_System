@@ -17,7 +17,7 @@ class DroneController extends Controller
         $distance = $request->input('distance', 0);
         
         $drones = Drone::available()
-            ->where('battery_level', '>=', 30)
+            ->where('current_battery_level', '>=', 30)
             ->get()
             ->filter(function ($drone) use ($payload, $distance) {
                 return $drone->canCarryPayload($payload) 

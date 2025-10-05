@@ -39,13 +39,13 @@ class DroneController extends Controller
         if ($batteryLevel = $request->input('battery_level')) {
             switch ($batteryLevel) {
                 case 'low':
-                    $query->where('battery_level', '<', 30);
+                    $query->where('current_battery_level', '<', 30);
                     break;
                 case 'medium':
-                    $query->whereBetween('battery_level', [30, 70]);
+                    $query->whereBetween('current_battery_level', [30, 70]);
                     break;
                 case 'high':
-                    $query->where('battery_level', '>', 70);
+                    $query->where('current_battery_level', '>', 70);
                     break;
             }
         }
@@ -69,7 +69,7 @@ class DroneController extends Controller
             'in_flight' => Drone::where('status', 'in_flight')->count(),
             'charging' => Drone::where('status', 'charging')->count(),
             'maintenance' => Drone::where('status', 'maintenance')->count(),
-            'low_battery' => Drone::where('battery_level', '<', 30)->count(),
+            'low_battery' => Drone::where('current_battery_level', '<', 30)->count(),
             'needs_maintenance' => Drone::needsMaintenance()->count(),
         ];
         
@@ -342,7 +342,7 @@ class DroneController extends Controller
         $distance = $request->input('distance', 0);
         
         $drones = Drone::available()
-            ->where('battery_level', '>=', 30)
+            ->where('current_battery_level', '>=', 30)
             ->get()
             ->filter(function ($drone) use ($payload, $distance) {
                 return $drone->canCarryPayload($payload) 

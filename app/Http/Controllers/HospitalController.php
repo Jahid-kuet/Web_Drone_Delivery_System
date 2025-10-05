@@ -54,8 +54,8 @@ class HospitalController extends Controller
         // Get statistics
         $stats = [
             'total' => Hospital::count(),
-            'active' => Hospital::where('status', 'active')->count(),
-            'inactive' => Hospital::where('status', 'inactive')->count(),
+            'active' => Hospital::where('is_active', true)->count(),
+            'inactive' => Hospital::where('is_active', false)->count(),
             'with_landing_pad' => Hospital::where('has_drone_landing_pad', true)->count(),
         ];
         

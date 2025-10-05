@@ -47,10 +47,10 @@ class MedicalSupplyController extends Controller
                     $query->lowStock();
                     break;
                 case 'out':
-                    $query->where('quantity_in_stock', 0);
+                    $query->where('quantity_available', 0);
                     break;
                 case 'adequate':
-                    $query->where('quantity_in_stock', '>', DB::raw('minimum_stock_level'));
+                    $query->where('quantity_available', '>', DB::raw('minimum_stock_level'));
                     break;
             }
         }
@@ -78,7 +78,7 @@ class MedicalSupplyController extends Controller
         $stats = [
             'total' => MedicalSupply::count(),
             'low_stock' => MedicalSupply::lowStock()->count(),
-            'out_of_stock' => MedicalSupply::where('quantity_in_stock', 0)->count(),
+            'out_of_stock' => MedicalSupply::where('quantity_available', 0)->count(),
             'expiring_soon' => MedicalSupply::expiringSoon()->count(),
             'expired' => MedicalSupply::expired()->count(),
         ];
@@ -106,7 +106,7 @@ class MedicalSupplyController extends Controller
             'type' => 'required|string|in:urgent,standard,scheduled,emergency',
             'description' => 'nullable|string',
             'manufacturer' => 'nullable|string|max:255',
-            'quantity_in_stock' => 'required|integer|min:0',
+            'quantity_available' => 'required|integer|min:0',
             'unit_of_measurement' => 'required|string|max:50',
             'minimum_stock_level' => 'required|integer|min:0',
             'reorder_quantity' => 'required|integer|min:1',
@@ -146,8 +146,8 @@ class MedicalSupplyController extends Controller
         // Get stock history (from audit logs)
         $stockHistory = $supply->auditLogs()
             ->where(function ($query) {
-                $query->whereRaw("JSON_EXTRACT(new_values, '$.quantity_in_stock') IS NOT NULL")
-                    ->orWhereRaw("JSON_EXTRACT(old_values, '$.quantity_in_stock') IS NOT NULL");
+                $query->whereRaw("JSON_EXTRACT(new_values, '$.quantity_available') IS NOT NULL")
+                    ->orWhereRaw("JSON_EXTRACT(old_values, '$.quantity_available') IS NOT NULL");
             })
             ->latest()
             ->limit(20)
@@ -176,7 +176,7 @@ class MedicalSupplyController extends Controller
             'type' => 'required|string|in:urgent,standard,scheduled,emergency',
             'description' => 'nullable|string',
             'manufacturer' => 'nullable|string|max:255',
-            'quantity_in_stock' => 'required|integer|min:0',
+            'quantity_available' => 'required|integer|min:0',
             'unit_of_measurement' => 'required|string|max:50',
             'minimum_stock_level' => 'required|integer|min:0',
             'reorder_quantity' => 'required|integer|min:1',
@@ -248,7 +248,7 @@ class MedicalSupplyController extends Controller
         DB::beginTransaction();
         
         try {
-            $oldQuantity = $supply->quantity_in_stock;
+            $oldQuantity = $supply->quantity_available;
             
             switch ($validated['type']) {
                 case 'add':
@@ -258,7 +258,7 @@ class MedicalSupplyController extends Controller
                     $supply->reduceStock(abs($validated['quantity']));
                     break;
                 case 'set':
-                    $supply->quantity_in_stock = abs($validated['quantity']);
+                    $supply->quantity_available = abs($validated['quantity']);
                     $supply->save();
                     break;
             }
@@ -268,7 +268,7 @@ class MedicalSupplyController extends Controller
                 'medical_supply_id' => $supply->id,
                 'user_id' => auth()->id(),
                 'old_quantity' => $oldQuantity,
-                'new_quantity' => $supply->quantity_in_stock,
+                'new_quantity' => $supply->quantity_available,
                 'adjustment_type' => $validated['type'],
                 'reason' => $validated['reason'],
                 'created_at' => now(),
@@ -321,7 +321,7 @@ class MedicalSupplyController extends Controller
                     $supply->name,
                     $supply->category,
                     $supply->type,
-                    $supply->quantity_in_stock,
+                    $supply->quantity_available,
                     $supply->unit_of_measurement,
                     $supply->minimum_stock_level,
                     $supply->unit_price,
@@ -352,7 +352,7 @@ class MedicalSupplyController extends Controller
                     'id' => $supply->id,
                     'name' => $supply->name,
                     'sku' => $supply->sku,
-                    'quantity' => $supply->quantity_in_stock,
+                    'quantity' => $supply->quantity_available,
                     'minimum' => $supply->minimum_stock_level,
                     'reorder' => $supply->reorder_quantity,
                     'status' => $supply->stock_status,

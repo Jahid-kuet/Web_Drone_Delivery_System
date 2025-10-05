@@ -407,4 +407,28 @@ class Delivery extends Model
             self::STATUS_EMERGENCY_LANDED => 'Emergency Landed'
         ];
     }
+
+    /**
+     * Accessor for backward compatibility: pickup_time -> actual_departure_time
+     */
+    public function getPickupTimeAttribute()
+    {
+        return $this->actual_departure_time;
+    }
+
+    /**
+     * Accessor for backward compatibility: estimated_delivery_time -> estimated_arrival_time
+     */
+    public function getEstimatedDeliveryTimeAttribute()
+    {
+        return $this->estimated_arrival_time;
+    }
+
+    /**
+     * Accessor for backward compatibility: actual_delivery_time -> delivery_completed_time
+     */
+    public function getActualDeliveryTimeAttribute()
+    {
+        return $this->delivery_completed_time;
+    }
 }
