@@ -16,13 +16,13 @@ class DeliveryController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Delivery::with(['request.hospital', 'drone', 'request.supply']);
+        $query = Delivery::with(['deliveryRequest.hospital', 'drone', 'deliveryRequest.supply']);
         
         // Search filter
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('tracking_number', 'like', "%{$search}%")
-                    ->orWhereHas('request', function ($q) use ($search) {
+                    ->orWhereHas('deliveryRequest', function ($q) use ($search) {
                         $q->where('request_number', 'like', "%{$search}%");
                     });
             });
@@ -243,7 +243,7 @@ class DeliveryController extends Controller
             $delivery->complete($validated['completion_notes'] ?? null);
             
             // Reduce stock
-            $delivery->request->supply->reduceStock($delivery->request->quantity_requested);
+            $delivery->deliveryRequest->supply->reduceStock($delivery->deliveryRequest->quantity_requested);
             
             DB::commit();
             
@@ -299,14 +299,14 @@ class DeliveryController extends Controller
      */
     public function active()
     {
-        $deliveries = Delivery::with(['request.hospital', 'drone'])
+        $deliveries = Delivery::with(['deliveryRequest.hospital', 'drone'])
             ->whereIn('status', ['pending', 'in_transit', 'picked_up'])
             ->get()
             ->map(function ($delivery) {
                 return [
                     'id' => $delivery->id,
                     'tracking_number' => $delivery->tracking_number,
-                    'hospital' => $delivery->request->hospital->name,
+                    'hospital' => $delivery->deliveryRequest->hospital->name,
                     'drone' => $delivery->drone->name,
                     'status' => $delivery->status,
                     'progress' => $delivery->progress_percentage,
@@ -350,9 +350,9 @@ class DeliveryController extends Controller
                 ],
             ],
             'destination' => [
-                'hospital' => $delivery->request->hospital->name,
-                'latitude' => $delivery->request->hospital->latitude,
-                'longitude' => $delivery->request->hospital->longitude,
+                'hospital' => $delivery->deliveryRequest->hospital->name,
+                'latitude' => $delivery->deliveryRequest->hospital->latitude,
+                'longitude' => $delivery->deliveryRequest->hospital->longitude,
             ],
             'timeline' => [
                 'created_at' => $delivery->created_at,

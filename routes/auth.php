@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,8 +22,25 @@ Route::middleware('guest')->group(function () {
         return view('auth.login');
     })->name('login');
     
-    Route::post('/login', function () {
-        // Login logic (to be implemented with Auth controller)
+    Route::post('/login', function (Illuminate\Http\Request $request) {
+        // Validate credentials
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        // Attempt to log the user in
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            $request->session()->regenerate();
+
+            // Redirect to intended page or dashboard
+            return redirect()->intended('/admin/dashboard');
+        }
+
+        // If authentication fails, redirect back with error
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email');
     })->name('login.post');
     
     // Registration Routes
@@ -57,8 +75,13 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     
     // Logout
-    Route::post('/logout', function () {
-        // Logout logic
+    Route::post('/logout', function (Illuminate\Http\Request $request) {
+        Auth::logout();
+        
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
+        return redirect('/');
     })->name('logout');
     
     // Email Verification Routes

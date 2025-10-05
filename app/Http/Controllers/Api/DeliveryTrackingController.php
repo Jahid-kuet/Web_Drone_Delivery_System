@@ -127,14 +127,14 @@ class DeliveryTrackingController extends Controller
      */
     public function activeDeliveries()
     {
-        $deliveries = Delivery::with(['request.hospital', 'drone'])
+        $deliveries = Delivery::with(['deliveryRequest.hospital', 'drone'])
             ->whereIn('status', ['pending', 'in_transit', 'picked_up'])
             ->get()
             ->map(function ($delivery) {
                 return [
                     'tracking_number' => $delivery->tracking_number,
                     'status' => $delivery->status,
-                    'hospital' => $delivery->request->hospital->name,
+                    'hospital' => $delivery->deliveryRequest->hospital->name,
                     'drone' => $delivery->drone->name,
                     'progress' => $delivery->progress_percentage,
                     'eta' => $delivery->eta,

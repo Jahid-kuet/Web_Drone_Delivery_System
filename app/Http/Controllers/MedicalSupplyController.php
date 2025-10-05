@@ -83,7 +83,7 @@ class MedicalSupplyController extends Controller
             'expired' => MedicalSupply::expired()->count(),
         ];
         
-        return view('admin.supplies.index', compact('supplies', 'stats'));
+        return view('admin.medical-supplies.index', compact('supplies', 'stats'));
     }
 
     /**
@@ -91,7 +91,7 @@ class MedicalSupplyController extends Controller
      */
     public function create()
     {
-        return view('admin.supplies.create');
+        return view('admin.medical-supplies.create');
     }
 
     /**
@@ -153,7 +153,7 @@ class MedicalSupplyController extends Controller
             ->limit(20)
             ->get();
         
-        return view('admin.supplies.show', compact('supply', 'stockHistory'));
+        return view('admin.medical-supplies.show', compact('supply', 'stockHistory'));
     }
 
     /**
@@ -161,7 +161,7 @@ class MedicalSupplyController extends Controller
      */
     public function edit(MedicalSupply $supply)
     {
-        return view('admin.supplies.edit', compact('supply'));
+        return view('admin.medical-supplies.edit', compact('supply'));
     }
 
     /**

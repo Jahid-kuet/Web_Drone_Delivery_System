@@ -14,6 +14,10 @@ use App\Http\Controllers\RoleController;
 
 // Landing Page
 Route::get('/', function () {
+    // If user is logged in, redirect to dashboard
+    if (auth()->check()) {
+        return redirect()->route('admin.dashboard');
+    }
     return view('welcome');
 })->name('home');
 
@@ -27,8 +31,8 @@ Route::get('/track/{trackingNumber}', function ($trackingNumber) {
 })->name('tracking.show');
 
 // ==================== AUTHENTICATION ROUTES ====================
-// These will be added by Laravel Breeze/UI or custom auth
-// Auth::routes();
+// Include authentication routes from auth.php
+require __DIR__.'/auth.php';
 
 // ==================== AUTHENTICATED ROUTES ====================
 

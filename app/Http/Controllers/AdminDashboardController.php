@@ -24,7 +24,7 @@ class AdminDashboardController extends Controller
         $recentActivities = $this->getRecentActivities();
         $charts = $this->getChartData();
         
-        return view('admin.dashboard.index', compact('stats', 'recentActivities', 'charts'));
+        return view('admin.dashboard', compact('stats', 'recentActivities', 'charts'));
     }
 
     /**
@@ -39,7 +39,7 @@ class AdminDashboardController extends Controller
             'completed_deliveries' => Delivery::where('status', 'completed')->count(),
             'failed_deliveries' => Delivery::where('status', 'failed')->count(),
             'today_deliveries' => Delivery::whereDate('created_at', today())->count(),
-            'emergency_deliveries' => Delivery::whereHas('request', function ($q) {
+            'emergency_deliveries' => Delivery::whereHas('deliveryRequest', function ($q) {
                 $q->where('priority', 'emergency');
             })->whereIn('status', ['pending', 'in_transit'])->count(),
             
@@ -122,7 +122,7 @@ class AdminDashboardController extends Controller
         $activities = [];
         
         // Recent deliveries
-        $recentDeliveries = Delivery::with(['request.hospital', 'drone'])
+        $recentDeliveries = Delivery::with(['deliveryRequest.hospital', 'drone'])
             ->latest()
             ->limit(10)
             ->get()
@@ -132,7 +132,7 @@ class AdminDashboardController extends Controller
                     'icon' => 'truck',
                     'color' => $this->getDeliveryColor($delivery->status),
                     'title' => "Delivery #{$delivery->tracking_number}",
-                    'description' => "Status: {$delivery->status} - {$delivery->request->hospital->name}",
+                    'description' => "Status: {$delivery->status} - {$delivery->deliveryRequest->hospital->name}",
                     'time' => $delivery->created_at,
                 ];
             });
@@ -333,7 +333,7 @@ class AdminDashboardController extends Controller
             'active_deliveries' => Delivery::whereIn('status', ['pending', 'in_transit', 'picked_up'])->count(),
             'available_drones' => Drone::where('status', 'available')->count(),
             'pending_requests' => DeliveryRequest::where('status', 'pending')->count(),
-            'emergency_deliveries' => Delivery::whereHas('request', function ($q) {
+            'emergency_deliveries' => Delivery::whereHas('deliveryRequest', function ($q) {
                 $q->where('priority', 'emergency');
             })->whereIn('status', ['pending', 'in_transit'])->count(),
             'timestamp' => now()->toIso8601String(),
