@@ -1,115 +1,353 @@
 @extends('layouts.app')
 
-@section('title', 'Create Delivery Request')
+@section('title', 'Request New Delivery')
 
 @section('content')
-<div class="container mx-auto px-4 py-8 max-w-4xl">
-    <div class="mb-6">
-        <h1 class="text-3xl font-bold text-gray-900">New Delivery Request</h1>
-        <p class="text-gray-600 mt-1">Request medical supplies delivery to your hospital</p>
-    </div>
-
-    <form action="{{ route('hospital.requests.store') }}" method="POST" class="space-y-6">
-        @csrf
-
-        <!-- Request Details -->
-        <div class="bg-white rounded-lg shadow-sm p-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Request Details</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Priority <span class="text-red-500">*</span></label>
-                    <select name="priority" required 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 @error('priority') border-red-500 @enderror">
-                        <option value="">Select Priority</option>
-                        <option value="emergency" class="text-red-600">Emergency - Immediate</option>
-                        <option value="high" class="text-orange-600">High - Within 1 hour</option>
-                        <option value="medium" class="text-yellow-600">Medium - Within 3 hours</option>
-                        <option value="low">Low - Within 24 hours</option>
-                    </select>
-                    @error('priority')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
-                </div>
-
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Request Description <span class="text-red-500">*</span></label>
-                    <textarea name="description" rows="3" required 
-                              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 @error('description') border-red-500 @enderror" 
-                              placeholder="Describe the medical supplies needed and the reason for the request...">{{ old('description') }}</textarea>
-                    @error('description')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
-                </div>
-
+<div class="min-h-screen bg-gradient-to-br from-teal-50 via-white to-blue-50 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {{-- Breadcrumb --}}
+        <div class="mb-6">
+            <div class="flex items-center text-sm text-gray-600 mb-4">
+                <a href="{{ route('hospital.dashboard') }}" class="hover:text-teal-600 transition">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+                <i class="fas fa-chevron-right mx-2 text-xs"></i>
+                <a href="{{ route('hospital.requests.index') }}" class="hover:text-teal-600 transition">
+                    Delivery Requests
+                </a>
+                <i class="fas fa-chevron-right mx-2 text-xs"></i>
+                <span class="text-gray-900">New Request</span>
+            </div>
+            
+            <div class="flex items-center justify-between">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Requested Delivery Date <span class="text-red-500">*</span></label>
-                    <input type="datetime-local" name="requested_date" required 
-                           value="{{ old('requested_date', now()->format('Y-m-d\TH:i')) }}"
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 @error('requested_date') border-red-500 @enderror">
-                    @error('requested_date')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
+                    <h1 class="text-3xl font-bold text-gray-900">Request New Delivery</h1>
+                    <p class="text-gray-600 mt-2">Fill out the form to request a drone delivery for medical supplies</p>
+                </div>
+                <div class="hidden md:block">
+                    <div class="w-16 h-16 bg-gradient-to-br from-teal-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-plus-circle text-white text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Alert Messages --}}
+        @if(session('success'))
+        <div class="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg shadow-sm">
+            <div class="flex items-center">
+                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                <p class="text-green-800">{{ session('success') }}</p>
+            </div>
+        </div>
+        @endif
+
+        @if($errors->any())
+        <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg shadow-sm">
+            <div class="flex items-start">
+                <i class="fas fa-exclamation-circle text-red-500 mr-3 mt-1"></i>
+                <div class="flex-1">
+                    <p class="text-red-800 font-semibold mb-2">Please fix the following errors:</p>
+                    <ul class="list-disc list-inside text-red-700 space-y-1">
+                        @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        {{-- Form --}}
+        <form action="{{ route('hospital.requests.store') }}" method="POST" class="bg-white rounded-2xl shadow-xl overflow-hidden" id="deliveryRequestForm">
+            @csrf
+
+            <div class="p-8 space-y-8">
+                
+                {{-- Basic Information --}}
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                        <div class="w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-info-circle text-teal-600"></i>
+                        </div>
+                        Basic Information
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {{-- Priority --}}
+                        <div>
+                            <label for="priority" class="block text-sm font-medium text-gray-700 mb-2">
+                                Priority Level <span class="text-red-500">*</span>
+                            </label>
+                            <select name="priority" id="priority" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition @error('priority') border-red-500 @enderror">
+                                <option value="">Select Priority</option>
+                                <option value="emergency" {{ old('priority') == 'emergency' ? 'selected' : '' }}>
+                                    🔴 Emergency - Critical/Life-threatening
+                                </option>
+                                <option value="high" {{ old('priority') == 'high' ? 'selected' : '' }}>
+                                    🟠 High - Urgent within 24 hours
+                                </option>
+                                <option value="medium" {{ old('priority') == 'medium' ? 'selected' : '' }}>
+                                    🟡 Medium - Required within 2-3 days
+                                </option>
+                                <option value="low" {{ old('priority') == 'low' ? 'selected' : '' }}>
+                                    🟢 Low - Standard delivery
+                                </option>
+                            </select>
+                            @error('priority')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Requested Date --}}
+                        <div>
+                            <label for="requested_date" class="block text-sm font-medium text-gray-700 mb-2">
+                                Requested Delivery Date <span class="text-red-500">*</span>
+                            </label>
+                            <input type="date" name="requested_date" id="requested_date" required
+                                value="{{ old('requested_date', date('Y-m-d')) }}"
+                                min="{{ date('Y-m-d') }}"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition @error('requested_date') border-red-500 @enderror">
+                            @error('requested_date')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    {{-- Description --}}
+                    <div class="mt-6">
+                        <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+                            Request Description <span class="text-red-500">*</span>
+                        </label>
+                        <textarea name="description" id="description" rows="4" required
+                            placeholder="Provide details about this delivery request..."
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition @error('description') border-red-500 @enderror">{{ old('description') }}</textarea>
+                        @error('description')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Contact Person</label>
-                    <input type="text" name="contact_person" value="{{ old('contact_person', auth()->user()->name) }}" 
+                {{-- Contact Information --}}
+                <div class="border-t pt-8">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-user text-blue-600"></i>
+                        </div>
+                        Contact Information
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {{-- Contact Person --}}
+                        <div>
+                            <label for="contact_person" class="block text-sm font-medium text-gray-700 mb-2">
+                                Contact Person Name
+                            </label>
+                            <input type="text" name="contact_person" id="contact_person"
+                                value="{{ old('contact_person', Auth::user()->name) }}"
+                                placeholder="Enter contact person name"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition">
+                            @error('contact_person')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Contact Phone --}}
+                        <div>
+                            <label for="contact_phone" class="block text-sm font-medium text-gray-700 mb-2">
+                                Contact Phone Number
+                            </label>
+                            <input type="tel" name="contact_phone" id="contact_phone"
+                                value="{{ old('contact_phone', Auth::user()->phone ?? '') }}" 
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Contact Phone</label>
-                    <input type="text" name="contact_phone" value="{{ old('contact_phone', auth()->user()->phone) }}" 
-                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                </div>
-            </div>
-        </div>
-
-        <!-- Medical Supplies -->
-        <div class="bg-white rounded-lg shadow-sm p-6" x-data="{ supplies: [{ supply_id: '', quantity: '' }] }">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Medical Supplies</h2>
-            
-            <template x-for="(supply, index) in supplies" :key="index">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Medical Supply <span class="text-red-500">*</span></label>
-                        <select :name="'supplies[' + index + '][supply_id]'" required 
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                            <option value="">Select Medical Supply</option>
-                            <!-- Medical supplies will be loaded from controller -->
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Quantity <span class="text-red-500">*</span></label>
-                        <div class="flex gap-2">
-                            <input type="number" :name="'supplies[' + index + '][quantity]'" required min="1" 
-                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                            <button type="button" @click="supplies.splice(index, 1)" x-show="supplies.length > 1"
-                                    class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                            <input type="tel" name="contact_phone" id="contact_phone"
+                                value="{{ old('contact_phone', Auth::user()->phone ?? '') }}"
+                                placeholder="Enter phone number"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition">
+                            @error('contact_phone')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                 </div>
-            </template>
 
-            <button type="button" @click="supplies.push({ supply_id: '', quantity: '' })"
-                    class="text-blue-600 hover:text-blue-800">
-                <i class="fas fa-plus-circle mr-2"></i>Add Another Supply
-            </button>
-        </div>
+                {{-- Medical Supplies --}}
+                <div class="border-t pt-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-semibold text-gray-900 flex items-center">
+                            <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-box-open text-purple-600"></i>
+                            </div>
+                            Medical Supplies <span class="text-red-500 ml-1">*</span>
+                        </h2>
+                        <button type="button" onclick="addSupplyRow()"
+                            class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition flex items-center shadow-sm">
+                            <i class="fas fa-plus mr-2"></i> Add Supply
+                        </button>
+                    </div>
 
-        <!-- Special Instructions -->
-        <div class="bg-white rounded-lg shadow-sm p-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Special Instructions</h2>
-            <textarea name="special_instructions" rows="4" 
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" 
-                      placeholder="Any special handling requirements, storage conditions, or delivery notes...">{{ old('special_instructions') }}</textarea>
-        </div>
+                    <div id="suppliesContainer" class="space-y-4">
+                        {{-- Initial supply row --}}
+                        <div class="supply-row bg-gray-50 p-5 rounded-xl border border-gray-200">
+                            <div class="flex items-start gap-4">
+                                <div class="flex-1">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Medical Supply</label>
+                                    <select name="supplies[0][supply_id]" required
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition">
+                                        <option value="">Select a supply</option>
+                                        @foreach($medicalSupplies as $supply)
+                                        <option value="{{ $supply->id }}" data-stock="{{ $supply->stock_quantity }}">
+                                            {{ $supply->name }} ({{ $supply->category }}) - Stock: {{ $supply->stock_quantity }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="w-32">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+                                    <input type="number" name="supplies[0][quantity]" required min="1"
+                                        placeholder="Qty"
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition">
+                                </div>
+                                <div class="pt-8">
+                                    <button type="button" onclick="removeSupplyRow(this)"
+                                        class="px-3 py-3 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg transition">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-        <!-- Actions -->
-        <div class="flex justify-between items-center">
-            <a href="{{ route('hospital.requests.index') }}" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100">
-                Cancel
-            </a>
-            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg shadow-lg">
-                <i class="fas fa-paper-plane mr-2"></i>Submit Request
-            </button>
-        </div>
-    </form>
+                    @error('supplies')
+                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                {{-- Special Instructions --}}
+                <div class="border-t pt-8">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                        <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-clipboard-list text-yellow-600"></i>
+                        </div>
+                        Additional Details
+                    </h2>
+                    
+                    <div>
+                        <label for="special_instructions" class="block text-sm font-medium text-gray-700 mb-2">
+                            Special Instructions
+                        </label>
+                        <textarea name="special_instructions" id="special_instructions" rows="4"
+                            placeholder="Any special handling instructions, storage requirements, or additional notes..."
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition">{{ old('special_instructions') }}</textarea>
+                        @error('special_instructions')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                {{-- Delivery Location (Auto-filled from hospital) --}}
+                <div class="bg-teal-50 p-6 rounded-xl border border-teal-200">
+                    <div class="flex items-start">
+                        <div class="w-10 h-10 bg-teal-500 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-map-marker-alt text-white"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-900 mb-2">Delivery Location</h3>
+                            <p class="text-gray-700">{{ $hospital->name }}</p>
+                            <p class="text-sm text-gray-600 mt-1">{{ $hospital->address }}</p>
+                            @if($hospital->latitude && $hospital->longitude)
+                            <p class="text-xs text-gray-500 mt-1">
+                                <i class="fas fa-location-dot mr-1"></i>
+                                Coordinates: {{ $hospital->latitude }}, {{ $hospital->longitude }}
+                            </p>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            {{-- Form Actions --}}
+            <div class="bg-gray-50 px-8 py-6 border-t border-gray-200 flex items-center justify-between">
+                <a href="{{ route('hospital.requests.index') }}"
+                    class="px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center">
+                    <i class="fas fa-times mr-2"></i> Cancel
+                </a>
+                <button type="submit"
+                    class="px-8 py-3 bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 text-white rounded-lg transition flex items-center shadow-lg">
+                    <i class="fas fa-paper-plane mr-2"></i> Submit Request
+                </button>
+            </div>
+        </form>
+
+    </div>
 </div>
+
+<script>
+let supplyRowIndex = 1;
+
+function addSupplyRow() {
+    const container = document.getElementById('suppliesContainer');
+    const newRow = document.createElement('div');
+    newRow.className = 'supply-row bg-gray-50 p-5 rounded-xl border border-gray-200';
+    newRow.innerHTML = `
+        <div class="flex items-start gap-4">
+            <div class="flex-1">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Medical Supply</label>
+                <select name="supplies[${supplyRowIndex}][supply_id]" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition">
+                    <option value="">Select a supply</option>
+                    @foreach($medicalSupplies as $supply)
+                    <option value="{{ $supply->id }}" data-stock="{{ $supply->stock_quantity }}">
+                        {{ $supply->name }} ({{ $supply->category }}) - Stock: {{ $supply->stock_quantity }}
+                    </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="w-32">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+                <input type="number" name="supplies[${supplyRowIndex}][quantity]" required min="1"
+                    placeholder="Qty"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition">
+            </div>
+            <div class="pt-8">
+                <button type="button" onclick="removeSupplyRow(this)"
+                    class="px-3 py-3 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg transition">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    `;
+    container.appendChild(newRow);
+    supplyRowIndex++;
+}
+
+function removeSupplyRow(button) {
+    const container = document.getElementById('suppliesContainer');
+    const rows = container.querySelectorAll('.supply-row');
+    
+    if (rows.length > 1) {
+        button.closest('.supply-row').remove();
+    } else {
+        alert('At least one supply item is required');
+    }
+}
+
+// Form validation
+document.getElementById('deliveryRequestForm').addEventListener('submit', function(e) {
+    const supplies = document.querySelectorAll('.supply-row');
+    if (supplies.length === 0) {
+        e.preventDefault();
+        alert('Please add at least one medical supply');
+        return false;
+    }
+});
+</script>
+
 @endsection

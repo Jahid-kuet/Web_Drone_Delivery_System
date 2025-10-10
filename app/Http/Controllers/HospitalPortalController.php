@@ -204,4 +204,67 @@ class HospitalPortalController extends Controller
 
         return view('hospital.deliveries.index', compact('deliveries', 'hospital'));
     }
+
+    /**
+     * Display delivery history with advanced filters
+     */
+    public function deliveryHistory(Request $request)
+    {
+        $user = Auth::user();
+        $hospital = $user->hospital;
+
+        if (!$hospital) {
+            return redirect()->route('home')->with('error', 'You are not associated with any hospital.');
+        }
+
+        $query = Delivery::whereHas('deliveryRequest', function ($q) use ($hospital) {
+            $q->where('hospital_id', $hospital->id);
+        })->with(['deliveryRequest', 'drone', 'assignedPilot']);
+
+        // Search filter
+        if ($search = $request->input('search')) {
+            $query->where('tracking_number', 'like', "%{$search}%");
+        }
+
+        // Status filter
+        if ($status = $request->input('status')) {
+            $query->where('status', $status);
+        }
+
+        // Date range filter
+        if ($dateFrom = $request->input('date_from')) {
+            $query->whereDate('created_at', '>=', $dateFrom);
+        }
+
+        if ($dateTo = $request->input('date_to')) {
+            $query->whereDate('created_at', '<=', $dateTo);
+        }
+
+        // Priority filter (from delivery request)
+        if ($priority = $request->input('priority')) {
+            $query->whereHas('deliveryRequest', function ($q) use ($priority) {
+                $q->where('priority', $priority);
+            });
+        }
+
+        $deliveries = $query->latest()->paginate(20);
+
+        // Statistics
+        $stats = [
+            'total' => Delivery::whereHas('deliveryRequest', function ($q) use ($hospital) {
+                $q->where('hospital_id', $hospital->id);
+            })->count(),
+            'delivered' => Delivery::whereHas('deliveryRequest', function ($q) use ($hospital) {
+                $q->where('hospital_id', $hospital->id);
+            })->where('status', 'delivered')->count(),
+            'cancelled' => Delivery::whereHas('deliveryRequest', function ($q) use ($hospital) {
+                $q->where('hospital_id', $hospital->id);
+            })->where('status', 'cancelled')->count(),
+            'in_transit' => Delivery::whereHas('deliveryRequest', function ($q) use ($hospital) {
+                $q->where('hospital_id', $hospital->id);
+            })->where('status', 'in_transit')->count(),
+        ];
+
+        return view('hospital.history', compact('deliveries', 'hospital', 'stats'));
+    }
 }

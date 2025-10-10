@@ -220,6 +220,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         
         // Track Deliveries
         Route::get('/deliveries', [HospitalPortalController::class, 'deliveriesIndex'])->name('deliveries.index');
+        
+        // Delivery History
+        Route::get('/history', [HospitalPortalController::class, 'deliveryHistory'])->name('history');
     });    // ==================== DRONE OPERATOR ROUTES ====================
     Route::prefix('operator')->name('operator.')->middleware('role:drone_operator')->group(function () {
         
