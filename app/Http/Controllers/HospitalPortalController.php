@@ -35,7 +35,7 @@ class HospitalPortalController extends Controller
             'completed_today' => Delivery::whereHas('deliveryRequest', function ($query) use ($hospital) {
                 $query->where('hospital_id', $hospital->id);
             })->where('status', 'completed')
-                ->whereDate('completed_at', today())
+                ->whereDate('delivery_completed_time', today())
                 ->count(),
             'emergency_requests' => DeliveryRequest::where('hospital_id', $hospital->id)
                 ->where('priority', 'emergency')
@@ -116,7 +116,7 @@ class HospitalPortalController extends Controller
         }
 
         $medicalSupplies = MedicalSupply::where('is_active', true)
-            ->where('stock_quantity', '>', 0)
+            ->where('quantity_available', '>', 0)
             ->orderBy('name')
             ->get();
 
@@ -150,14 +150,37 @@ class HospitalPortalController extends Controller
         // Generate request number
         $requestNumber = 'REQ-' . date('Ymd') . '-' . strtoupper(Str::random(6));
 
+        // Calculate total weight from supplies
+        $totalWeight = 0;
+        $totalVolume = 0;
+        foreach ($validated['supplies'] as $supply) {
+            $medicalSupply = MedicalSupply::find($supply['supply_id']);
+            if ($medicalSupply) {
+                $totalWeight += $medicalSupply->weight_kg * $supply['quantity'];
+                $totalVolume += ($medicalSupply->volume_ml ?? 0) * $supply['quantity'];
+            }
+        }
+
+        // Map priority to urgency_level
+        $urgencyMap = [
+            'low' => 'routine',
+            'medium' => 'routine',
+            'high' => 'urgent',
+            'emergency' => 'emergency',
+        ];
+        $urgencyLevel = $urgencyMap[$validated['priority']] ?? 'routine';
+
         // Create delivery request
         $deliveryRequest = DeliveryRequest::create([
             'request_number' => $requestNumber,
             'hospital_id' => $hospital->id,
-            'requested_by' => $user->id,
+            'requested_by_user_id' => $user->id,
             'priority' => $validated['priority'],
+            'urgency_level' => $urgencyLevel,
             'description' => $validated['description'],
-            'requested_date' => $validated['requested_date'],
+            'requested_delivery_time' => $validated['requested_date'],
+            'total_weight_kg' => $totalWeight,
+            'total_volume_ml' => $totalVolume > 0 ? $totalVolume : null,
             'status' => 'pending',
             'medical_supplies' => json_encode($validated['supplies']),
             'delivery_location' => json_encode([

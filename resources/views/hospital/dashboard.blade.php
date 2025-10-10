@@ -81,7 +81,7 @@
     <div class="bg-white rounded-lg shadow p-6">
         <h2 class="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <a href="{{ route('hospital.delivery-requests.create') }}" class="flex items-center p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition group">
+            <a href="{{ route('hospital.requests.create') }}" class="flex items-center p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition group">
                 <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mr-4 group-hover:scale-110 transition">
                     <i class="fas fa-plus text-white text-xl"></i>
                 </div>
@@ -91,7 +91,7 @@
                 </div>
             </a>
 
-            <a href="{{ route('hospital.delivery-requests.index') }}" class="flex items-center p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition group">
+            <a href="{{ route('hospital.requests.index') }}" class="flex items-center p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition group">
                 <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mr-4 group-hover:scale-110 transition">
                     <i class="fas fa-clipboard-list text-white text-xl"></i>
                 </div>
@@ -101,7 +101,7 @@
                 </div>
             </a>
 
-            <a href="{{ route('hospital.deliveries') }}" class="flex items-center p-4 bg-green-50 hover:bg-green-100 rounded-lg transition group">
+            <a href="{{ route('hospital.deliveries.index') }}" class="flex items-center p-4 bg-green-50 hover:bg-green-100 rounded-lg transition group">
                 <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mr-4 group-hover:scale-110 transition">
                     <i class="fas fa-shipping-fast text-white text-xl"></i>
                 </div>
@@ -119,7 +119,7 @@
         <div class="bg-white rounded-lg shadow">
             <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                 <h2 class="text-lg font-semibold text-gray-900">Recent Requests</h2>
-                <a href="{{ route('hospital.delivery-requests.index') }}" class="text-sm text-blue-600 hover:text-blue-800">
+                <a href="{{ route('hospital.requests.index') }}" class="text-sm text-blue-600 hover:text-blue-800">
                     View All <i class="fas fa-arrow-right ml-1"></i>
                 </a>
             </div>
@@ -158,7 +158,7 @@
                     <div class="text-center py-8">
                         <i class="fas fa-inbox text-4xl text-gray-300 mb-3"></i>
                         <p class="text-gray-500">No recent requests</p>
-                        <a href="{{ route('hospital.delivery-requests.create') }}" class="text-blue-600 hover:text-blue-800 text-sm mt-2 inline-block">
+                        <a href="{{ route('hospital.requests.create') }}" class="text-blue-600 hover:text-blue-800 text-sm mt-2 inline-block">
                             Create your first request
                         </a>
                     </div>
@@ -170,7 +170,7 @@
         <div class="bg-white rounded-lg shadow">
             <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                 <h2 class="text-lg font-semibold text-gray-900">Active Deliveries</h2>
-                <a href="{{ route('hospital.deliveries') }}" class="text-sm text-blue-600 hover:text-blue-800">
+                <a href="{{ route('hospital.deliveries.index') }}" class="text-sm text-blue-600 hover:text-blue-800">
                     View All <i class="fas fa-arrow-right ml-1"></i>
                 </a>
             </div>

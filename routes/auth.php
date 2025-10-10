@@ -33,8 +33,18 @@ Route::middleware('guest')->group(function () {
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            // Redirect to intended page or dashboard
-            return redirect()->intended('/admin/dashboard');
+            // Get authenticated user
+            $user = Auth::user();
+            
+            // Redirect based on user role
+            if ($user->hasRoleSlug('hospital_admin') || $user->hasRoleSlug('hospital_staff')) {
+                return redirect()->intended(route('hospital.dashboard'));
+            } elseif ($user->hasRoleSlug('drone_operator')) {
+                return redirect()->intended(route('operator.dashboard'));
+            } else {
+                // Admin and other roles
+                return redirect()->intended(route('admin.dashboard'));
+            }
         }
 
         // If authentication fails, redirect back with error
