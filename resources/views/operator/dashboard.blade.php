@@ -91,7 +91,7 @@
                 </div>
             </a>
 
-            <a href="#" class="flex items-center p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition group">
+            <a href="{{ route('operator.drones.index') }}" class="flex items-center p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition group">
                 <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mr-4 group-hover:scale-110 transition">
                     <i class="fas fa-drone text-white text-xl"></i>
                 </div>
@@ -176,7 +176,7 @@
         <div class="bg-white rounded-lg shadow">
             <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                 <h2 class="text-lg font-semibold text-gray-900">My Drones</h2>
-                <a href="#" class="text-sm text-blue-600 hover:text-blue-800">
+                <a href="{{ route('operator.drones.index') }}" class="text-sm text-blue-600 hover:text-blue-800">
                     View All <i class="fas fa-arrow-right ml-1"></i>
                 </a>
             </div>

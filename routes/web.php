@@ -235,6 +235,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/deliveries/{delivery}/mark-delivered', [OperatorPortalController::class, 'markAsDelivered'])->name('deliveries.mark-delivered');
         Route::post('/deliveries/{delivery}/cancel', [OperatorPortalController::class, 'cancelDelivery'])->name('deliveries.cancel');
         Route::post('/deliveries/{delivery}/report-incident', [OperatorPortalController::class, 'reportIncident'])->name('deliveries.report-incident');
+        
+        // My Drones
+        Route::get('/drones', [OperatorPortalController::class, 'dronesIndex'])->name('drones.index');
     });
     
     // ==================== USER PROFILE ====================

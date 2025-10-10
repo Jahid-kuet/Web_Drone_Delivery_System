@@ -60,6 +60,30 @@ class OperatorPortalController extends Controller
     }
 
     /**
+     * Display drones assigned to this operator
+     */
+    public function dronesIndex()
+    {
+        $user = Auth::user();
+
+        // Get drones through active assignments
+        $drones = Drone::whereHas('assignments', function($q) use ($user) {
+            $q->whereHas('delivery', function($d) use ($user) {
+                $d->where('assigned_pilot_id', $user->id)
+                  ->whereIn('status', ['pending', 'in_transit']);
+            });
+        })->with(['assignments.delivery'])->get();
+
+        // Stats
+        $stats = [
+            'available' => $drones->where('status', 'available')->count(),
+            'in_flight' => $drones->where('status', 'in_flight')->count(),
+        ];
+
+        return view('operator.drones.index', compact('drones', 'stats'));
+    }
+
+    /**
      * Display deliveries assigned to this operator
      */
     public function deliveriesIndex(Request $request)
@@ -68,11 +92,6 @@ class OperatorPortalController extends Controller
 
         $query = Delivery::where('assigned_pilot_id', $user->id)
             ->with(['deliveryRequest.hospital', 'drone']);
-
-        // Search filter
-        if ($search = $request->input('search')) {
-            $query->where('tracking_number', 'like', "%{$search}%");
-        }
 
         // Status filter
         if ($status = $request->input('status')) {
@@ -92,15 +111,16 @@ class OperatorPortalController extends Controller
 
         $deliveries = $query->paginate(15);
 
-        // Stats for filters
+        // Stats for filter tabs
         $stats = [
-            'ready_to_start' => Delivery::where('assigned_pilot_id', $user->id)
+            'total' => Delivery::where('assigned_pilot_id', $user->id)->count(),
+            'pending' => Delivery::where('assigned_pilot_id', $user->id)
                 ->where('status', 'pending')
                 ->count(),
-            'in_progress' => Delivery::where('assigned_pilot_id', $user->id)
+            'in_transit' => Delivery::where('assigned_pilot_id', $user->id)
                 ->where('status', 'in_transit')
                 ->count(),
-            'awaiting_confirmation' => Delivery::where('assigned_pilot_id', $user->id)
+            'delivered' => Delivery::where('assigned_pilot_id', $user->id)
                 ->where('status', 'delivered')
                 ->count(),
         ];
