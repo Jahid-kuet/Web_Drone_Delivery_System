@@ -175,6 +175,7 @@ class AdminDashboardController extends Controller
             'status_distribution' => $this->getStatusDistribution(),
             'priority_distribution' => $this->getPriorityDistribution(),
             'drone_utilization' => $this->getDroneUtilization(),
+            'hospital_usage' => $this->getHospitalUsage(),
             'hourly_deliveries' => $this->getHourlyDeliveries(),
         ];
     }
@@ -322,6 +323,24 @@ class AdminDashboardController extends Controller
             'info' => 'blue',
             default => 'gray',
         };
+    }
+
+    /**
+     * Get hospital usage data
+     */
+    private function getHospitalUsage(): array
+    {
+        $data = Hospital::withCount(['deliveryRequests' => function ($q) {
+                $q->where('created_at', '>=', now()->subDays(30));
+            }])
+            ->orderByDesc('delivery_requests_count')
+            ->limit(10)
+            ->get();
+        
+        return [
+            'labels' => $data->pluck('name')->toArray(),
+            'data' => $data->pluck('delivery_requests_count')->toArray(),
+        ];
     }
 
     /**

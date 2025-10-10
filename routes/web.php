@@ -60,9 +60,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/dashboard/export', [AdminDashboardController::class, 'export'])->name('dashboard.export');
         
         // Reports (Placeholder)
-        Route::get('/reports', function () {
-            return view('admin.reports.index');
-        })->name('reports');
+        Route::get('/reports', [\App\Http\Controllers\Admin\ReportsController::class, 'index'])->name('reports');
+        Route::get('/reports/delivery', [\App\Http\Controllers\Admin\ReportsController::class, 'deliveryReport'])->name('reports.delivery');
+        Route::get('/reports/drone', [\App\Http\Controllers\Admin\ReportsController::class, 'droneReport'])->name('reports.drone');
+        Route::get('/reports/hospital', [\App\Http\Controllers\Admin\ReportsController::class, 'hospitalReport'])->name('reports.hospital');
+        
+        // ==================== USER MANAGEMENT ====================
+        Route::prefix('users')->name('users.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\UserManagementController::class, 'index'])->name('index');
+            Route::post('/', [\App\Http\Controllers\Admin\UserManagementController::class, 'store'])->name('store');
+            Route::put('/{user}', [\App\Http\Controllers\Admin\UserManagementController::class, 'update'])->name('update');
+            Route::delete('/{user}', [\App\Http\Controllers\Admin\UserManagementController::class, 'destroy'])->name('destroy');
+            Route::post('/{user}/toggle-status', [\App\Http\Controllers\Admin\UserManagementController::class, 'toggleStatus'])->name('toggle-status');
+            Route::post('/{user}/reset-password', [\App\Http\Controllers\Admin\UserManagementController::class, 'resetPassword'])->name('reset-password');
+        });
         
         // ==================== MEDICAL SUPPLIES ====================
         Route::prefix('supplies')->name('supplies.')->group(function () {
@@ -151,6 +162,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/{deliveryRequest}', [DeliveryRequestController::class, 'show'])->name('show');
             Route::get('/{deliveryRequest}/edit', [DeliveryRequestController::class, 'edit'])->name('edit');
             Route::put('/{deliveryRequest}', [DeliveryRequestController::class, 'update'])->name('update');
+            Route::delete('/{deliveryRequest}', [DeliveryRequestController::class, 'destroy'])->name('destroy');
             
             // Approval Workflow
             Route::post('/{deliveryRequest}/approve', [DeliveryRequestController::class, 'approve'])->name('approve');
@@ -223,6 +235,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         
         // Delivery History
         Route::get('/history', [HospitalPortalController::class, 'deliveryHistory'])->name('history');
+        
+        // Notifications
+        Route::get('/notifications', [HospitalPortalController::class, 'getNotifications'])->name('notifications.api');
+        Route::get('/notifications/all', [HospitalPortalController::class, 'notificationsIndex'])->name('notifications.index');
+        Route::post('/notifications/{notification}/mark-read', [HospitalPortalController::class, 'markNotificationRead'])->name('notifications.mark-read');
+        Route::post('/notifications/mark-all-read', [HospitalPortalController::class, 'markAllNotificationsRead'])->name('notifications.mark-all-read');
     });    // ==================== DRONE OPERATOR ROUTES ====================
     Route::prefix('operator')->name('operator.')->middleware('role:drone_operator')->group(function () {
         

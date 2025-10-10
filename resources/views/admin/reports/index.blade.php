@@ -10,22 +10,147 @@
             <i class="fas fa-chart-bar text-orange-600 mr-2"></i>
             Reports & Analytics
         </h1>
-        <p class="text-gray-600">Generate and view comprehensive reports for your drone delivery system</p>
+        <p class="text-gray-600">Generate and export comprehensive reports for your drone delivery system</p>
     </div>
 
-    <!-- Coming Soon Notice -->
-    <div class="bg-gradient-to-r from-orange-50 to-yellow-50 border border-orange-200 rounded-lg p-8 text-center mb-8">
-        <i class="fas fa-construction text-orange-600 text-5xl mb-4"></i>
-        <h2 class="text-2xl font-bold text-gray-900 mb-2">Reports Module Coming Soon!</h2>
-        <p class="text-gray-600 mb-4">We're working on comprehensive reporting features for your drone delivery system.</p>
-        <div class="inline-flex items-center px-4 py-2 bg-orange-100 text-orange-800 rounded-lg">
-            <i class="fas fa-clock mr-2"></i>
-            <span class="font-medium">Under Development</span>
+    <!-- Report Generation Forms -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Delivery Reports -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center mb-4">
+                <div class="bg-blue-100 p-3 rounded-lg">
+                    <i class="fas fa-shipping-fast text-blue-600 text-2xl"></i>
+                </div>
+                <h3 class="ml-4 text-lg font-semibold text-gray-900">Delivery Reports</h3>
+            </div>
+            <form method="GET" action="{{ route('admin.reports.delivery') }}">
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Period</label>
+                        <select name="period" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly" selected>Monthly</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Date From</label>
+                        <input type="date" name="date_from" value="{{ now()->startOfMonth()->format('Y-m-d') }}" 
+                               class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Date To</label>
+                        <input type="date" name="date_to" value="{{ now()->format('Y-m-d') }}" 
+                               class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Hospital (Optional)</label>
+                        <select name="hospital_id" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <option value="">All Hospitals</option>
+                            @foreach($hospitals ?? [] as $hospital)
+                                <option value="{{ $hospital->id }}">{{ $hospital->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    <i class="fas fa-file-alt mr-2"></i>Generate Report
+                </button>
+            </form>
+        </div>
+
+        <!-- Drone Performance Reports -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center mb-4">
+                <div class="bg-green-100 p-3 rounded-lg">
+                    <i class="fas fa-drone text-green-600 text-2xl"></i>
+                </div>
+                <h3 class="ml-4 text-lg font-semibold text-gray-900">Drone Performance</h3>
+            </div>
+            <form method="GET" action="{{ route('admin.reports.drone') }}">
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Date From</label>
+                        <input type="date" name="date_from" value="{{ now()->startOfMonth()->format('Y-m-d') }}" 
+                               class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Date To</label>
+                        <input type="date" name="date_to" value="{{ now()->format('Y-m-d') }}" 
+                               class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Drone (Optional)</label>
+                        <select name="drone_id" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500">
+                            <option value="">All Drones</option>
+                            @foreach($drones ?? [] as $drone)
+                                <option value="{{ $drone->id }}">{{ $drone->name }} ({{ $drone->model }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="w-full mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                    <i class="fas fa-file-alt mr-2"></i>Generate Report
+                </button>
+            </form>
+        </div>
+
+        <!-- Hospital Activity Reports -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center mb-4">
+                <div class="bg-purple-100 p-3 rounded-lg">
+                    <i class="fas fa-hospital text-purple-600 text-2xl"></i>
+                </div>
+                <h3 class="ml-4 text-lg font-semibold text-gray-900">Hospital Activity</h3>
+            </div>
+            <form method="GET" action="{{ route('admin.reports.hospital') }}">
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Date From</label>
+                        <input type="date" name="date_from" value="{{ now()->startOfMonth()->format('Y-m-d') }}" 
+                               class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Date To</label>
+                        <input type="date" name="date_to" value="{{ now()->format('Y-m-d') }}" 
+                               class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500">
+                    </div>
+                </div>
+                <button type="submit" class="w-full mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                    <i class="fas fa-file-alt mr-2"></i>Generate Report
+                </button>
+            </form>
         </div>
     </div>
 
     <!-- Planned Features Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6 mb-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">
+            <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>Upcoming Features
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
+            <div class="flex items-start">
+                <i class="fas fa-check text-green-600 mt-1 mr-2"></i>
+                <span>PDF Export for all reports</span>
+            </div>
+            <div class="flex items-start">
+                <i class="fas fa-check text-green-600 mt-1 mr-2"></i>
+                <span>Excel Export with charts</span>
+            </div>
+            <div class="flex items-start">
+                <i class="fas fa-check text-green-600 mt-1 mr-2"></i>
+                <span>Scheduled report email delivery</span>
+            </div>
+            <div class="flex items-start">
+                <i class="fas fa-check text-green-600 mt-1 mr-2"></i>
+                <span>Custom report templates</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Removed rest of old content, keeping only the active report forms above -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8" style="display: none;">
+        <!-- Old content hidden -->
         <!-- Delivery Reports -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div class="flex items-center mb-4">

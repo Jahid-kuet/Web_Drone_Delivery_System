@@ -45,11 +45,7 @@ class DeliveryTrackingController extends Controller
                         'longitude' => $delivery->request->hospital->longitude,
                     ],
                 ],
-                'supply' => [
-                    'name' => $delivery->request->supply->name,
-                    'quantity' => $delivery->request->quantity_requested,
-                    'category' => $delivery->request->supply->category,
-                ],
+                'medical_supplies' => $delivery->request->medical_supplies,
                 'drone' => [
                     'name' => $delivery->drone->name,
                     'model' => $delivery->drone->model,

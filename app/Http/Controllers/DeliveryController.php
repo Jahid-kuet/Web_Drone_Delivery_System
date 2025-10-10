@@ -16,7 +16,7 @@ class DeliveryController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Delivery::with(['deliveryRequest.hospital', 'drone', 'deliveryRequest.supply']);
+        $query = Delivery::with(['deliveryRequest.hospital', 'drone']);
         
         // Search filter
         if ($search = $request->input('search')) {

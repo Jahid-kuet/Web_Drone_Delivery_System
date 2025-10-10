@@ -290,4 +290,84 @@ class HospitalPortalController extends Controller
 
         return view('hospital.history', compact('deliveries', 'hospital', 'stats'));
     }
+
+    /**
+     * Get notifications for AJAX request
+     */
+    public function getNotifications()
+    {
+        $user = Auth::user();
+        
+        $notifications = \App\Models\Notification::where('user_id', $user->id)
+            ->latest()
+            ->take(10)
+            ->get()
+            ->map(function ($notification) {
+                return [
+                    'id' => $notification->id,
+                    'title' => $notification->title,
+                    'message' => $notification->message,
+                    'type' => $notification->type,
+                    'read_at' => $notification->read_at,
+                    'time_ago' => $notification->created_at->diffForHumans(),
+                ];
+            });
+
+        $unreadCount = \App\Models\Notification::where('user_id', $user->id)
+            ->whereNull('read_at')
+            ->count();
+
+        return response()->json([
+            'notifications' => $notifications,
+            'unread_count' => $unreadCount,
+        ]);
+    }
+
+    /**
+     * Display all notifications page
+     */
+    public function notificationsIndex()
+    {
+        $user = Auth::user();
+        $hospital = $user->hospital;
+
+        if (!$hospital) {
+            return redirect()->route('home')->with('error', 'You are not associated with any hospital.');
+        }
+
+        $notifications = \App\Models\Notification::where('user_id', $user->id)
+            ->latest()
+            ->paginate(20);
+
+        return view('hospital.notifications.index', compact('notifications', 'hospital'));
+    }
+
+    /**
+     * Mark notification as read
+     */
+    public function markNotificationRead($notificationId)
+    {
+        $notification = \App\Models\Notification::where('id', $notificationId)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if ($notification) {
+            $notification->update(['read_at' => now()]);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Mark all notifications as read
+     */
+    public function markAllNotificationsRead()
+    {
+        \App\Models\Notification::where('user_id', Auth::id())
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
+
+        return response()->json(['success' => true]);
+    }
 }
+

@@ -16,7 +16,7 @@ class DeliveryRequestController extends Controller
      */
     public function index(Request $request)
     {
-        $query = DeliveryRequest::with(['hospital', 'requestedByUser', 'supply']);
+        $query = DeliveryRequest::with(['hospital', 'requestedBy']);
         
         // Search filter
         if ($search = $request->input('search')) {
@@ -140,10 +140,9 @@ class DeliveryRequestController extends Controller
     {
         $deliveryRequest->load([
             'hospital',
-            'supply',
-            'requestedByUser',
-            'approvedByUser',
-            'deliveries',
+            'requestedBy',
+            'approvedBy',
+            'delivery',
         ]);
         
         return view('admin.delivery-requests.show', compact('deliveryRequest'));
@@ -293,12 +292,41 @@ class DeliveryRequestController extends Controller
     }
 
     /**
+     * Delete a delivery request
+     */
+    public function destroy(DeliveryRequest $deliveryRequest)
+    {
+        // Check if request has an associated delivery
+        if ($deliveryRequest->delivery) {
+            return redirect()->back()
+                ->with('error', 'Cannot delete request with associated delivery!');
+        }
+        
+        // Only allow deletion of pending, rejected, or cancelled requests
+        if (!in_array($deliveryRequest->status, ['pending', 'rejected', 'cancelled'])) {
+            return redirect()->back()
+                ->with('error', 'Can only delete pending, rejected, or cancelled requests!');
+        }
+        
+        try {
+            $deliveryRequest->delete();
+            
+            return redirect()->route('admin.delivery-requests.index')
+                ->with('success', 'Delivery request deleted successfully!');
+                
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Failed to delete request: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Get pending requests (AJAX)
      */
     public function pending()
     {
         $requests = DeliveryRequest::pending()
-            ->with(['hospital', 'supply'])
+            ->with(['hospital'])
             ->orderByPriority('desc')
             ->get()
             ->map(function ($request) {
@@ -306,8 +334,7 @@ class DeliveryRequestController extends Controller
                     'id' => $request->id,
                     'request_number' => $request->request_number,
                     'hospital' => $request->hospital->name,
-                    'supply' => $request->supply->name,
-                    'quantity' => $request->quantity_requested,
+                    'medical_supplies' => $request->medical_supplies,
                     'priority' => $request->priority,
                     'required_by' => $request->required_by_date->format('Y-m-d H:i'),
                     'is_overdue' => $request->isOverdue(),

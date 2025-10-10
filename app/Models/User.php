@@ -28,12 +28,11 @@ class User extends Authenticatable
         'phone',
         'address',
         'city',
-        'state',
-        'zip_code',
+        'state_province',
+        'postal_code',
         'country',
         'profile_photo',
         'hospital_id',
-        'drone_pilot_license',
         'license_expiry_date',
         'emergency_contact_name',
         'emergency_contact_phone',
@@ -290,8 +289,7 @@ class User extends Authenticatable
      */
     public function isDronePilot(): bool
     {
-        return $this->hasAnyRole(['drone_operator', 'admin', 'super_admin']) 
-            && !empty($this->drone_pilot_license);
+        return $this->hasAnyRole(['drone_operator', 'admin', 'super_admin']);
     }
 
     /**
@@ -299,10 +297,6 @@ class User extends Authenticatable
      */
     public function hasValidLicense(): bool
     {
-        if (!$this->drone_pilot_license) {
-            return false;
-        }
-
         if (!$this->license_expiry_date) {
             return true;
         }
@@ -384,15 +378,13 @@ class User extends Authenticatable
     }
 
     /**
-     * Scope: Drone pilots
+     * Scope: Drone pilots (users with drone_operator role)
      */
     public function scopeDronePilots($query)
     {
-        return $query->whereNotNull('drone_pilot_license')
-            ->where(function ($q) {
-                $q->whereNull('license_expiry_date')
-                    ->orWhere('license_expiry_date', '>', now());
-            });
+        return $query->whereHas('roles', function ($q) {
+            $q->where('slug', 'drone_operator');
+        });
     }
 
     /**
@@ -400,8 +392,7 @@ class User extends Authenticatable
      */
     public function scopeExpiringLicenses($query, int $days = 30)
     {
-        return $query->whereNotNull('drone_pilot_license')
-            ->whereNotNull('license_expiry_date')
+        return $query->whereNotNull('license_expiry_date')
             ->whereBetween('license_expiry_date', [now(), now()->addDays($days)]);
     }
 }
