@@ -152,11 +152,27 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if user has a specific role by slug
+     */
+    public function hasRoleSlug(string $roleSlug): bool
+    {
+        return $this->roles()->where('slug', $roleSlug)->exists();
+    }
+
+    /**
      * Check if user has any of the given roles
      */
     public function hasAnyRole(array $roleNames): bool
     {
         return $this->roles()->whereIn('name', $roleNames)->exists();
+    }
+
+    /**
+     * Check if user has any of the given role slugs
+     */
+    public function hasAnyRoleSlug(array $roleSlugs): bool
+    {
+        return $this->roles()->whereIn('slug', $roleSlugs)->exists();
     }
 
     /**

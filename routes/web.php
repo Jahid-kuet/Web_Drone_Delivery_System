@@ -22,9 +22,9 @@ Route::get('/', function () {
         $user = auth()->user();
         
         // Check user role and redirect accordingly
-        if ($user->hasRole('hospital_admin') || $user->hasRole('hospital_staff')) {
+        if ($user->hasRoleSlug('hospital_admin') || $user->hasRoleSlug('hospital_staff')) {
             return redirect()->route('hospital.dashboard');
-        } elseif ($user->hasRole('drone_operator')) {
+        } elseif ($user->hasRoleSlug('drone_operator')) {
             return redirect()->route('operator.dashboard');
         } else {
             // Admin and other roles go to admin dashboard

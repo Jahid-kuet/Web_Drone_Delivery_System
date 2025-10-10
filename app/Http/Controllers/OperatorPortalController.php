@@ -26,25 +26,37 @@ class OperatorPortalController extends Controller
                 ->count(),
             'completed_today' => Delivery::where('assigned_pilot_id', $user->id)
                 ->where('status', 'completed')
-                ->whereDate('completed_at', today())
+                ->whereDate('delivery_completed_time', today())
                 ->count(),
             'flight_hours' => $this->calculateFlightHours($user->id),
         ];
 
-        // Active deliveries
-        $activeDeliveries = Delivery::where('assigned_pilot_id', $user->id)
-            ->whereIn('status', ['pending', 'in_transit'])
+        // Today's deliveries
+        $todayDeliveries = Delivery::where('assigned_pilot_id', $user->id)
+            ->whereDate('scheduled_departure_time', today())
             ->with(['deliveryRequest.hospital', 'drone'])
-            ->latest()
-            ->take(5)
+            ->orderBy('scheduled_departure_time', 'asc')
             ->get();
 
-        // Assigned drones
-        $assignedDrones = Drone::where('status', 'available')
-            ->orWhere('operator_id', $user->id)
-            ->get();
+        // Assigned drones (through active deliveries)
+        $drones = Drone::whereHas('assignments', function($q) use ($user) {
+            $q->whereHas('delivery', function($d) use ($user) {
+                $d->where('assigned_pilot_id', $user->id)
+                  ->whereIn('status', ['pending', 'in_transit']);
+            });
+        })->get();
 
-        return view('operator.dashboard', compact('stats', 'activeDeliveries', 'assignedDrones'));
+        // Low battery drones (only for assigned drones)
+        $lowBatteryDrones = Drone::whereHas('assignments', function($q) use ($user) {
+            $q->whereHas('delivery', function($d) use ($user) {
+                $d->where('assigned_pilot_id', $user->id)
+                  ->whereIn('status', ['pending', 'in_transit']);
+            });
+        })
+        ->where('current_battery_level', '<', 30)
+        ->get();
+
+        return view('operator.dashboard', compact('stats', 'todayDeliveries', 'drones', 'lowBatteryDrones'));
     }
 
     /**
@@ -76,7 +88,7 @@ class OperatorPortalController extends Controller
                 WHEN 'completed' THEN 4
                 ELSE 5
             END
-        ")->orderBy('scheduled_departure', 'asc');
+        ")->orderBy('scheduled_departure_time', 'asc');
 
         $deliveries = $query->paginate(15);
 
@@ -125,7 +137,7 @@ class OperatorPortalController extends Controller
 
         $delivery->update([
             'status' => 'in_transit',
-            'actual_departure' => now(),
+            'actual_departure_time' => now(),
         ]);
 
         // Update drone status
@@ -150,7 +162,7 @@ class OperatorPortalController extends Controller
 
         $delivery->update([
             'status' => 'delivered',
-            'actual_arrival' => now(),
+            'actual_arrival_time' => now(),
         ]);
 
         // Update drone status
@@ -229,14 +241,14 @@ class OperatorPortalController extends Controller
     {
         $deliveries = Delivery::where('assigned_pilot_id', $userId)
             ->where('status', 'completed')
-            ->whereNotNull('actual_departure')
-            ->whereNotNull('actual_arrival')
+            ->whereNotNull('actual_departure_time')
+            ->whereNotNull('actual_arrival_time')
             ->get();
 
         $totalMinutes = 0;
         foreach ($deliveries as $delivery) {
-            if ($delivery->actual_departure && $delivery->actual_arrival) {
-                $totalMinutes += $delivery->actual_departure->diffInMinutes($delivery->actual_arrival);
+            if ($delivery->actual_departure_time && $delivery->actual_arrival_time) {
+                $totalMinutes += $delivery->actual_departure_time->diffInMinutes($delivery->actual_arrival_time);
             }
         }
 

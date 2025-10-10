@@ -50,7 +50,22 @@ class HospitalPortalController extends Controller
             ->take(10)
             ->get();
 
-        return view('hospital.dashboard', compact('stats', 'recentRequests', 'hospital'));
+        // Active deliveries
+        $activeDeliveries = Delivery::whereHas('deliveryRequest', function ($query) use ($hospital) {
+            $query->where('hospital_id', $hospital->id);
+        })->whereIn('status', ['pending', 'in_transit'])
+            ->with(['drone', 'deliveryRequest'])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        // Low stock supplies (optional, if tracking inventory)
+        $lowStockSupplies = MedicalSupply::where('quantity_available', '<', 10)
+            ->orderBy('quantity_available', 'asc')
+            ->take(6)
+            ->get();
+
+        return view('hospital.dashboard', compact('stats', 'recentRequests', 'activeDeliveries', 'hospital', 'lowStockSupplies'));
     }
 
     /**
