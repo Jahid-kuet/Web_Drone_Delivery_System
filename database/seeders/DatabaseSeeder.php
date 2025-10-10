@@ -239,11 +239,255 @@ class DatabaseSeeder extends Seeder
             \App\Models\MedicalSupply::firstOrCreate(['code' => $supply['code']], $supply);
         }
 
-        $this->command->info('✅ Database seeded successfully!');
+        // Create Drones
+        $drones = [
+            [
+                'name' => 'Drone Alpha',
+                'serial_number' => 'DRN-ALPHA-001',
+                'registration_number' => 'REG-ALPHA-001',
+                'model' => 'MediDrone X1',
+                'status' => 'available',
+                'type' => 'medical_transport',
+                'max_payload_kg' => 5.0,
+                'max_range_km' => 50.0,
+                'max_altitude_m' => 500.0,
+                'max_speed_kmh' => 80.0,
+                'battery_life_minutes' => 90,
+                'current_battery_level' => 100.00,
+                'total_flight_hours' => 250,
+                'total_deliveries' => 150,
+                'last_maintenance_date' => now()->subMonths(1),
+                'next_maintenance_due' => now()->addMonths(2),
+                'has_temperature_control' => true,
+                'has_camera' => true,
+                'has_emergency_parachute' => true,
+                'temperature_min_celsius' => 2.0,
+                'temperature_max_celsius' => 8.0,
+                'insurance_policy_number' => 'INS-DRONE-' . rand(1000, 9999),
+                'insurance_expiry_date' => now()->addYear(),
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Drone Beta',
+                'serial_number' => 'DRN-BETA-002',
+                'registration_number' => 'REG-BETA-002',
+                'model' => 'MediDrone X2',
+                'status' => 'in_flight',
+                'type' => 'blood_delivery',
+                'max_payload_kg' => 7.0,
+                'max_range_km' => 75.0,
+                'max_altitude_m' => 600.0,
+                'max_speed_kmh' => 100.0,
+                'battery_life_minutes' => 120,
+                'current_battery_level' => 65.00,
+                'total_flight_hours' => 180,
+                'total_deliveries' => 95,
+                'last_maintenance_date' => now()->subMonths(2),
+                'next_maintenance_due' => now()->addMonth(),
+                'has_temperature_control' => true,
+                'has_camera' => true,
+                'has_emergency_parachute' => true,
+                'temperature_min_celsius' => 2.0,
+                'temperature_max_celsius' => 8.0,
+                'insurance_policy_number' => 'INS-DRONE-' . rand(1000, 9999),
+                'insurance_expiry_date' => now()->addYear(),
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Drone Gamma',
+                'serial_number' => 'DRN-GAMMA-003',
+                'registration_number' => 'REG-GAMMA-003',
+                'model' => 'MediDrone Pro',
+                'status' => 'charging',
+                'type' => 'pharmaceutical',
+                'max_payload_kg' => 10.0,
+                'max_range_km' => 100.0,
+                'max_altitude_m' => 800.0,
+                'max_speed_kmh' => 120.0,
+                'battery_life_minutes' => 150,
+                'current_battery_level' => 45.00,
+                'total_flight_hours' => 95,
+                'total_deliveries' => 50,
+                'last_maintenance_date' => now()->subWeeks(2),
+                'next_maintenance_due' => now()->addMonths(4),
+                'has_temperature_control' => true,
+                'has_camera' => true,
+                'has_emergency_parachute' => true,
+                'temperature_min_celsius' => -20.0,
+                'temperature_max_celsius' => 8.0,
+                'insurance_policy_number' => 'INS-DRONE-' . rand(1000, 9999),
+                'insurance_expiry_date' => now()->addYear(),
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Drone Delta',
+                'serial_number' => 'DRN-DELTA-004',
+                'registration_number' => 'REG-DELTA-004',
+                'model' => 'MediDrone X1',
+                'status' => 'maintenance',
+                'type' => 'multi_purpose',
+                'max_payload_kg' => 5.0,
+                'max_range_km' => 50.0,
+                'max_altitude_m' => 500.0,
+                'max_speed_kmh' => 80.0,
+                'battery_life_minutes' => 90,
+                'current_battery_level' => 20.00,
+                'total_flight_hours' => 450,
+                'total_deliveries' => 280,
+                'last_maintenance_date' => now()->subDays(2),
+                'next_maintenance_due' => now()->addMonths(3),
+                'has_temperature_control' => false,
+                'has_camera' => true,
+                'has_emergency_parachute' => true,
+                'insurance_policy_number' => 'INS-DRONE-' . rand(1000, 9999),
+                'insurance_expiry_date' => now()->addMonths(6),
+                'is_active' => true,
+            ],
+        ];
+
+        foreach ($drones as $droneData) {
+            \App\Models\Drone::firstOrCreate(['serial_number' => $droneData['serial_number']], $droneData);
+        }
+
+        // Create more hospitals
+        $moreHospitals = [
+            [
+                'name' => 'St. Mary Medical Center',
+                'code' => 'SMMC002',
+                'type' => 'specialized_hospital',
+                'email' => 'contact@stmary.com',
+                'address' => '456 Healthcare Avenue',
+                'city' => 'Los Angeles',
+                'state_province' => 'CA',
+                'postal_code' => '90001',
+                'country' => 'USA',
+                'latitude' => 34.0522,
+                'longitude' => -118.2437,
+                'primary_phone' => '+1 (555) 234-5678',
+                'emergency_phone' => '+1 (555) 911-1111',
+                'website' => 'https://stmary.com',
+                'license_number' => 'LIC-CA-' . time(),
+                'license_expiry_date' => now()->addYears(5),
+                'bed_capacity' => 300,
+                'has_emergency_department' => true,
+                'has_drone_landing_pad' => true,
+                'is_active' => true,
+                'is_verified' => true,
+            ],
+            [
+                'name' => 'Regional Community Hospital',
+                'code' => 'RCH003',
+                'type' => 'general_hospital',
+                'email' => 'info@regionalch.com',
+                'address' => '789 Community Road',
+                'city' => 'Chicago',
+                'state_province' => 'IL',
+                'postal_code' => '60601',
+                'country' => 'USA',
+                'latitude' => 41.8781,
+                'longitude' => -87.6298,
+                'primary_phone' => '+1 (555) 345-6789',
+                'emergency_phone' => '+1 (555) 911-2222',
+                'website' => 'https://regionalch.com',
+                'license_number' => 'LIC-IL-' . time(),
+                'license_expiry_date' => now()->addYears(5),
+                'bed_capacity' => 150,
+                'has_emergency_department' => true,
+                'has_drone_landing_pad' => false,
+                'is_active' => true,
+                'is_verified' => true,
+            ],
+        ];
+
+        foreach ($moreHospitals as $hospitalData) {
+            \App\Models\Hospital::firstOrCreate(['code' => $hospitalData['code']], $hospitalData);
+        }
+
+        // Create Delivery Requests
+        $deliveryRequests = [
+            [
+                'hospital_id' => $hospital->id,
+                'requested_by_user_id' => $hospitalAdmin->id,
+                'request_number' => 'REQ-' . date('Ymd') . '-001',
+                'priority' => 'high',
+                'status' => 'pending',
+                'medical_supplies' => json_encode([
+                    ['name' => 'Blood Bag (Type O-)', 'quantity' => 5, 'code' => 'BLOOD-O-NEG']
+                ]),
+                'total_weight_kg' => 2.5,
+                'total_volume_ml' => 2250.0,
+                'description' => 'Emergency blood supply needed',
+                'urgency_level' => 'emergency',
+                'requested_delivery_time' => now()->addHours(2),
+                'latest_acceptable_time' => now()->addHours(4),
+                'pickup_location' => json_encode([
+                    'address' => '123 Medical Center Drive',
+                    'city' => 'New York',
+                    'latitude' => 40.7580,
+                    'longitude' => -73.9855
+                ]),
+                'delivery_location' => json_encode([
+                    'address' => $hospital->address,
+                    'city' => $hospital->city,
+                    'latitude' => $hospital->latitude,
+                    'longitude' => $hospital->longitude
+                ]),
+                'special_instructions' => 'Handle with extreme care. Temperature critical.',
+                'requires_signature' => true,
+                'recipient_name' => 'Dr. Sarah Johnson',
+                'recipient_phone' => '+1 (555) 123-4567',
+            ],
+            [
+                'hospital_id' => $hospital->id,
+                'requested_by_user_id' => $hospitalAdmin->id,
+                'request_number' => 'REQ-' . date('Ymd') . '-002',
+                'priority' => 'medium',
+                'status' => 'approved',
+                'approved_by_user_id' => $admin->id,
+                'approved_at' => now()->subHours(1),
+                'medical_supplies' => json_encode([
+                    ['name' => 'Insulin Vials', 'quantity' => 10, 'code' => 'MED-INSULIN-100']
+                ]),
+                'total_weight_kg' => 1.0,
+                'description' => 'Regular insulin supply',
+                'urgency_level' => 'routine',
+                'requested_delivery_time' => now()->addHours(6),
+                'pickup_location' => json_encode([
+                    'address' => '456 Pharmacy Center',
+                    'city' => 'New York',
+                    'latitude' => 40.7480,
+                    'longitude' => -73.9755
+                ]),
+                'delivery_location' => json_encode([
+                    'address' => $hospital->address,
+                    'city' => $hospital->city,
+                    'latitude' => $hospital->latitude,
+                    'longitude' => $hospital->longitude
+                ]),
+                'requires_signature' => true,
+                'recipient_name' => 'Nurse Emily Davis',
+                'recipient_phone' => '+1 (555) 234-5678',
+            ],
+        ];
+
+        foreach ($deliveryRequests as $requestData) {
+            \App\Models\DeliveryRequest::firstOrCreate(
+                ['request_number' => $requestData['request_number']], 
+                $requestData
+            );
+        }
+
+        $this->command->info('✅ Database seeded successfully with comprehensive test data!');
         $this->command->info('');
         $this->command->info('📧 Default Users:');
         $this->command->info('   Admin: admin@drone.com / password123');
         $this->command->info('   Operator: operator@drone.com / password123');
         $this->command->info('   Hospital: hospital@drone.com / password123');
+        $this->command->info('');
+        $this->command->info('📊 Test Data Created:');
+        $this->command->info('   • 8 Medical Supplies');
+        $this->command->info('   • 4 Drones (various statuses)');
+        $this->command->info('   • 3 Hospitals');
+        $this->command->info('   • 2 Delivery Requests');
     }
 }
