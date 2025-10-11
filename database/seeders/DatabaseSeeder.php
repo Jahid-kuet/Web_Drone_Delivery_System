@@ -5,6 +5,9 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Permission;
+use App\Models\Hospital;
+use App\Models\MedicalSupply;
+use App\Models\Drone;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -64,21 +67,23 @@ class DatabaseSeeder extends Seeder
         $adminRole->permissions()->sync(Permission::all());
 
         // Create a sample hospital first
-        $hospital = \App\Models\Hospital::firstOrCreate(['email' => 'contact@cityhospital.com'], [
-            'name' => 'City General Hospital',
-            'code' => 'CGH001',
+                // Create Primary Hospital (Bangladesh)
+        $hospital = Hospital::firstOrCreate(['code' => 'SQUH001'], [
+            'name' => 'Square Hospital Dhaka',
+            'code' => 'SQUH001',
+            'email' => 'info@squarehospital.com',
             'type' => 'general_hospital',
-            'address' => '123 Medical Center Drive',
-            'city' => 'New York',
-            'state_province' => 'NY',
-            'postal_code' => '10001',
-            'country' => 'USA',
-            'latitude' => 40.7580,
-            'longitude' => -73.9855,
-            'primary_phone' => '+1 (555) 123-4567',
-            'emergency_phone' => '+1 (555) 911-0000',
-            'website' => 'https://cityhospital.com',
-            'license_number' => 'LIC-NY-' . time(),
+            'address' => '18/F, Bir Uttam Qazi Nuruzzaman Sarak, West Panthapath',
+            'city' => 'Dhaka',
+            'state_province' => 'Dhaka Division',
+            'postal_code' => '1205',
+            'country' => 'Bangladesh',
+            'latitude' => 23.7557,
+            'longitude' => 90.3872,
+            'primary_phone' => '+880-2-8159457',
+            'emergency_phone' => '+880-2-8159458',
+            'website' => 'https://squarehospital.com',
+            'license_number' => 'LIC-BD-DHK-' . time(),
             'license_expiry_date' => now()->addYears(5),
             'bed_capacity' => 500,
             'has_emergency_department' => true,
@@ -345,55 +350,56 @@ class DatabaseSeeder extends Seeder
             ],
         ];
 
-        foreach ($drones as $droneData) {
-            \App\Models\Drone::firstOrCreate(['serial_number' => $droneData['serial_number']], $droneData);
-        }
+        $droneAlpha = \App\Models\Drone::firstOrCreate(['serial_number' => $drones[0]['serial_number']], $drones[0]);
+        $droneBeta = \App\Models\Drone::firstOrCreate(['serial_number' => $drones[1]['serial_number']], $drones[1]);
+        $droneGamma = \App\Models\Drone::firstOrCreate(['serial_number' => $drones[2]['serial_number']], $drones[2]);
+        $droneDelta = \App\Models\Drone::firstOrCreate(['serial_number' => $drones[3]['serial_number']], $drones[3]);
 
         // Create more hospitals
-        $moreHospitals = [
+                $moreHospitals = [
             [
-                'name' => 'St. Mary Medical Center',
-                'code' => 'SMMC002',
+                'name' => 'Dhaka Medical College Hospital',
+                'code' => 'DMCH002',
                 'type' => 'specialized_hospital',
-                'email' => 'contact@stmary.com',
-                'address' => '456 Healthcare Avenue',
-                'city' => 'Los Angeles',
-                'state_province' => 'CA',
-                'postal_code' => '90001',
-                'country' => 'USA',
-                'latitude' => 34.0522,
-                'longitude' => -118.2437,
-                'primary_phone' => '+1 (555) 234-5678',
-                'emergency_phone' => '+1 (555) 911-1111',
-                'website' => 'https://stmary.com',
-                'license_number' => 'LIC-CA-' . time(),
+                'email' => 'info@dhakamedical.gov.bd',
+                'address' => 'Bakshi Bazar, Secretariat Road',
+                'city' => 'Dhaka',
+                'state_province' => 'Dhaka Division',
+                'postal_code' => '1000',
+                'country' => 'Bangladesh',
+                'latitude' => 23.7261,
+                'longitude' => 90.3967,
+                'primary_phone' => '+880-2-8626812',
+                'emergency_phone' => '+880-2-8626813',
+                'website' => 'https://dhakamedical.gov.bd',
+                'license_number' => 'LIC-BD-DHK-' . (time() + 1),
                 'license_expiry_date' => now()->addYears(5),
-                'bed_capacity' => 300,
+                'bed_capacity' => 600,
                 'has_emergency_department' => true,
                 'has_drone_landing_pad' => true,
                 'is_active' => true,
                 'is_verified' => true,
             ],
             [
-                'name' => 'Regional Community Hospital',
-                'code' => 'RCH003',
+                'name' => 'Chittagong Medical College Hospital',
+                'code' => 'CMCH003',
                 'type' => 'general_hospital',
-                'email' => 'info@regionalch.com',
-                'address' => '789 Community Road',
-                'city' => 'Chicago',
-                'state_province' => 'IL',
-                'postal_code' => '60601',
-                'country' => 'USA',
-                'latitude' => 41.8781,
-                'longitude' => -87.6298,
-                'primary_phone' => '+1 (555) 345-6789',
-                'emergency_phone' => '+1 (555) 911-2222',
-                'website' => 'https://regionalch.com',
-                'license_number' => 'LIC-IL-' . time(),
+                'email' => 'info@chittagongmedical.gov.bd',
+                'address' => 'Panchlaish, K.B. Fazlul Kader Road',
+                'city' => 'Chittagong',
+                'state_province' => 'Chittagong Division',
+                'postal_code' => '4203',
+                'country' => 'Bangladesh',
+                'latitude' => 22.3475,
+                'longitude' => 91.8123,
+                'primary_phone' => '+880-31-619821',
+                'emergency_phone' => '+880-31-619822',
+                'website' => 'https://chittagongmedical.gov.bd',
+                'license_number' => 'LIC-BD-CTG-' . (time() + 2),
                 'license_expiry_date' => now()->addYears(5),
-                'bed_capacity' => 150,
+                'bed_capacity' => 450,
                 'has_emergency_department' => true,
-                'has_drone_landing_pad' => false,
+                'has_drone_landing_pad' => true,
                 'is_active' => true,
                 'is_verified' => true,
             ],
@@ -421,10 +427,10 @@ class DatabaseSeeder extends Seeder
                 'requested_delivery_time' => now()->addHours(2),
                 'latest_acceptable_time' => now()->addHours(4),
                 'pickup_location' => json_encode([
-                    'address' => '123 Medical Center Drive',
-                    'city' => 'New York',
-                    'latitude' => 40.7580,
-                    'longitude' => -73.9855
+                    'address' => 'Central Medical Warehouse, Dhanmondi',
+                    'city' => 'Dhaka',
+                    'latitude' => 23.7461,
+                    'longitude' => 90.3742
                 ]),
                 'delivery_location' => json_encode([
                     'address' => $hospital->address,
@@ -453,10 +459,10 @@ class DatabaseSeeder extends Seeder
                 'urgency_level' => 'routine',
                 'requested_delivery_time' => now()->addHours(6),
                 'pickup_location' => json_encode([
-                    'address' => '456 Pharmacy Center',
-                    'city' => 'New York',
-                    'latitude' => 40.7480,
-                    'longitude' => -73.9755
+                    'address' => 'Pharmacy Depot, Gulshan',
+                    'city' => 'Dhaka',
+                    'latitude' => 23.7806,
+                    'longitude' => 90.4193
                 ]),
                 'delivery_location' => json_encode([
                     'address' => $hospital->address,
@@ -477,6 +483,130 @@ class DatabaseSeeder extends Seeder
             );
         }
 
+        // ===========================
+        // CREATE DELIVERIES (Bangladesh Locations)
+        // ===========================
+        $deliveryRequest1 = \App\Models\DeliveryRequest::where('request_number', 'REQ-' . date('Ymd') . '-001')->first();
+        $deliveryRequest2 = \App\Models\DeliveryRequest::where('request_number', 'REQ-' . date('Ymd') . '-002')->first();
+
+        $deliveries = [
+            [
+                'delivery_request_id' => $deliveryRequest1 ? $deliveryRequest1->id : null,
+                'drone_id' => $droneAlpha->id,
+                'hospital_id' => $hospital->id,
+                'assigned_pilot_id' => $operator->id,
+                'delivery_number' => 'DEL-' . date('Ymd') . '-001',
+                'status' => 'in_transit',
+                'scheduled_departure_time' => now()->subMinutes(20),
+                'actual_departure_time' => now()->subMinutes(18),
+                'estimated_arrival_time' => now()->addMinutes(12),
+                'pickup_coordinates' => json_encode([
+                    'address' => 'Central Medical Warehouse, Dhanmondi',
+                    'city' => 'Dhaka',
+                    'latitude' => 23.7461,
+                    'longitude' => 90.3742
+                ]),
+                'delivery_coordinates' => json_encode([
+                    'address' => $hospital->address,
+                    'city' => $hospital->city,
+                    'latitude' => $hospital->latitude,
+                    'longitude' => $hospital->longitude
+                ]),
+                'current_coordinates' => json_encode([
+                    'latitude' => 23.7520,
+                    'longitude' => 90.3820
+                ]),
+                'current_altitude_m' => 120.5,
+                'current_speed_kmh' => 65.3,
+                'distance_remaining_km' => 2.8,
+                'estimated_time_remaining_minutes' => 12,
+                'total_distance_km' => 8.5,
+                'route_waypoints' => json_encode([
+                    ['lat' => 23.7461, 'lng' => 90.3742],
+                    ['lat' => 23.7500, 'lng' => 90.3800],
+                    ['lat' => 23.7557, 'lng' => 90.3872]
+                ]),
+                'weather_conditions' => json_encode([
+                    'temperature' => 28,
+                    'humidity' => 75,
+                    'wind_speed' => 12,
+                    'conditions' => 'Partly Cloudy'
+                ]),
+                'fuel_battery_level_start' => 100.00,
+                'fuel_battery_level_current' => 78.50,
+                'cargo_manifest' => json_encode([
+                    ['item' => 'Blood Bag (Type O-)', 'quantity' => 5, 'weight_kg' => 2.5]
+                ]),
+                'total_cargo_weight_kg' => 2.5,
+                'special_handling_notes' => 'Temperature sensitive - maintain 2-8°C',
+                'pilot_notes' => 'Clear weather, smooth flight',
+                'delivery_cost' => 850.00,
+            ],
+            [
+                'delivery_request_id' => $deliveryRequest2 ? $deliveryRequest2->id : null,
+                'drone_id' => $droneBeta->id,
+                'hospital_id' => $hospital->id,
+                'assigned_pilot_id' => $operator->id,
+                'delivery_number' => 'DEL-' . date('Ymd') . '-002',
+                'status' => 'completed',
+                'scheduled_departure_time' => now()->subHours(2),
+                'actual_departure_time' => now()->subHours(2)->addMinutes(5),
+                'estimated_arrival_time' => now()->subHours(1)->subMinutes(25),
+                'actual_arrival_time' => now()->subHours(1)->subMinutes(30),
+                'delivery_completed_time' => now()->subHours(1)->subMinutes(20),
+                'pickup_coordinates' => json_encode([
+                    'address' => 'Pharmacy Depot, Gulshan',
+                    'city' => 'Dhaka',
+                    'latitude' => 23.7806,
+                    'longitude' => 90.4193
+                ]),
+                'delivery_coordinates' => json_encode([
+                    'address' => $hospital->address,
+                    'city' => $hospital->city,
+                    'latitude' => $hospital->latitude,
+                    'longitude' => $hospital->longitude
+                ]),
+                'current_coordinates' => json_encode([
+                    'latitude' => $hospital->latitude,
+                    'longitude' => $hospital->longitude
+                ]),
+                'total_distance_km' => 6.2,
+                'route_waypoints' => json_encode([
+                    ['lat' => 23.7806, 'lng' => 90.4193],
+                    ['lat' => 23.7650, 'lng' => 90.3950],
+                    ['lat' => 23.7557, 'lng' => 90.3872]
+                ]),
+                'weather_conditions' => json_encode([
+                    'temperature' => 26,
+                    'humidity' => 70,
+                    'wind_speed' => 8,
+                    'conditions' => 'Clear'
+                ]),
+                'fuel_battery_level_start' => 100.00,
+                'fuel_battery_level_end' => 85.00,
+                'cargo_manifest' => json_encode([
+                    ['item' => 'Insulin Vials', 'quantity' => 10, 'weight_kg' => 1.0]
+                ]),
+                'total_cargo_weight_kg' => 1.0,
+                'special_handling_notes' => 'Refrigerated items - handle with care',
+                'pilot_notes' => 'Successful delivery, no issues',
+                'delivery_notes' => 'Delivered to pharmacy reception, signed by Nurse Emily Davis',
+                'delivery_confirmation_signature' => 'Emily Davis',
+                'delivery_rating' => 5,
+                'delivery_feedback' => 'Fast and professional service',
+                'delivery_cost' => 650.00,
+            ],
+        ];
+
+        foreach ($deliveries as $deliveryData) {
+            if (isset($deliveryData['delivery_request_id']) && $deliveryData['delivery_request_id']) {
+                \App\Models\Delivery::firstOrCreate(
+                    ['delivery_number' => $deliveryData['delivery_number']], 
+                    $deliveryData
+                );
+            }
+        }
+
         $this->command->info('✅ Database seeded successfully with comprehensive test data!');
         $this->command->info('');
         $this->command->info('📧 Default Users:');
@@ -487,7 +617,12 @@ class DatabaseSeeder extends Seeder
         $this->command->info('📊 Test Data Created:');
         $this->command->info('   • 8 Medical Supplies');
         $this->command->info('   • 4 Drones (various statuses)');
-        $this->command->info('   • 3 Hospitals');
+        $this->command->info('   • 3 Hospitals (Bangladesh locations)');
         $this->command->info('   • 2 Delivery Requests');
+        $this->command->info('   • 2 Active Deliveries (in_transit, completed)');
+        $this->command->info('');
+        $this->command->info('🚁 Delivery Status:');
+        $this->command->info('   • DEL-' . date('Ymd') . '-001: In Transit (Drone Alpha)');
+        $this->command->info('   • DEL-' . date('Ymd') . '-002: Completed (Drone Beta)');
     }
 }
