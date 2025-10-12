@@ -34,6 +34,9 @@
         @media (max-width: 768px) {
             .mobile-hidden { display: none !important; }
             .mobile-full-width { width: 100% !important; }
+            .mobile-text-sm { font-size: 0.875rem !important; }
+            .mobile-p-2 { padding: 0.5rem !important; }
+            .mobile-overflow-x { overflow-x: auto !important; }
         }
         
         /* Smooth Transitions */
@@ -67,6 +70,40 @@
                 display: block;
                 overflow-x: auto;
                 white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .responsive-table table {
+                min-width: 800px;
+            }
+            
+            /* Stack table on very small screens */
+            @media (max-width: 480px) {
+                .stack-table thead {
+                    display: none;
+                }
+                
+                .stack-table tr {
+                    display: block;
+                    margin-bottom: 1rem;
+                    border: 1px solid #e5e7eb;
+                    border-radius: 0.5rem;
+                    padding: 0.5rem;
+                }
+                
+                .stack-table td {
+                    display: block;
+                    text-align: right;
+                    padding: 0.5rem;
+                    border-bottom: 1px solid #f3f4f6;
+                }
+                
+                .stack-table td:before {
+                    content: attr(data-label);
+                    float: left;
+                    font-weight: bold;
+                    color: #374151;
+                }
             }
         }
         
@@ -93,6 +130,41 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive Grid Improvements */
+        @media (max-width: 640px) {
+            .sm-grid-cols-1 {
+                grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+            }
+        }
+        
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .md-grid-cols-2 {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            }
+        }
+        
+        /* Responsive Text Sizes */
+        @media (max-width: 640px) {
+            h1 { font-size: 1.5rem !important; }
+            h2 { font-size: 1.25rem !important; }
+            h3 { font-size: 1.125rem !important; }
+        }
+        
+        /* Mobile Form Improvements */
+        @media (max-width: 768px) {
+            input, select, textarea {
+                font-size: 16px !important; /* Prevents zoom on iOS */
+            }
+        }
+        
+        /* Responsive Spacing */
+        @media (max-width: 640px) {
+            .container {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
         }
     </style>
 
@@ -305,16 +377,16 @@
 
             <!-- Main Content Area -->
             <main class="flex-1 overflow-y-auto bg-gray-50">
-                <div class="p-4 lg:p-6 xl:p-8">
+                <div class="p-3 sm:p-4 md:p-5 lg:p-6 xl:p-8">
                     <!-- Alert Messages -->
                     @if(session('success'))
-                        <div x-data="{ show: true }" x-show="show" x-transition class="mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded-lg shadow-md">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <i class="fas fa-check-circle mr-3 text-lg"></i>
-                                    <span class="font-medium">{{ session('success') }}</span>
+                        <div x-data="{ show: true }" x-show="show" x-transition class="mb-3 sm:mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 px-3 sm:px-4 py-2 sm:py-3 rounded-lg shadow-md">
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="flex items-center min-w-0">
+                                    <i class="fas fa-check-circle mr-2 sm:mr-3 text-base sm:text-lg flex-shrink-0"></i>
+                                    <span class="font-medium text-sm sm:text-base truncate">{{ session('success') }}</span>
                                 </div>
-                                <button @click="show = false" class="text-green-700 hover:text-green-900">
+                                <button @click="show = false" class="text-green-700 hover:text-green-900 flex-shrink-0">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
@@ -322,13 +394,13 @@
                     @endif
 
                     @if(session('error'))
-                        <div x-data="{ show: true }" x-show="show" x-transition class="mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg shadow-md">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <i class="fas fa-exclamation-circle mr-3 text-lg"></i>
-                                    <span class="font-medium">{{ session('error') }}</span>
+                        <div x-data="{ show: true }" x-show="show" x-transition class="mb-3 sm:mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 px-3 sm:px-4 py-2 sm:py-3 rounded-lg shadow-md">
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="flex items-center min-w-0">
+                                    <i class="fas fa-exclamation-circle mr-2 sm:mr-3 text-base sm:text-lg flex-shrink-0"></i>
+                                    <span class="font-medium text-sm sm:text-base truncate">{{ session('error') }}</span>
                                 </div>
-                                <button @click="show = false" class="text-red-700 hover:text-red-900">
+                                <button @click="show = false" class="text-red-700 hover:text-red-900 flex-shrink-0">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>

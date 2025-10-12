@@ -7,75 +7,75 @@
 @endsection
 
 @section('content')
-<div class="space-y-6">
+<div class="space-y-4 sm:space-y-6 p-2 sm:p-0">
     <!-- Welcome Section -->
-    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg shadow-lg p-6 text-white">
-        <h1 class="text-3xl font-bold mb-2">Welcome back, {{ Auth::user()->name }}! 👋</h1>
-        <p class="text-blue-100">Here's what's happening with your drone delivery system today.</p>
+    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg shadow-lg p-4 sm:p-6 text-white">
+        <h1 class="text-xl sm:text-2xl md:text-3xl font-bold mb-2">Welcome back, {{ Auth::user()->name }}!</h1>
+        <p class="text-sm sm:text-base text-blue-100">Here's what's happening with your drone delivery system today.</p>
     </div>
 
     {{-- READ: Statistics cards showing key metrics --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
         <!-- Total Deliveries -->
-        <div class="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
+        <div class="bg-white rounded-lg shadow p-4 sm:p-6 border-l-4 border-blue-500">
             <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600 mb-1">Total Deliveries</p>
-                    <h3 class="text-3xl font-bold text-gray-900">{{ $stats['total_deliveries'] ?? 0 }}</h3>
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs sm:text-sm text-gray-600 mb-1 truncate">Total Deliveries</p>
+                    <h3 class="text-2xl sm:text-3xl font-bold text-gray-900">{{ $stats['total_deliveries'] ?? 0 }}</h3>
                     <p class="text-xs text-green-600 mt-2">
                         <i class="fas fa-arrow-up"></i> +12% from last month
                     </p>
                 </div>
-                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                    <i class="fas fa-shipping-fast text-2xl text-blue-600"></i>
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 ml-2">
+                    <i class="fas fa-shipping-fast text-xl sm:text-2xl text-blue-600"></i>
                 </div>
             </div>
         </div>
 
         <!-- Active Drones -->
-        <div class="bg-white rounded-lg shadow p-6 border-l-4 border-green-500">
+        <div class="bg-white rounded-lg shadow p-4 sm:p-6 border-l-4 border-green-500">
             <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600 mb-1">Active Drones</p>
-                    <h3 class="text-3xl font-bold text-gray-900">{{ $stats['active_drones'] ?? 0 }}</h3>
-                    <p class="text-xs text-gray-600 mt-2">
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs sm:text-sm text-gray-600 mb-1 truncate">Active Drones</p>
+                    <h3 class="text-2xl sm:text-3xl font-bold text-gray-900">{{ $stats['active_drones'] ?? 0 }}</h3>
+                    <p class="text-xs text-gray-600 mt-2 truncate">
                         <i class="fas fa-drone"></i> {{ $stats['total_drones'] ?? 0 }} total drones
                     </p>
                 </div>
-                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                    <i class="fas fa-drone text-2xl text-green-600"></i>
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 ml-2">
+                    <i class="fas fa-drone text-xl sm:text-2xl text-green-600"></i>
                 </div>
             </div>
         </div>
 
         <!-- Pending Requests -->
-        <div class="bg-white rounded-lg shadow p-6 border-l-4 border-yellow-500">
+        <div class="bg-white rounded-lg shadow p-4 sm:p-6 border-l-4 border-yellow-500">
             <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600 mb-1">Pending Requests</p>
-                    <h3 class="text-3xl font-bold text-gray-900">{{ $stats['pending_requests'] ?? 0 }}</h3>
-                    <p class="text-xs text-yellow-600 mt-2">
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs sm:text-sm text-gray-600 mb-1 truncate">Pending Requests</p>
+                    <h3 class="text-2xl sm:text-3xl font-bold text-gray-900">{{ $stats['pending_requests'] ?? 0 }}</h3>
+                    <p class="text-xs text-yellow-600 mt-2 truncate">
                         <i class="fas fa-clock"></i> Awaiting assignment
                     </p>
                 </div>
-                <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-                    <i class="fas fa-clipboard-list text-2xl text-yellow-600"></i>
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0 ml-2">
+                    <i class="fas fa-clipboard-list text-xl sm:text-2xl text-yellow-600"></i>
                 </div>
             </div>
         </div>
 
         <!-- Total Hospitals -->
-        <div class="bg-white rounded-lg shadow p-6 border-l-4 border-purple-500">
+        <div class="bg-white rounded-lg shadow p-4 sm:p-6 border-l-4 border-purple-500">
             <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600 mb-1">Registered Hospitals</p>
-                    <h3 class="text-3xl font-bold text-gray-900">{{ $stats['total_hospitals'] ?? 0 }}</h3>
-                    <p class="text-xs text-purple-600 mt-2">
+                <div class="flex-1 min-w-0">
+                    <p class="text-xs sm:text-sm text-gray-600 mb-1 truncate">Registered Hospitals</p>
+                    <h3 class="text-2xl sm:text-3xl font-bold text-gray-900">{{ $stats['total_hospitals'] ?? 0 }}</h3>
+                    <p class="text-xs text-purple-600 mt-2 truncate">
                         <i class="fas fa-hospital"></i> Active network
                     </p>
                 </div>
-                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                    <i class="fas fa-hospital text-2xl text-purple-600"></i>
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 ml-2">
+                    <i class="fas fa-hospital text-xl sm:text-2xl text-purple-600"></i>
                 </div>
             </div>
         </div>

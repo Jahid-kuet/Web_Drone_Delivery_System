@@ -234,11 +234,31 @@
             <div class="flex justify-between items-center h-20">
                 <!-- Logo -->
                 <div class="flex items-center space-x-3 fade-in-up">
-                    <div class="w-12 h-12 bg-gradient-to-br from-purple-600 via-purple-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg pulse-glow">
-                        <i class="fas fa-drone text-white text-2xl floating-animation"></i>
+                    <div class="w-14 h-14 bg-gradient-to-br from-purple-600 via-purple-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg pulse-glow">
+                        <!-- Realistic Drone SVG Icon -->
+                        <svg class="w-9 h-9 text-white floating-animation" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Propellers -->
+                            <circle cx="5" cy="5" r="2.5" stroke-width="1.8" fill="currentColor" opacity="0.3"/>
+                            <circle cx="19" cy="5" r="2.5" stroke-width="1.8" fill="currentColor" opacity="0.3"/>
+                            <circle cx="5" cy="19" r="2.5" stroke-width="1.8" fill="currentColor" opacity="0.3"/>
+                            <circle cx="19" cy="19" r="2.5" stroke-width="1.8" fill="currentColor" opacity="0.3"/>
+                            
+                            <!-- Arms connecting to propellers -->
+                            <line x1="8" y1="8" x2="5" y2="5" stroke-width="2"/>
+                            <line x1="16" y1="8" x2="19" y2="5" stroke-width="2"/>
+                            <line x1="8" y1="16" x2="5" y2="19" stroke-width="2"/>
+                            <line x1="16" y1="16" x2="19" y2="19" stroke-width="2"/>
+                            
+                            <!-- Central body -->
+                            <rect x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor" stroke-width="0"/>
+                            
+                            <!-- Camera/Gimbal -->
+                            <circle cx="12" cy="15" r="1.5" fill="currentColor" opacity="0.7"/>
+                            <line x1="12" y1="15" x2="12" y2="17" stroke-width="1.5"/>
+                        </svg>
                     </div>
                     <span class="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                        {{ config('app.name', 'MedDrone') }}
+                        Drone Delivery System
                     </span>
                 </div>
                 
