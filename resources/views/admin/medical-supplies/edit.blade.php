@@ -44,20 +44,20 @@
                     @enderror
                 </div>
 
-                <!-- SKU -->
+                <!-- Code -->
                 <div>
-                    <label for="sku" class="block text-sm font-medium text-gray-700 mb-2">
-                        SKU <span class="text-red-500">*</span>
+                    <label for="code" class="block text-sm font-medium text-gray-700 mb-2">
+                        Code <span class="text-red-500">*</span>
                     </label>
                     <input 
                         type="text" 
-                        name="sku" 
-                        id="sku" 
-                        value="{{ old('sku', $supply->sku) }}" 
+                        name="code" 
+                        id="code" 
+                        value="{{ old('code', $supply->code) }}" 
                         required
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
-                    @error('sku')
+                    @error('code')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
@@ -74,51 +74,76 @@
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                         <option value="">Select Category</option>
-                        <option value="medication" {{ old('category', $supply->category) === 'medication' ? 'selected' : '' }}>Medication</option>
                         <option value="blood_products" {{ old('category', $supply->category) === 'blood_products' ? 'selected' : '' }}>Blood Products</option>
+                        <option value="medicines" {{ old('category', $supply->category) === 'medicines' ? 'selected' : '' }}>Medicines</option>
                         <option value="vaccines" {{ old('category', $supply->category) === 'vaccines' ? 'selected' : '' }}>Vaccines</option>
-                        <option value="surgical" {{ old('category', $supply->category) === 'surgical' ? 'selected' : '' }}>Surgical</option>
-                        <option value="equipment" {{ old('category', $supply->category) === 'equipment' ? 'selected' : '' }}>Equipment</option>
-                        <option value="other" {{ old('category', $supply->category) === 'other' ? 'selected' : '' }}>Other</option>
+                        <option value="surgical_instruments" {{ old('category', $supply->category) === 'surgical_instruments' ? 'selected' : '' }}>Surgical Instruments</option>
+                        <option value="emergency_supplies" {{ old('category', $supply->category) === 'emergency_supplies' ? 'selected' : '' }}>Emergency Supplies</option>
+                        <option value="diagnostic_kits" {{ old('category', $supply->category) === 'diagnostic_kits' ? 'selected' : '' }}>Diagnostic Kits</option>
+                        <option value="medical_devices" {{ old('category', $supply->category) === 'medical_devices' ? 'selected' : '' }}>Medical Devices</option>
                     </select>
                     @error('category')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <!-- Unit -->
+                <!-- Type -->
                 <div>
-                    <label for="unit" class="block text-sm font-medium text-gray-700 mb-2">
-                        Unit <span class="text-red-500">*</span>
+                    <label for="type" class="block text-sm font-medium text-gray-700 mb-2">
+                        Type <span class="text-red-500">*</span>
                     </label>
-                    <input 
-                        type="text" 
-                        name="unit" 
-                        id="unit" 
-                        value="{{ old('unit', $supply->unit) }}" 
+                    <select 
+                        name="type" 
+                        id="type" 
                         required
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
-                    @error('unit')
+                        <option value="">Select Type</option>
+                        <option value="liquid" {{ old('type', $supply->type) === 'liquid' ? 'selected' : '' }}>Liquid</option>
+                        <option value="solid" {{ old('type', $supply->type) === 'solid' ? 'selected' : '' }}>Solid</option>
+                        <option value="fragile" {{ old('type', $supply->type) === 'fragile' ? 'selected' : '' }}>Fragile</option>
+                        <option value="temperature_sensitive" {{ old('type', $supply->type) === 'temperature_sensitive' ? 'selected' : '' }}>Temperature Sensitive</option>
+                    </select>
+                    @error('type')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <!-- Quantity -->
+                <!-- Quantity Available -->
                 <div>
-                    <label for="quantity" class="block text-sm font-medium text-gray-700 mb-2">
-                        Quantity <span class="text-red-500">*</span>
+                    <label for="quantity_available" class="block text-sm font-medium text-gray-700 mb-2">
+                        Quantity Available <span class="text-red-500">*</span>
                     </label>
                     <input 
                         type="number" 
-                        name="quantity" 
-                        id="quantity" 
-                        value="{{ old('quantity', $supply->quantity) }}" 
+                        name="quantity_available" 
+                        id="quantity_available" 
+                        value="{{ old('quantity_available', $supply->quantity_available) }}" 
                         required
                         min="0"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
-                    @error('quantity')
+                    @error('quantity_available')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Weight (kg) -->
+                <div>
+                    <label for="weight_kg" class="block text-sm font-medium text-gray-700 mb-2">
+                        Weight (kg) <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                        type="number" 
+                        name="weight_kg" 
+                        id="weight_kg" 
+                        value="{{ old('weight_kg', $supply->weight_kg) }}" 
+                        required
+                        min="0"
+                        step="0.001"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                    @error('weight_kg')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
@@ -126,14 +151,13 @@
                 <!-- Unit Price -->
                 <div>
                     <label for="unit_price" class="block text-sm font-medium text-gray-700 mb-2">
-                        Unit Price ($) <span class="text-red-500">*</span>
+                        Unit Price ($)
                     </label>
                     <input 
                         type="number" 
                         name="unit_price" 
                         id="unit_price" 
                         value="{{ old('unit_price', $supply->unit_price) }}" 
-                        required
                         min="0"
                         step="0.01"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -145,18 +169,72 @@
 
                 <!-- Minimum Stock Level -->
                 <div>
-                    <label for="min_stock_level" class="block text-sm font-medium text-gray-700 mb-2">
-                        Minimum Stock Level
+                    <label for="minimum_stock_level" class="block text-sm font-medium text-gray-700 mb-2">
+                        Minimum Stock Level <span class="text-red-500">*</span>
                     </label>
                     <input 
                         type="number" 
-                        name="min_stock_level" 
-                        id="min_stock_level" 
-                        value="{{ old('min_stock_level', $supply->min_stock_level) }}" 
+                        name="minimum_stock_level" 
+                        id="minimum_stock_level" 
+                        value="{{ old('minimum_stock_level', $supply->minimum_stock_level) }}" 
+                        required
                         min="0"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
-                    @error('min_stock_level')
+                    @error('minimum_stock_level')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Volume (ml) -->
+                <div>
+                    <label for="volume_ml" class="block text-sm font-medium text-gray-700 mb-2">
+                        Volume (ml)
+                    </label>
+                    <input 
+                        type="number" 
+                        name="volume_ml" 
+                        id="volume_ml" 
+                        value="{{ old('volume_ml', $supply->volume_ml) }}" 
+                        min="0"
+                        step="0.01"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                    @error('volume_ml')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Manufacturer -->
+                <div>
+                    <label for="manufacturer" class="block text-sm font-medium text-gray-700 mb-2">
+                        Manufacturer
+                    </label>
+                    <input 
+                        type="text" 
+                        name="manufacturer" 
+                        id="manufacturer" 
+                        value="{{ old('manufacturer', $supply->manufacturer) }}" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                    @error('manufacturer')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Batch Number -->
+                <div>
+                    <label for="batch_number" class="block text-sm font-medium text-gray-700 mb-2">
+                        Batch Number
+                    </label>
+                    <input 
+                        type="text" 
+                        name="batch_number" 
+                        id="batch_number" 
+                        value="{{ old('batch_number', $supply->batch_number) }}" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                    @error('batch_number')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>

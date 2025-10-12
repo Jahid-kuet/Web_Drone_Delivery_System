@@ -94,20 +94,39 @@ class DroneController extends Controller
             'serial_number' => 'required|string|unique:drones,serial_number|max:100',
             'registration_number' => 'required|string|unique:drones,registration_number|max:100',
             'model' => 'required|string|max:255',
-            'manufacturer' => 'required|string|max:255',
+            'manufacturer' => 'nullable|string|max:255',
             'max_payload_kg' => 'required|numeric|min:0',
             'max_range_km' => 'required|numeric|min:0',
             'max_speed_kmh' => 'required|numeric|min:0',
-            'battery_capacity_mah' => 'required|integer|min:0',
-            'battery_level' => 'required|integer|min:0|max:100',
-            'flight_time_minutes' => 'required|integer|min:0',
-            'status' => 'required|string|in:available,in_flight,charging,maintenance,unavailable',
+            'battery_life_minutes' => 'required|integer|min:0',
+            'current_battery_level' => 'required|numeric|min:0|max:100',
+            'status' => 'required|string|in:available,assigned,in_flight,maintenance,charging,offline,emergency',
             'last_maintenance_date' => 'nullable|date',
             'next_maintenance_date' => 'nullable|date|after:last_maintenance_date',
             'total_flight_hours' => 'nullable|numeric|min:0',
             'total_deliveries' => 'nullable|integer|min:0',
             'notes' => 'nullable|string',
+            // Equipment & Specifications
+            'has_camera' => 'nullable|boolean',
+            'has_temperature_control' => 'nullable|boolean',
+            'has_emergency_parachute' => 'nullable|boolean',
+            'firmware_version' => 'nullable|string|max:50',
+            'sensors_input' => 'nullable|string',
+            'temperature_min_celsius' => 'nullable|numeric',
+            'temperature_max_celsius' => 'nullable|numeric|gte:temperature_min_celsius',
         ]);
+        
+        // Convert sensors from comma-separated string to JSON array
+        if (!empty($validated['sensors_input'])) {
+            $sensors = array_map('trim', explode(',', $validated['sensors_input']));
+            $validated['sensors'] = json_encode($sensors);
+            unset($validated['sensors_input']);
+        }
+        
+        // Convert checkboxes to boolean
+        $validated['has_camera'] = $request->has('has_camera');
+        $validated['has_temperature_control'] = $request->has('has_temperature_control');
+        $validated['has_emergency_parachute'] = $request->has('has_emergency_parachute');
         
         // Set default values
         $validated['current_latitude'] = $validated['current_latitude'] ?? null;
@@ -132,34 +151,24 @@ class DroneController extends Controller
             'deliveries' => function ($query) {
                 $query->latest()->limit(10);
             },
-            'trackingRecords' => function ($query) {
-                $query->latest()->limit(20);
-            },
+            // TODO: Uncomment when delivery_trackings table exists
+            // 'trackingRecords' => function ($query) {
+            //     $query->latest()->limit(20);
+            // },
         ]);
         
-        // Get maintenance history
-        $maintenanceHistory = $drone->auditLogs()
-            ->where(function ($query) {
-                $query->whereRaw("JSON_EXTRACT(new_values, '$.last_maintenance_date') IS NOT NULL")
-                    ->orWhereRaw("JSON_EXTRACT(new_values, '$.status') = 'maintenance'");
-            })
-            ->latest()
-            ->limit(10)
-            ->get();
+        // Maintenance history not available without audit logs
+        $maintenanceHistory = collect();
         
         // Get performance metrics
         $metrics = [
-            'total_distance' => $drone->deliveries()
-                ->whereNotNull('distance_km')
-                ->sum('distance_km'),
-            'avg_efficiency' => $drone->assignments()
-                ->where('status', 'completed')
-                ->avg('efficiency_rating'),
+            'total_distance' => $drone->deliveries()->sum('total_distance_km'),
+            'avg_efficiency' => 0, // efficiency_rating column doesn't exist in drone_assignments
             'success_rate' => $this->calculateSuccessRate($drone),
             'avg_battery_usage' => $drone->assignments()
-                ->where('status', 'completed')
-                ->whereNotNull('battery_used_percent')
-                ->avg('battery_used_percent'),
+                ->where('assignment_status', 'completed')
+                ->whereNotNull('actual_battery_usage')
+                ->avg('actual_battery_usage'),
         ];
         
         return view('admin.drones.show', compact('drone', 'maintenanceHistory', 'metrics'));
@@ -183,14 +192,13 @@ class DroneController extends Controller
             'serial_number' => 'required|string|max:100|unique:drones,serial_number,' . $drone->id,
             'registration_number' => 'required|string|max:100|unique:drones,registration_number,' . $drone->id,
             'model' => 'required|string|max:255',
-            'manufacturer' => 'required|string|max:255',
+            'manufacturer' => 'nullable|string|max:255',
             'max_payload_kg' => 'required|numeric|min:0',
             'max_range_km' => 'required|numeric|min:0',
             'max_speed_kmh' => 'required|numeric|min:0',
-            'battery_capacity_mah' => 'required|integer|min:0',
-            'battery_level' => 'required|integer|min:0|max:100',
-            'flight_time_minutes' => 'required|integer|min:0',
-            'status' => 'required|string|in:available,in_flight,charging,maintenance,unavailable',
+            'battery_life_minutes' => 'required|integer|min:0',
+            'current_battery_level' => 'required|numeric|min:0|max:100',
+            'status' => 'required|string|in:available,assigned,in_flight,maintenance,charging,offline,emergency',
             'last_maintenance_date' => 'nullable|date',
             'next_maintenance_date' => 'nullable|date|after:last_maintenance_date',
             'total_flight_hours' => 'nullable|numeric|min:0',
@@ -211,7 +219,7 @@ class DroneController extends Controller
     {
         // Check if drone has active assignments
         $activeAssignments = $drone->assignments()
-            ->whereIn('status', ['pending', 'accepted', 'in_progress'])
+            ->whereIn('assignment_status', ['pending', 'accepted', 'in_progress'])
             ->count();
         
         if ($activeAssignments > 0) {
@@ -231,7 +239,7 @@ class DroneController extends Controller
     public function updateStatus(Request $request, Drone $drone)
     {
         $validated = $request->validate([
-            'status' => 'required|string|in:available,in_flight,charging,maintenance,unavailable',
+            'status' => 'required|string|in:available,assigned,in_flight,maintenance,charging,offline,emergency',
             'notes' => 'nullable|string|max:500',
         ]);
         
@@ -403,13 +411,13 @@ class DroneController extends Controller
     private function calculateSuccessRate(Drone $drone): float
     {
         $total = $drone->assignments()
-            ->whereIn('status', ['completed', 'cancelled', 'failed'])
+            ->whereIn('assignment_status', ['completed', 'cancelled', 'failed'])
             ->count();
         
         if ($total === 0) return 100.0;
         
         $completed = $drone->assignments()
-            ->where('status', 'completed')
+            ->where('assignment_status', 'completed')
             ->count();
         
         return round(($completed / $total) * 100, 2);

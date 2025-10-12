@@ -238,12 +238,24 @@
                         <p class="text-sm text-gray-600">Total Weight</p>
                         <p class="text-gray-900 font-medium">{{ $delivery->total_cargo_weight_kg ?? '0' }} kg</p>
                     </div>
-                    @if($delivery->cargo_manifest)
+                    @php
+                        $manifest = is_array($delivery->cargo_manifest ?? null)
+                            ? $delivery->cargo_manifest
+                            : (is_string($delivery->cargo_manifest ?? null)
+                                ? json_decode($delivery->cargo_manifest, true)
+                                : []);
+                    @endphp
+                    @if(!empty($manifest))
                     <div>
                         <p class="text-sm text-gray-600 mb-2">Manifest</p>
                         <ul class="text-sm text-gray-900 space-y-1">
-                            @foreach($delivery->cargo_manifest as $item)
-                            <li>• {{ $item }}</li>
+                            @foreach($manifest as $item)
+                                @php
+                                    $label = is_array($item)
+                                        ? (($item['item'] ?? $item['name'] ?? 'Item') . (isset($item['quantity']) ? ' x ' . $item['quantity'] : ''))
+                                        : (string)$item;
+                                @endphp
+                                <li>• {{ $label }}</li>
                             @endforeach
                         </ul>
                     </div>

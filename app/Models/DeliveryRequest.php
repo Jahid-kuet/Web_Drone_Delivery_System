@@ -116,6 +116,22 @@ class DeliveryRequest extends Model
     }
 
     /**
+     * Get all deliveries associated with this request (alias)
+     */
+    public function deliveries(): HasMany
+    {
+        return $this->hasMany(Delivery::class);
+    }
+
+    /**
+     * Get the medical supply for this request (if single supply)
+     */
+    public function supply(): BelongsTo
+    {
+        return $this->belongsTo(MedicalSupply::class, 'medical_supply_id');
+    }
+
+    /**
      * Scope for pending requests
      */
     public function scopePending($query)

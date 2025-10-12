@@ -50,10 +50,38 @@
                 </div>
 
                 <div>
-                    <label for="battery_level" class="block text-sm font-medium text-gray-700 mb-2">Battery Level (%) <span class="text-red-500">*</span></label>
-                    <input type="number" name="battery_level" id="battery_level" value="{{ old('battery_level', $drone->battery_level) }}" required min="0" max="100"
+                    <label for="registration_number" class="block text-sm font-medium text-gray-700 mb-2">Registration Number <span class="text-red-500">*</span></label>
+                    <input type="text" name="registration_number" id="registration_number" value="{{ old('registration_number', $drone->registration_number) }}" required
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                    @error('battery_level')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                    @error('registration_number')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                </div>
+
+                <div>
+                    <label for="manufacturer" class="block text-sm font-medium text-gray-700 mb-2">Manufacturer</label>
+                    <input type="text" name="manufacturer" id="manufacturer" value="{{ old('manufacturer', $drone->manufacturer ?? '') }}"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    @error('manufacturer')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                </div>
+
+                <div>
+                    <label for="max_speed_kmh" class="block text-sm font-medium text-gray-700 mb-2">Max Speed (km/h) <span class="text-red-500">*</span></label>
+                    <input type="number" name="max_speed_kmh" id="max_speed_kmh" value="{{ old('max_speed_kmh', $drone->max_speed_kmh) }}" required min="0" step="0.01"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    @error('max_speed_kmh')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                </div>
+
+                <div>
+                    <label for="battery_life_minutes" class="block text-sm font-medium text-gray-700 mb-2">Battery Life (minutes) <span class="text-red-500">*</span></label>
+                    <input type="number" name="battery_life_minutes" id="battery_life_minutes" value="{{ old('battery_life_minutes', $drone->battery_life_minutes) }}" required min="0"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    @error('battery_life_minutes')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                </div>
+
+                <div>
+                    <label for="current_battery_level" class="block text-sm font-medium text-gray-700 mb-2">Current Battery Level (%) <span class="text-red-500">*</span></label>
+                    <input type="number" name="current_battery_level" id="current_battery_level" value="{{ old('current_battery_level', $drone->current_battery_level) }}" required min="0" max="100"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    @error('current_battery_level')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
 
                 <div>
@@ -74,10 +102,12 @@
                     <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status <span class="text-red-500">*</span></label>
                     <select name="status" id="status" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
                         <option value="available" {{ old('status', $drone->status) === 'available' ? 'selected' : '' }}>Available</option>
-                        <option value="in_use" {{ old('status', $drone->status) === 'in_use' ? 'selected' : '' }}>In Use</option>
+                        <option value="assigned" {{ old('status', $drone->status) === 'assigned' ? 'selected' : '' }}>Assigned</option>
+                        <option value="in_flight" {{ old('status', $drone->status) === 'in_flight' ? 'selected' : '' }}>In Flight</option>
                         <option value="maintenance" {{ old('status', $drone->status) === 'maintenance' ? 'selected' : '' }}>Maintenance</option>
                         <option value="charging" {{ old('status', $drone->status) === 'charging' ? 'selected' : '' }}>Charging</option>
-                        <option value="retired" {{ old('status', $drone->status) === 'retired' ? 'selected' : '' }}>Retired</option>
+                        <option value="offline" {{ old('status', $drone->status) === 'offline' ? 'selected' : '' }}>Offline</option>
+                        <option value="emergency" {{ old('status', $drone->status) === 'emergency' ? 'selected' : '' }}>Emergency</option>
                     </select>
                     @error('status')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>

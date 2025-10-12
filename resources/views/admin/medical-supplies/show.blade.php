@@ -40,8 +40,8 @@
         <div class="p-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label class="text-sm font-medium text-gray-500">SKU</label>
-                    <p class="text-lg text-gray-900 mt-1">{{ $supply->sku }}</p>
+                    <label class="text-sm font-medium text-gray-500">Code</label>
+                    <p class="text-lg text-gray-900 mt-1">{{ $supply->code }}</p>
                 </div>
 
                 <div>
@@ -54,8 +54,8 @@
                 </div>
 
                 <div>
-                    <label class="text-sm font-medium text-gray-500">Quantity</label>
-                    <p class="text-lg text-gray-900 mt-1">{{ number_format($supply->quantity) }} {{ $supply->unit }}</p>
+                    <label class="text-sm font-medium text-gray-500">Quantity Available</label>
+                    <p class="text-lg text-gray-900 mt-1">{{ number_format($supply->quantity_available) }}</p>
                 </div>
 
                 <div>
@@ -65,7 +65,7 @@
 
                 <div>
                     <label class="text-sm font-medium text-gray-500">Minimum Stock Level</label>
-                    <p class="text-lg text-gray-900 mt-1">{{ number_format($supply->min_stock_level ?? 0) }} {{ $supply->unit }}</p>
+                    <p class="text-lg text-gray-900 mt-1">{{ number_format($supply->minimum_stock_level ?? 0) }}</p>
                 </div>
 
                 <div>
@@ -136,8 +136,8 @@
                 </p>
             </div>
             <div class="bg-purple-50 p-4 rounded-lg">
-                <p class="text-sm text-gray-600">Total Requests</p>
-                <p class="text-2xl font-bold text-purple-600">{{ $supply->deliveryRequests()->count() }}</p>
+                <p class="text-sm text-gray-600">Priority Level</p>
+                <p class="text-2xl font-bold text-purple-600">{{ ucfirst($supply->priority_level ?? 'medium') }}</p>
             </div>
         </div>
     </div>

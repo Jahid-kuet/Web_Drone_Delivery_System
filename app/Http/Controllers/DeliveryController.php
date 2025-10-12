@@ -70,10 +70,10 @@ class DeliveryController extends Controller
      */
     public function create()
     {
+        // Get approved delivery requests that don't have a delivery yet
         $pendingRequests = DeliveryRequest::approved()
-            ->whereDoesntHave('deliveries', function ($query) {
-                $query->whereIn('status', ['pending', 'in_transit', 'picked_up', 'completed']);
-            })
+            ->doesntHave('delivery')
+            ->with(['hospital', 'supply'])
             ->get();
         
         $availableDrones = Drone::available()
@@ -152,9 +152,10 @@ class DeliveryController extends Controller
             'request.supply',
             'drone',
             'assignedPilot',
-            'trackingRecords' => function ($query) {
-                $query->latest();
-            },
+            // TODO: Uncomment when delivery_trackings table is created
+            // 'trackingRecords' => function ($query) {
+            //     $query->latest();
+            // },
             'confirmation',
         ]);
         

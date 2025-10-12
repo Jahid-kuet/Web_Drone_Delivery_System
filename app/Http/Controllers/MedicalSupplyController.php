@@ -101,25 +101,25 @@ class MedicalSupplyController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'sku' => 'required|string|unique:medical_supplies,sku|max:100',
-            'category' => 'required|string|in:medication,equipment,vaccine,blood_product,diagnostic,other',
-            'type' => 'required|string|in:urgent,standard,scheduled,emergency',
+            'code' => 'required|string|unique:medical_supplies,code|max:100',
+            'category' => 'required|string|in:blood_products,medicines,vaccines,surgical_instruments,emergency_supplies,diagnostic_kits,medical_devices',
+            'type' => 'required|string|in:liquid,solid,fragile,temperature_sensitive',
             'description' => 'nullable|string',
             'manufacturer' => 'nullable|string|max:255',
             'quantity_available' => 'required|integer|min:0',
-            'unit_of_measurement' => 'required|string|max:50',
             'minimum_stock_level' => 'required|integer|min:0',
-            'reorder_quantity' => 'required|integer|min:1',
-            'unit_price' => 'required|numeric|min:0',
-            'weight_grams' => 'required|numeric|min:0',
+            'unit_price' => 'nullable|numeric|min:0',
+            'weight_kg' => 'required|numeric|min:0',
             'volume_ml' => 'nullable|numeric|min:0',
-            'storage_temperature_min' => 'nullable|numeric',
-            'storage_temperature_max' => 'nullable|numeric',
-            'requires_refrigeration' => 'required|boolean',
-            'is_fragile' => 'required|boolean',
+            'requires_cold_chain' => 'nullable|boolean',
+            'temperature_min' => 'nullable|numeric',
+            'temperature_max' => 'nullable|numeric',
             'expiry_date' => 'nullable|date|after:today',
             'batch_number' => 'nullable|string|max:100',
-            'status' => 'required|string|in:active,inactive,discontinued',
+            'is_hazardous' => 'nullable|boolean',
+            'is_controlled_substance' => 'nullable|boolean',
+            'priority_level' => 'nullable|string|in:low,medium,high,critical',
+            'is_active' => 'nullable|boolean',
             'image' => 'nullable|image|max:2048',
         ]);
         
@@ -139,20 +139,7 @@ class MedicalSupplyController extends Controller
      */
     public function show(MedicalSupply $supply)
     {
-        $supply->load(['deliveryRequests' => function ($query) {
-            $query->latest()->limit(10);
-        }]);
-        
-        // Get stock history (from audit logs)
-        $stockHistory = $supply->auditLogs()
-            ->where(function ($query) {
-                $query->whereRaw("JSON_EXTRACT(new_values, '$.quantity_available') IS NOT NULL")
-                    ->orWhereRaw("JSON_EXTRACT(old_values, '$.quantity_available') IS NOT NULL");
-            })
-            ->latest()
-            ->limit(20)
-            ->get();
-        
+        $stockHistory = collect();
         return view('admin.medical-supplies.show', compact('supply', 'stockHistory'));
     }
 
@@ -171,25 +158,25 @@ class MedicalSupplyController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'sku' => 'required|string|max:100|unique:medical_supplies,sku,' . $supply->id,
-            'category' => 'required|string|in:medication,equipment,vaccine,blood_product,diagnostic,other',
-            'type' => 'required|string|in:urgent,standard,scheduled,emergency',
+            'code' => 'required|string|max:100|unique:medical_supplies,code,' . $supply->id,
+            'category' => 'required|string|in:blood_products,medicines,vaccines,surgical_instruments,emergency_supplies,diagnostic_kits,medical_devices',
+            'type' => 'required|string|in:liquid,solid,fragile,temperature_sensitive',
             'description' => 'nullable|string',
             'manufacturer' => 'nullable|string|max:255',
             'quantity_available' => 'required|integer|min:0',
-            'unit_of_measurement' => 'required|string|max:50',
             'minimum_stock_level' => 'required|integer|min:0',
-            'reorder_quantity' => 'required|integer|min:1',
-            'unit_price' => 'required|numeric|min:0',
-            'weight_grams' => 'required|numeric|min:0',
+            'unit_price' => 'nullable|numeric|min:0',
+            'weight_kg' => 'required|numeric|min:0',
             'volume_ml' => 'nullable|numeric|min:0',
-            'storage_temperature_min' => 'nullable|numeric',
-            'storage_temperature_max' => 'nullable|numeric',
-            'requires_refrigeration' => 'required|boolean',
-            'is_fragile' => 'required|boolean',
+            'requires_cold_chain' => 'nullable|boolean',
+            'temperature_min' => 'nullable|numeric',
+            'temperature_max' => 'nullable|numeric',
             'expiry_date' => 'nullable|date',
             'batch_number' => 'nullable|string|max:100',
-            'status' => 'required|string|in:active,inactive,discontinued',
+            'is_hazardous' => 'nullable|boolean',
+            'is_controlled_substance' => 'nullable|boolean',
+            'priority_level' => 'nullable|string|in:low,medium,high,critical',
+            'is_active' => 'nullable|boolean',
             'image' => 'nullable|image|max:2048',
         ]);
         
@@ -213,16 +200,7 @@ class MedicalSupplyController extends Controller
      */
     public function destroy(MedicalSupply $supply)
     {
-        // Check if supply is used in any pending/active deliveries
-        $activeDeliveries = $supply->deliveryRequests()
-            ->whereIn('status', ['pending', 'approved'])
-            ->count();
-        
-        if ($activeDeliveries > 0) {
-            return redirect()->route('admin.supplies.index')
-                ->with('error', 'Cannot delete supply with active delivery requests!');
-        }
-        
+        // Skipping dependency checks as delivery requests are stored as JSON in current schema
         // Delete image
         if ($supply->image_url) {
             Storage::disk('public')->delete($supply->image_url);

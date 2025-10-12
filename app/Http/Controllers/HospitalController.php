@@ -163,13 +163,16 @@ class HospitalController extends Controller
             'contact_person_phone' => 'required|string|max:20',
             'operating_hours' => 'nullable|string',
             'emergency_contact' => 'nullable|string|max:20',
-            'has_drone_landing_pad' => 'required|boolean',
+            'has_drone_landing_pad' => 'nullable|boolean',
             'landing_pad_coordinates' => 'nullable|string|max:100',
             'license_number' => 'nullable|string|max:100',
             'license_expiry_date' => 'nullable|date',
             'status' => 'required|string|in:active,inactive',
             'notes' => 'nullable|string',
         ]);
+        
+        // Handle checkbox (checkboxes don't send anything when unchecked)
+        $validated['has_drone_landing_pad'] = $request->has('has_drone_landing_pad');
         
         $hospital->update($validated);
         

@@ -156,10 +156,12 @@
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     >
                         <option value="available" {{ old('status') === 'available' ? 'selected' : '' }}>Available</option>
-                        <option value="in_use" {{ old('status') === 'in_use' ? 'selected' : '' }}>In Use</option>
+                        <option value="assigned" {{ old('status') === 'assigned' ? 'selected' : '' }}>Assigned</option>
+                        <option value="in_flight" {{ old('status') === 'in_flight' ? 'selected' : '' }}>In Flight</option>
                         <option value="maintenance" {{ old('status') === 'maintenance' ? 'selected' : '' }}>Maintenance</option>
                         <option value="charging" {{ old('status') === 'charging' ? 'selected' : '' }}>Charging</option>
-                        <option value="retired" {{ old('status') === 'retired' ? 'selected' : '' }}>Retired</option>
+                        <option value="offline" {{ old('status') === 'offline' ? 'selected' : '' }}>Offline</option>
+                        <option value="emergency" {{ old('status') === 'emergency' ? 'selected' : '' }}>Emergency</option>
                     </select>
                     @error('status')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -224,21 +226,132 @@
                 </div>
             </div>
 
-            <!-- Specifications -->
-            <div>
-                <label for="specifications" class="block text-sm font-medium text-gray-700 mb-2">
-                    Specifications (JSON)
-                </label>
-                <textarea 
-                    name="specifications" 
-                    id="specifications" 
-                    rows="4"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent font-mono text-sm"
-                    placeholder='{"camera": "4K", "sensors": ["GPS", "Lidar"], "max_speed": "80km/h"}'
-                >{{ old('specifications') }}</textarea>
-                @error('specifications')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
+            <!-- Additional Specifications -->
+            <div class="col-span-2 bg-gray-50 p-6 rounded-lg border border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                    <i class="fas fa-cog mr-2"></i>Equipment & Specifications
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Camera -->
+                    <div>
+                        <label for="has_camera" class="flex items-center space-x-2 cursor-pointer">
+                            <input 
+                                type="checkbox" 
+                                name="has_camera" 
+                                id="has_camera" 
+                                value="1"
+                                {{ old('has_camera') ? 'checked' : '' }}
+                                class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                            >
+                            <span class="text-sm font-medium text-gray-700">Has Camera</span>
+                        </label>
+                    </div>
+
+                    <!-- Temperature Control -->
+                    <div>
+                        <label for="has_temperature_control" class="flex items-center space-x-2 cursor-pointer">
+                            <input 
+                                type="checkbox" 
+                                name="has_temperature_control" 
+                                id="has_temperature_control" 
+                                value="1"
+                                {{ old('has_temperature_control') ? 'checked' : '' }}
+                                class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                            >
+                            <span class="text-sm font-medium text-gray-700">Has Temperature Control</span>
+                        </label>
+                    </div>
+
+                    <!-- Emergency Parachute -->
+                    <div>
+                        <label for="has_emergency_parachute" class="flex items-center space-x-2 cursor-pointer">
+                            <input 
+                                type="checkbox" 
+                                name="has_emergency_parachute" 
+                                id="has_emergency_parachute" 
+                                value="1"
+                                {{ old('has_emergency_parachute') ? 'checked' : '' }}
+                                class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                            >
+                            <span class="text-sm font-medium text-gray-700">Has Emergency Parachute</span>
+                        </label>
+                    </div>
+
+                    <!-- Firmware Version -->
+                    <div>
+                        <label for="firmware_version" class="block text-sm font-medium text-gray-700 mb-2">
+                            Firmware Version
+                        </label>
+                        <input 
+                            type="text" 
+                            name="firmware_version" 
+                            id="firmware_version" 
+                            value="{{ old('firmware_version') }}"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            placeholder="v2.5.1"
+                        >
+                        @error('firmware_version')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Sensors (comma-separated) -->
+                    <div class="col-span-2">
+                        <label for="sensors_input" class="block text-sm font-medium text-gray-700 mb-2">
+                            Sensors (comma-separated)
+                        </label>
+                        <input 
+                            type="text" 
+                            name="sensors_input" 
+                            id="sensors_input" 
+                            value="{{ old('sensors_input') }}"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            placeholder="GPS, Lidar, Ultrasonic, Barometer, Gyroscope"
+                        >
+                        <p class="mt-1 text-xs text-gray-500">Enter sensor names separated by commas (e.g., GPS, Lidar, Camera)</p>
+                        @error('sensors_input')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Temperature Range -->
+                    <div>
+                        <label for="temperature_min_celsius" class="block text-sm font-medium text-gray-700 mb-2">
+                            Min Temperature (°C)
+                        </label>
+                        <input 
+                            type="number" 
+                            name="temperature_min_celsius" 
+                            id="temperature_min_celsius" 
+                            value="{{ old('temperature_min_celsius') }}"
+                            step="0.01"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            placeholder="-20.0"
+                        >
+                        @error('temperature_min_celsius')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="temperature_max_celsius" class="block text-sm font-medium text-gray-700 mb-2">
+                            Max Temperature (°C)
+                        </label>
+                        <input 
+                            type="number" 
+                            name="temperature_max_celsius" 
+                            id="temperature_max_celsius" 
+                            value="{{ old('temperature_max_celsius') }}"
+                            step="0.01"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            placeholder="50.0"
+                        >
+                        @error('temperature_max_celsius')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
             </div>
 
             <!-- Form Actions -->

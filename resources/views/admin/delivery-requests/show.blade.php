@@ -26,13 +26,10 @@
                         <i class="fas fa-check mr-2"></i>Approve
                     </button>
                 </form>
-                <form action="{{ route('admin.delivery-requests.reject', $deliveryRequest) }}" method="POST" class="inline">
-                    @csrf
-                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
-                            onclick="return confirm('Are you sure you want to reject this request?')">
-                        <i class="fas fa-times mr-2"></i>Reject
-                    </button>
-                </form>
+                <button type="button" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
+                        onclick="document.getElementById('rejectModal').classList.remove('hidden')">
+                    <i class="fas fa-times mr-2"></i>Reject
+                </button>
                 @endif
                 @if($deliveryRequest->status == 'approved')
                 <a href="{{ route('admin.deliveries.create', ['request_id' => $deliveryRequest->id]) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
@@ -112,24 +109,32 @@
                             <tr class="border-b">
                                 <th class="text-left py-2 text-sm font-medium text-gray-700">Item</th>
                                 <th class="text-center py-2 text-sm font-medium text-gray-700">Quantity</th>
-                                <th class="text-right py-2 text-sm font-medium text-gray-700">Urgency</th>
+                                <th class="text-right py-2 text-sm font-medium text-gray-700">Code</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @if($deliveryRequest->items && count($deliveryRequest->items) > 0)
-                                @foreach($deliveryRequest->items as $item)
-                                <tr class="border-b">
-                                    <td class="py-3">
-                                        <p class="text-gray-900 font-medium">{{ $item->medicalSupply->name ?? 'N/A' }}</p>
-                                        <p class="text-sm text-gray-500">{{ $item->medicalSupply->code ?? '' }}</p>
-                                    </td>
-                                    <td class="text-center py-3 text-gray-900">{{ $item->quantity_requested ?? 0 }}</td>
-                                    <td class="text-right py-3">
-                                        <span class="px-2 py-1 text-xs font-medium rounded {{ $item->urgency_level == 'critical' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800' }}">
-                                            {{ ucfirst($item->urgency_level ?? 'normal') }}
-                                        </span>
-                                    </td>
-                                </tr>
+                            @php
+                                $supplies = is_array($deliveryRequest->medical_supplies ?? null)
+                                    ? $deliveryRequest->medical_supplies
+                                    : (is_string($deliveryRequest->medical_supplies ?? null)
+                                        ? json_decode($deliveryRequest->medical_supplies, true)
+                                        : []);
+                            @endphp
+                            @if(!empty($supplies))
+                                @foreach($supplies as $item)
+                                    @php
+                                        $name = is_array($item) ? ($item['name'] ?? 'N/A') : (is_string($item) ? $item : 'N/A');
+                                        $qty = is_array($item) ? ($item['quantity'] ?? ($item['quantity_requested'] ?? 0)) : 0;
+                                        $code = is_array($item) ? ($item['code'] ?? '') : '';
+                                    @endphp
+                                    <tr class="border-b">
+                                        <td class="py-3">
+                                            <p class="text-gray-900 font-medium">{{ $name }}</p>
+                                            <p class="text-sm text-gray-500">{{ $code }}</p>
+                                        </td>
+                                        <td class="text-center py-3 text-gray-900">{{ $qty }}</td>
+                                        <td class="text-right py-3 text-gray-900">{{ $code }}</td>
+                                    </tr>
                                 @endforeach
                             @else
                                 <tr>
@@ -248,6 +253,43 @@
                 </div>
             </div>
             @endif
+        </div>
+    </div>
+</div>
+
+<!-- Reject Modal -->
+<div id="rejectModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-medium text-gray-900">Reject Delivery Request</h3>
+                <button type="button" onclick="document.getElementById('rejectModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-500">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form action="{{ route('admin.delivery-requests.reject', $deliveryRequest) }}" method="POST">
+                @csrf
+                <div class="mb-4">
+                    <label for="rejection_reason" class="block text-sm font-medium text-gray-700 mb-2">
+                        Rejection Reason <span class="text-red-600">*</span>
+                    </label>
+                    <textarea name="rejection_reason" id="rejection_reason" rows="4" 
+                              class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500" 
+                              required placeholder="Please provide a reason for rejecting this request...">{{ old('rejection_reason') }}</textarea>
+                    @error('rejection_reason')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="document.getElementById('rejectModal').classList.add('hidden')" 
+                            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                        <i class="fas fa-times mr-2"></i>Reject Request
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

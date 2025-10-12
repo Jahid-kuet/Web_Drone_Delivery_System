@@ -34,8 +34,9 @@
                 <select name="delivery_request_id" id="delivery_request_id" required 
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('delivery_request_id') border-red-500 @enderror">
                     <option value="">-- Select Delivery Request --</option>
-                    @foreach($deliveryRequests ?? [] as $request)
-                    <option value="{{ $request->id }}" {{ old('delivery_request_id') == $request->id ? 'selected' : '' }}>
+                    @php $preselected = old('delivery_request_id', request('request_id')); @endphp
+                    @foreach(($pendingRequests ?? []) as $request)
+                    <option value="{{ $request->id }}" {{ (string)$preselected === (string)$request->id ? 'selected' : '' }}>
                         #{{ $request->request_number }} - {{ $request->hospital->name }} - {{ ucfirst($request->priority) }} Priority
                     </option>
                     @endforeach
@@ -107,6 +108,18 @@
                            value="{{ old('scheduled_departure_time') }}" required
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('scheduled_departure_time') border-red-500 @enderror">
                     @error('scheduled_departure_time')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="estimated_delivery_time" class="block text-sm font-medium text-gray-700 mb-2">
+                        Estimated Delivery Time <span class="text-red-500">*</span>
+                    </label>
+                    <input type="datetime-local" name="estimated_delivery_time" id="estimated_delivery_time" 
+                           value="{{ old('estimated_delivery_time') }}" required
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('estimated_delivery_time') border-red-500 @enderror">
+                    @error('estimated_delivery_time')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>

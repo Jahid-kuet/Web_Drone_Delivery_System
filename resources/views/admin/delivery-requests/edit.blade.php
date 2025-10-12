@@ -17,7 +17,7 @@
 
         {{-- UPDATE: Modify existing delivery request in database --}}
         <div class="bg-white rounded-lg shadow-lg p-6">
-            <form action="{{ route('admin.delivery-requests.update', $request) }}" method="POST">
+            <form action="{{ route('admin.delivery-requests.update', $deliveryRequest) }}" method="POST">
                 @csrf
                 @method('PUT')
 
@@ -29,7 +29,7 @@
                             class="w-full px-4 py-2 border @error('hospital_id') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-orange-500">
                             <option value="">Select Hospital</option>
                             @foreach($hospitals as $hospital)
-                                <option value="{{ $hospital->id }}" {{ old('hospital_id', $request->hospital_id) == $hospital->id ? 'selected' : '' }}>
+                                <option value="{{ $hospital->id }}" {{ old('hospital_id', $deliveryRequest->hospital_id) == $hospital->id ? 'selected' : '' }}>
                                     {{ $hospital->name }}
                                 </option>
                             @endforeach
@@ -46,7 +46,7 @@
                             class="w-full px-4 py-2 border @error('medical_supply_id') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-orange-500">
                             <option value="">Select Supply</option>
                             @foreach($medicalSupplies as $supply)
-                                <option value="{{ $supply->id }}" {{ old('medical_supply_id', $request->medical_supply_id) == $supply->id ? 'selected' : '' }}>
+                                <option value="{{ $supply->id }}" {{ old('medical_supply_id', $deliveryRequest->medical_supply_id) == $supply->id ? 'selected' : '' }}>
                                     {{ $supply->name }}
                                 </option>
                             @endforeach
@@ -58,66 +58,85 @@
 
                     <!-- Quantity -->
                     <div>
-                        <label class="block text-gray-700 font-medium mb-2">Quantity *</label>
-                        <input type="number" name="quantity" value="{{ old('quantity', $request->quantity) }}" min="1" required
-                            class="w-full px-4 py-2 border @error('quantity') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-orange-500">
-                        @error('quantity')
+                        <label class="block text-gray-700 font-medium mb-2">Quantity Requested *</label>
+                        <input type="number" name="quantity_requested" value="{{ old('quantity_requested', $deliveryRequest->quantity_requested) }}" min="1" required
+                            class="w-full px-4 py-2 border @error('quantity_requested') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-orange-500">
+                        @error('quantity_requested')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <!-- Urgency Level -->
+                    <!-- Priority -->
                     <div>
-                        <label class="block text-gray-700 font-medium mb-2">Urgency Level *</label>
-                        <select name="urgency_level" required
-                            class="w-full px-4 py-2 border @error('urgency_level') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-orange-500">
-                            <option value="">Select Urgency</option>
-                            <option value="normal" {{ old('urgency_level', $request->urgency_level) === 'normal' ? 'selected' : '' }}>Normal</option>
-                            <option value="urgent" {{ old('urgency_level', $request->urgency_level) === 'urgent' ? 'selected' : '' }}>Urgent</option>
-                            <option value="emergency" {{ old('urgency_level', $request->urgency_level) === 'emergency' ? 'selected' : '' }}>Emergency</option>
+                        <label class="block text-gray-700 font-medium mb-2">Priority *</label>
+                        <select name="priority" required
+                            class="w-full px-4 py-2 border @error('priority') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-orange-500">
+                            <option value="">Select Priority</option>
+                            <option value="low" {{ old('priority', $deliveryRequest->priority) === 'low' ? 'selected' : '' }}>Low</option>
+                            <option value="medium" {{ old('priority', $deliveryRequest->priority) === 'medium' ? 'selected' : '' }}>Medium</option>
+                            <option value="high" {{ old('priority', $deliveryRequest->priority) === 'high' ? 'selected' : '' }}>High</option>
+                            <option value="critical" {{ old('priority', $deliveryRequest->priority) === 'critical' ? 'selected' : '' }}>Critical</option>
+                            <option value="emergency" {{ old('priority', $deliveryRequest->priority) === 'emergency' ? 'selected' : '' }}>Emergency</option>
                         </select>
-                        @error('urgency_level')
+                        @error('priority')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <!-- Required By -->
+                    <!-- Required By Date -->
                     <div>
-                        <label class="block text-gray-700 font-medium mb-2">Required By *</label>
-                        <input type="datetime-local" name="required_by" value="{{ old('required_by', $request->required_by) }}" required
-                            class="w-full px-4 py-2 border @error('required_by') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-orange-500">
-                        @error('required_by')
+                        <label class="block text-gray-700 font-medium mb-2">Required By Date *</label>
+                        <input type="datetime-local" name="required_by_date" value="{{ old('required_by_date', $deliveryRequest->required_by_date ? $deliveryRequest->required_by_date->format('Y-m-d\TH:i') : '') }}" required
+                            class="w-full px-4 py-2 border @error('required_by_date') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-orange-500">
+                        @error('required_by_date')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <!-- Status -->
+                    <!-- Temperature Control -->
                     <div>
-                        <label class="block text-gray-700 font-medium mb-2">Status *</label>
-                        <select name="status" required
-                            class="w-full px-4 py-2 border @error('status') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-orange-500">
-                            <option value="pending" {{ old('status', $request->status) === 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="approved" {{ old('status', $request->status) === 'approved' ? 'selected' : '' }}>Approved</option>
-                            <option value="processing" {{ old('status', $request->status) === 'processing' ? 'selected' : '' }}>Processing</option>
-                            <option value="delivered" {{ old('status', $request->status) === 'delivered' ? 'selected' : '' }}>Delivered</option>
-                            <option value="cancelled" {{ old('status', $request->status) === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                        <label class="block text-gray-700 font-medium mb-2">Requires Temperature Control *</label>
+                        <select name="requires_temperature_control" required
+                            class="w-full px-4 py-2 border @error('requires_temperature_control') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-orange-500">
+                            <option value="0" {{ old('requires_temperature_control', $deliveryRequest->requires_temperature_control) == '0' ? 'selected' : '' }}>No</option>
+                            <option value="1" {{ old('requires_temperature_control', $deliveryRequest->requires_temperature_control) == '1' ? 'selected' : '' }}>Yes</option>
                         </select>
-                        @error('status')
+                        @error('requires_temperature_control')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
-                </div>
 
-                <!-- Notes -->
-                <div class="mb-6">
-                    <label class="block text-gray-700 font-medium mb-2">Notes</label>
-                    <textarea name="notes" rows="4"
-                        class="w-full px-4 py-2 border @error('notes') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-orange-500"
-                        placeholder="Additional information...">{{ old('notes', $request->notes) }}</textarea>
-                    @error('notes')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
+                    <!-- Temperature Range (optional) -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Temperature Range</label>
+                        <input type="text" name="temperature_range" value="{{ old('temperature_range', $deliveryRequest->temperature_range) }}" placeholder="e.g., 2-8°C"
+                            class="w-full px-4 py-2 border @error('temperature_range') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-orange-500">
+                        @error('temperature_range')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Delivery Notes -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Delivery Notes</label>
+                        <textarea name="delivery_notes" rows="3"
+                            class="w-full px-4 py-2 border @error('delivery_notes') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-orange-500"
+                            placeholder="Special delivery instructions...">{{ old('delivery_notes', $deliveryRequest->delivery_notes) }}</textarea>
+                        @error('delivery_notes')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Special Instructions -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Special Instructions</label>
+                        <textarea name="special_instructions" rows="3"
+                            class="w-full px-4 py-2 border @error('special_instructions') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-orange-500"
+                            placeholder="Additional handling requirements...">{{ old('special_instructions', $deliveryRequest->special_instructions) }}</textarea>
+                        @error('special_instructions')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
                 <!-- Actions -->
                 <div class="flex items-center justify-end space-x-3">

@@ -77,9 +77,9 @@ class DeliveryRequestController extends Controller
     public function create()
     {
         $hospitals = Hospital::active()->get();
-        $supplies = MedicalSupply::active()->get();
+        $medicalSupplies = MedicalSupply::active()->get();
         
-        return view('admin.delivery-requests.create', compact('hospitals', 'supplies'));
+        return view('admin.delivery-requests.create', compact('hospitals', 'medicalSupplies'));
     }
 
     /**
@@ -160,9 +160,9 @@ class DeliveryRequestController extends Controller
         }
         
         $hospitals = Hospital::active()->get();
-        $supplies = MedicalSupply::active()->get();
+        $medicalSupplies = MedicalSupply::active()->get();
         
-        return view('admin.delivery-requests.edit', compact('deliveryRequest', 'hospitals', 'supplies'));
+        return view('admin.delivery-requests.edit', compact('deliveryRequest', 'hospitals', 'medicalSupplies'));
     }
 
     /**
@@ -180,7 +180,7 @@ class DeliveryRequestController extends Controller
             'hospital_id' => 'required|exists:hospitals,id',
             'medical_supply_id' => 'required|exists:medical_supplies,id',
             'quantity_requested' => 'required|integer|min:1',
-            'priority' => 'required|string|in:low,normal,high,urgent,emergency',
+            'priority' => 'required|string|in:low,medium,high,critical,emergency',
             'required_by_date' => 'required|date|after:now',
             'delivery_notes' => 'nullable|string|max:1000',
             'special_instructions' => 'nullable|string|max:1000',
@@ -211,7 +211,7 @@ class DeliveryRequestController extends Controller
         DB::beginTransaction();
         
         try {
-            $deliveryRequest->approve($validated['approval_notes'] ?? null);
+            $deliveryRequest->approve(auth()->user(), $validated['approval_notes'] ?? null);
             
             DB::commit();
             
