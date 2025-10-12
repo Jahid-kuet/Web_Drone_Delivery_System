@@ -1,5 +1,5 @@
-@extends('layouts.app')
-@section('title', 'Public Tracking')
+@extends('layouts.public')
+@section('title', 'Track Your Delivery')
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
     <div class="max-w-4xl mx-auto">
@@ -14,7 +14,7 @@
 
         <!-- Search Form -->
         <div class="bg-white rounded-lg shadow-xl p-6 mb-8">
-            <form action="{{ route('tracking.show') }}" method="GET" class="flex gap-3">
+            <form action="{{ route('tracking.search') }}" method="GET" class="flex flex-col sm:flex-row gap-3">
                 {{-- READ: Search for delivery by tracking number --}}
                 <input 
                     type="text" 
@@ -24,10 +24,19 @@
                     required
                     class="flex-1 px-6 py-4 border-2 border-gray-300 rounded-lg focus:ring-4 focus:ring-blue-300 focus:border-blue-500 focus:outline-none text-lg"
                 >
-                <button type="submit" class="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition shadow-lg">
+                <button type="submit" class="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition shadow-lg whitespace-nowrap">
                     <i class="fas fa-search mr-2"></i>Track
                 </button>
             </form>
+            
+            @if(session('error'))
+                <div class="mt-4 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        <span>{{ session('error') }}</span>
+                    </div>
+                </div>
+            @endif
         </div>
 
         @if(isset($delivery))

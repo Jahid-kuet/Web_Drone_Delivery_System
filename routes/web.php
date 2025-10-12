@@ -12,36 +12,22 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HospitalPortalController;
 use App\Http\Controllers\OperatorPortalController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\TrackingController;
 
 // ==================== PUBLIC ROUTES ====================
 
 // Landing Page
-Route::get('/', function () {
-    // If user is logged in, redirect based on role
-    if (auth()->check()) {
-        $user = auth()->user();
-        
-        // Check user role and redirect accordingly
-        if ($user->hasRoleSlug('hospital_admin') || $user->hasRoleSlug('hospital_staff')) {
-            return redirect()->route('hospital.dashboard');
-        } elseif ($user->hasRoleSlug('drone_operator')) {
-            return redirect()->route('operator.dashboard');
-        } else {
-            // Admin and other roles go to admin dashboard
-            return redirect()->route('admin.dashboard');
-        }
-    }
-    return view('welcome');
-})->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Public Information Pages
+Route::get('/about', [HomeController::class, 'about'])->name('about');
+Route::get('/services', [HomeController::class, 'services'])->name('services');
+Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 
 // Public Delivery Tracking (no auth required)
-Route::get('/track', function () {
-    return view('tracking.public');
-})->name('tracking.public');
-
-Route::get('/track/{trackingNumber}', function ($trackingNumber) {
-    return view('tracking.show', compact('trackingNumber'));
-})->name('tracking.show');
+Route::get('/track', [TrackingController::class, 'index'])->name('tracking.public');
+Route::get('/track/search', [TrackingController::class, 'track'])->name('tracking.search');
 
 // ==================== AUTHENTICATION ROUTES ====================
 // Include authentication routes from auth.php

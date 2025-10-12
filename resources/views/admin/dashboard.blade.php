@@ -95,8 +95,8 @@
                         @foreach($recent_requests as $request)
                             <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
                                 <div class="flex-1">
-                                    <h4 class="font-medium text-gray-900">{{ $request->hospital->name }}</h4>
-                                    <p class="text-sm text-gray-600">{{ $request->supply->name }} - {{ $request->quantity }} units</p>
+                                    <h4 class="font-medium text-gray-900">{{ $request->hospital->name ?? 'N/A' }}</h4>
+                                    <p class="text-sm text-gray-600">{{ $request->supply->name ?? 'N/A' }} - {{ $request->quantity }} units</p>
                                     <p class="text-xs text-gray-500 mt-1">
                                         <i class="fas fa-clock"></i> {{ $request->created_at->diffForHumans() }}
                                     </p>
@@ -142,7 +142,7 @@
                                         <i class="fas fa-drone"></i> {{ $delivery->drone->model ?? 'N/A' }}
                                     </p>
                                     <p class="text-xs text-gray-500 mt-1">
-                                        <i class="fas fa-map-marker-alt"></i> {{ $delivery->deliveryRequest->hospital->name }}
+                                        <i class="fas fa-map-marker-alt"></i> {{ $delivery->deliveryRequest->hospital->name ?? 'N/A' }}
                                     </p>
                                 </div>
                                 <div>

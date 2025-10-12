@@ -134,7 +134,7 @@
                             </div>
                             <div class="flex items-center">
                                 <i class="fas fa-user mr-2 text-teal-600"></i>
-                                <span>{{ $request->requestedBy->name }}</span>
+                                <span>{{ $request->requestedBy->name ?? 'N/A' }}</span>
                             </div>
                             @if($request->contact_person)
                             <div class="flex items-center">

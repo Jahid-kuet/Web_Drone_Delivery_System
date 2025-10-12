@@ -29,6 +29,73 @@
     <!-- Custom CSS (no build required) -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
+    <style>
+        /* Enhanced Responsive Utilities */
+        @media (max-width: 768px) {
+            .mobile-hidden { display: none !important; }
+            .mobile-full-width { width: 100% !important; }
+        }
+        
+        /* Smooth Transitions */
+        * {
+            transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #9333ea;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7c3aed;
+        }
+        
+        /* Responsive Tables */
+        @media (max-width: 768px) {
+            .responsive-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+        
+        /* Card Hover Effects */
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #9333ea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
     @stack('styles')
 </head>
 <body class="bg-gray-100 font-sans antialiased">
@@ -40,9 +107,13 @@
             style="background-color: #111827 !important;"
         >
             <div class="flex items-center justify-between h-16 px-6 bg-gray-800" style="background-color: #1f2937 !important;">
-                <span class="text-xl font-bold text-white">
-                    <i class="fas fa-drone mr-2"></i>DDS
-                </span>
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-drone text-purple-400 text-2xl"></i>
+                    <div class="flex flex-col">
+                        <span class="text-lg font-bold text-white leading-tight">Drone Delivery</span>
+                        <span class="text-xs text-gray-400 leading-tight">Medical System</span>
+                    </div>
+                </div>
                 <button @click="sidebarOpen = false" class="md:hidden text-gray-400 hover:text-white">
                     <i class="fas fa-times"></i>
                 </button>
@@ -57,16 +128,27 @@
         <div class="flex-1 flex flex-col overflow-hidden">
             <!-- Top Navigation -->
             <header class="bg-white shadow-sm z-10">
-                <div class="flex items-center justify-between h-16 px-6">
-                    <button @click="sidebarOpen = !sidebarOpen" class="md:hidden text-gray-500 hover:text-gray-700">
-                        <i class="fas fa-bars text-xl"></i>
-                    </button>
+                <div class="flex items-center justify-between h-16 px-4 lg:px-6">
+                    <!-- Mobile Menu Button & Logo -->
+                    <div class="flex items-center space-x-4">
+                        <button @click="sidebarOpen = !sidebarOpen" class="md:hidden text-gray-600 hover:text-gray-900 p-2 rounded-lg hover:bg-gray-100 transition">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                        
+                        <!-- Mobile Logo (visible only on small screens) -->
+                        <div class="flex items-center space-x-2 md:hidden">
+                            <i class="fas fa-drone text-purple-600 text-xl"></i>
+                            <span class="font-bold text-gray-900 text-sm">Drone Delivery System</span>
+                        </div>
+                    </div>
 
                     <div class="flex-1 flex items-center justify-between ml-4 lg:ml-0">
-                        <!-- Breadcrumb -->
-                        <div class="text-sm text-gray-600">
+                        <!-- Breadcrumb (hidden on mobile) -->
+                        <div class="hidden lg:block text-sm text-gray-600">
                             @yield('breadcrumb')
                         </div>
+
+                        <div class="flex items-center space-x-2 lg:space-x-4 ml-auto">
 
                         <!-- Notifications (Hospital Portal Only) -->
                         @if(Auth::user()->hasAnyRoleSlug(['hospital_admin', 'hospital_staff']))
@@ -180,70 +262,102 @@
 
                         <!-- User Menu -->
                         <div x-data="{ userMenuOpen: false }" class="relative">
-                            <button @click="userMenuOpen = !userMenuOpen" class="flex items-center space-x-3 hover:bg-gray-100 px-3 py-2 rounded-lg transition">
-                                <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white">
+                            <button @click="userMenuOpen = !userMenuOpen" class="flex items-center space-x-2 lg:space-x-3 hover:bg-gray-100 px-2 lg:px-3 py-2 rounded-lg transition">
+                                <div class="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center text-white font-bold shadow-md">
                                     {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                                 </div>
-                                <span class="hidden md:block font-medium text-gray-700">{{ Auth::user()->name }}</span>
-                                <i class="fas fa-chevron-down text-xs text-gray-500"></i>
+                                <span class="hidden sm:block font-medium text-gray-700 text-sm lg:text-base">{{ Str::limit(Auth::user()->name, 15) }}</span>
+                                <i class="fas fa-chevron-down text-xs text-gray-500 hidden sm:block"></i>
                             </button>
 
                             <!-- Dropdown Menu -->
-                            <div x-show="userMenuOpen" @click.away="userMenuOpen = false" x-transition class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 border">
-                                <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-                                    <i class="fas fa-user mr-2"></i>Profile
+                            <div x-show="userMenuOpen" @click.away="userMenuOpen = false" x-transition class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl py-2 border border-gray-200 z-50">
+                                <!-- User Info Header -->
+                                <div class="px-4 py-3 border-b border-gray-100">
+                                    <p class="text-sm font-semibold text-gray-900">{{ Auth::user()->name }}</p>
+                                    <p class="text-xs text-gray-500 truncate">{{ Auth::user()->email }}</p>
+                                </div>
+                                
+                                <a href="{{ route('profile.edit') }}" class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-purple-50 transition">
+                                    <i class="fas fa-user mr-3 text-purple-600 w-5"></i>
+                                    <span class="text-sm">My Profile</span>
                                 </a>
-                                <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-                                    <i class="fas fa-cog mr-2"></i>Settings
+                                <a href="{{ route('profile.edit') }}" class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-purple-50 transition">
+                                    <i class="fas fa-cog mr-3 text-purple-600 w-5"></i>
+                                    <span class="text-sm">Settings</span>
                                 </a>
-                                <hr class="my-2">
+                                
+                                <div class="border-t border-gray-100 my-1"></div>
+                                
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
-                                    <button type="submit" class="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100">
-                                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                                    <button type="submit" class="w-full flex items-center px-4 py-2.5 text-red-600 hover:bg-red-50 transition">
+                                        <i class="fas fa-sign-out-alt mr-3 w-5"></i>
+                                        <span class="text-sm font-medium">Logout</span>
                                     </button>
                                 </form>
                             </div>
+                        </div>
                         </div>
                     </div>
                 </div>
             </header>
 
             <!-- Main Content Area -->
-            <main class="flex-1 overflow-y-auto p-6">
-                <!-- Alert Messages -->
-                @if(session('success'))
-                    <div x-data="{ show: true }" x-show="show" x-transition class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
-                        <span class="block sm:inline">{{ session('success') }}</span>
-                        <button @click="show = false" class="absolute top-0 right-0 px-4 py-3">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                @endif
+            <main class="flex-1 overflow-y-auto bg-gray-50">
+                <div class="p-4 lg:p-6 xl:p-8">
+                    <!-- Alert Messages -->
+                    @if(session('success'))
+                        <div x-data="{ show: true }" x-show="show" x-transition class="mb-4 bg-green-100 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded-lg shadow-md">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <i class="fas fa-check-circle mr-3 text-lg"></i>
+                                    <span class="font-medium">{{ session('success') }}</span>
+                                </div>
+                                <button @click="show = false" class="text-green-700 hover:text-green-900">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    @endif
 
-                @if(session('error'))
-                    <div x-data="{ show: true }" x-show="show" x-transition class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-                        <span class="block sm:inline">{{ session('error') }}</span>
-                        <button @click="show = false" class="absolute top-0 right-0 px-4 py-3">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                @endif
+                    @if(session('error'))
+                        <div x-data="{ show: true }" x-show="show" x-transition class="mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg shadow-md">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <i class="fas fa-exclamation-circle mr-3 text-lg"></i>
+                                    <span class="font-medium">{{ session('error') }}</span>
+                                </div>
+                                <button @click="show = false" class="text-red-700 hover:text-red-900">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    @endif
 
-                @if($errors->any())
-                    <div x-data="{ show: true }" x-show="show" x-transition class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-                        <ul class="list-disc list-inside">
-                            @foreach($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                        <button @click="show = false" class="absolute top-0 right-0 px-4 py-3">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                @endif
+                    @if($errors->any())
+                        <div x-data="{ show: true }" x-show="show" x-transition class="mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg shadow-md">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1">
+                                    <div class="flex items-center mb-2">
+                                        <i class="fas fa-exclamation-triangle mr-2 text-lg"></i>
+                                        <span class="font-bold">Please fix the following errors:</span>
+                                    </div>
+                                    <ul class="list-disc list-inside space-y-1 ml-6">
+                                        @foreach($errors->all() as $error)
+                                            <li class="text-sm">{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                                <button @click="show = false" class="text-red-700 hover:text-red-900 ml-4">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    @endif
 
-                @yield('content')
+                    @yield('content')
+                </div>
             </main>
         </div>
     </div>
