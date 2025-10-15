@@ -21,7 +21,7 @@
 
         <div class="mt-8">
             <h2 class="text-xl font-semibold mb-2">Contact & Careers</h2>
-            <p class="text-gray-600">Interested in partnering with DDS or joining our team? Visit our <a href="{{ route('home.contact') }}" class="text-purple-600">Contact</a> page to reach out.</p>
+            <p class="text-gray-600">Interested in partnering with DDS or joining our team? Visit our <a href="{{ route('contact') }}" class="text-purple-600">Contact</a> page to reach out.</p>
         </div>
     </div>
 </div>
