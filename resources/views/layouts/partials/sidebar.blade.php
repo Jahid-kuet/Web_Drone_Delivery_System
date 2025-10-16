@@ -22,7 +22,7 @@
         </a>
 
         <a href="{{ route('admin.drones.index') }}" class="flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('admin.drones.*') ? 'bg-teal-600 text-white' : 'text-gray-300 hover:bg-gray-800' }}">
-            <i class="fas fa-drone w-5"></i>
+            <i class="fas fa-drone w-5 {{ request()->routeIs('admin.drones.*') ? 'text-white' : 'text-gray-400' }}"></i>
             <span class="ml-3">Drones</span>
         </a>
 
@@ -102,7 +102,7 @@
         </a>
 
         <a href="{{ route('operator.drones.index') }}" class="flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('operator.drones.*') ? 'bg-purple-600 text-white' : 'text-gray-300 hover:bg-gray-800' }}">
-            <i class="fas fa-drone w-5"></i>
+            <i class="fas fa-drone w-5 {{ request()->routeIs('operator.drones.*') ? 'text-white' : 'text-gray-400' }}"></i>
             <span class="ml-3">My Drones</span>
         </a>
     </div>

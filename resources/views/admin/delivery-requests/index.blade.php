@@ -10,9 +10,20 @@
             </h1>
             <p class="text-gray-600 mt-1">Manage all delivery requests</p>
         </div>
-        <a href="{{ route('admin.delivery-requests.create') }}" class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition">
-            <i class="fas fa-plus mr-2"></i>New Request
-        </a>
+        @if(!auth()->user()->hasRoleSlug('admin') && !auth()->user()->hasRoleSlug('super_admin'))
+            {{-- Only hospital staff can create delivery requests --}}
+            <a href="{{ route('admin.delivery-requests.create') }}" class="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition">
+                <i class="fas fa-plus mr-2"></i>New Request
+            </a>
+        @else
+            {{-- Admins can only view and manage requests --}}
+            <div class="bg-blue-50 border border-blue-200 px-4 py-2 rounded-lg">
+                <p class="text-sm text-blue-700">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    <strong>Admin View:</strong> Only hospital staff can create delivery requests
+                </p>
+            </div>
+        @endif
     </div>
 
     {{-- READ: Fetch and display delivery requests from database --}}

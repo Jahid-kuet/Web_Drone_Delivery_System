@@ -76,6 +76,21 @@ class DeliveryRequestController extends Controller
      */
     public function create()
     {
+        // Authorization: Only hospital staff can create delivery requests
+        $user = auth()->user();
+        
+        // Block admin users
+        if ($user->hasRoleSlug('admin') || $user->hasRoleSlug('super_admin')) {
+            return redirect()->route('admin.delivery-requests.index')
+                ->with('error', 'Admins cannot create delivery requests. Only hospital staff can request deliveries.');
+        }
+        
+        // Only allow hospital staff
+        if (!$user->hasRoleSlug('hospital_admin') && !$user->hasRoleSlug('hospital_staff')) {
+            return redirect()->back()
+                ->with('error', 'Only hospital staff can create delivery requests.');
+        }
+        
         $hospitals = Hospital::active()->get();
         $medicalSupplies = MedicalSupply::active()->get();
         
@@ -87,6 +102,21 @@ class DeliveryRequestController extends Controller
      */
     public function store(Request $request)
     {
+        // Authorization: Only hospital staff can create delivery requests
+        $user = auth()->user();
+        
+        // Block admin users
+        if ($user->hasRoleSlug('admin') || $user->hasRoleSlug('super_admin')) {
+            return redirect()->route('admin.delivery-requests.index')
+                ->with('error', 'Admins cannot create delivery requests. Only hospital staff can request deliveries.');
+        }
+        
+        // Only allow hospital staff
+        if (!$user->hasRoleSlug('hospital_admin') && !$user->hasRoleSlug('hospital_staff')) {
+            return redirect()->back()
+                ->with('error', 'Only hospital staff can create delivery requests.');
+        }
+        
         $validated = $request->validate([
             'hospital_id' => 'required|exists:hospitals,id',
             'medical_supply_id' => 'required|exists:medical_supplies,id',

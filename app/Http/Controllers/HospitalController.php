@@ -78,7 +78,7 @@ class HospitalController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'code' => 'required|string|unique:hospitals,code|max:50',
-            'type' => 'required|string|in:hospital,clinic,health_center,pharmacy,other',
+            'type' => 'required|string|in:general_hospital,specialized_hospital,clinic,emergency_center,blood_bank,diagnostic_center,pharmacy,research_facility',
             'address' => 'required|string|max:500',
             'city' => 'required|string|max:100',
             'state' => 'required|string|max:100',
@@ -100,7 +100,47 @@ class HospitalController extends Controller
             'notes' => 'nullable|string',
         ]);
         
-        $hospital = Hospital::create($validated);
+        // Validate location is in Bangladesh (Khulna division for initial launch)
+        $locationCheck = \App\Services\BangladeshLocationService::validateLocation(
+            $validated['latitude'],
+            $validated['longitude'],
+            true // Strict Khulna validation
+        );
+
+        if (!$locationCheck['valid']) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', $locationCheck['error'] ?? 'Invalid location. Service currently available in Khulna Division only.');
+        }
+
+        // Map form fields to database columns
+        $hospitalData = [
+            'name' => $validated['name'],
+            'code' => $validated['code'],
+            'type' => $validated['type'],
+            'address' => $validated['address'],
+            'city' => $validated['city'],
+            'state_province' => $validated['state'], // Form: 'state' -> DB: 'state_province'
+            'postal_code' => $validated['zip_code'], // Form: 'zip_code' -> DB: 'postal_code'
+            'country' => 'Bangladesh', // Always Bangladesh
+            'latitude' => $validated['latitude'],
+            'longitude' => $validated['longitude'],
+            'primary_phone' => $validated['phone'], // Form: 'phone' -> DB: 'primary_phone'
+            'emergency_phone' => $validated['emergency_contact'] ?? null, // Form: 'emergency_contact' -> DB: 'emergency_phone'
+            'email' => $validated['email'],
+            'operating_hours' => $validated['operating_hours'] ?? null,
+            'license_number' => $validated['license_number'] ?? 'LIC-BD-' . strtoupper($validated['code']), // Auto-generate if not provided
+            'license_expiry_date' => $validated['license_expiry_date'] ?? now()->addYears(5), // Default 5 years from now
+            'has_drone_landing_pad' => $validated['has_drone_landing_pad'],
+            'drone_landing_coordinates' => $validated['landing_pad_coordinates'] ?? null,
+            'contact_person_name' => $validated['contact_person'],
+            'contact_person_phone' => $validated['contact_person_phone'],
+            'special_instructions' => $validated['notes'] ?? null,
+            'is_active' => $validated['status'] === 'active',
+            'is_verified' => false, // New hospitals need verification
+        ];
+        
+        $hospital = Hospital::create($hospitalData);
         
         return redirect()->route('admin.hospitals.show', $hospital)
             ->with('success', 'Hospital created successfully!');
@@ -149,7 +189,7 @@ class HospitalController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'code' => 'required|string|max:50|unique:hospitals,code,' . $hospital->id,
-            'type' => 'required|string|in:hospital,clinic,health_center,pharmacy,other',
+            'type' => 'required|string|in:general_hospital,specialized_hospital,clinic,emergency_center,blood_bank,diagnostic_center,pharmacy,research_facility',
             'address' => 'required|string|max:500',
             'city' => 'required|string|max:100',
             'state' => 'required|string|max:100',
@@ -171,10 +211,46 @@ class HospitalController extends Controller
             'notes' => 'nullable|string',
         ]);
         
-        // Handle checkbox (checkboxes don't send anything when unchecked)
-        $validated['has_drone_landing_pad'] = $request->has('has_drone_landing_pad');
+        // Validate location is in Bangladesh (Khulna division for initial launch)
+        $locationCheck = \App\Services\BangladeshLocationService::validateLocation(
+            $validated['latitude'],
+            $validated['longitude'],
+            true // Strict Khulna validation
+        );
+
+        if (!$locationCheck['valid']) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', $locationCheck['error'] ?? 'Invalid location. Service currently available in Khulna Division only.');
+        }
+
+        // Map form fields to database columns
+        $hospitalData = [
+            'name' => $validated['name'],
+            'code' => $validated['code'],
+            'type' => $validated['type'],
+            'address' => $validated['address'],
+            'city' => $validated['city'],
+            'state_province' => $validated['state'], // Form: 'state' -> DB: 'state_province'
+            'postal_code' => $validated['zip_code'], // Form: 'zip_code' -> DB: 'postal_code'
+            'country' => 'Bangladesh', // Always Bangladesh
+            'latitude' => $validated['latitude'],
+            'longitude' => $validated['longitude'],
+            'primary_phone' => $validated['phone'], // Form: 'phone' -> DB: 'primary_phone'
+            'emergency_phone' => $validated['emergency_contact'] ?? null, // Form: 'emergency_contact' -> DB: 'emergency_phone'
+            'email' => $validated['email'],
+            'operating_hours' => $validated['operating_hours'] ?? null,
+            'license_number' => $validated['license_number'] ?? 'LIC-BD-' . strtoupper($validated['code']), // Auto-generate if not provided
+            'license_expiry_date' => $validated['license_expiry_date'] ?? now()->addYears(5), // Default 5 years from now
+            'has_drone_landing_pad' => $request->has('has_drone_landing_pad'), // Checkbox handling
+            'drone_landing_coordinates' => $validated['landing_pad_coordinates'] ?? null,
+            'contact_person_name' => $validated['contact_person'],
+            'contact_person_phone' => $validated['contact_person_phone'],
+            'special_instructions' => $validated['notes'] ?? null,
+            'is_active' => $validated['status'] === 'active',
+        ];
         
-        $hospital->update($validated);
+        $hospital->update($hospitalData);
         
         return redirect()->route('admin.hospitals.show', $hospital)
             ->with('success', 'Hospital updated successfully!');
