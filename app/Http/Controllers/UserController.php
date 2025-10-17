@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Hospital;
+use App\Rules\UniquePassword;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -78,10 +79,10 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => ['required', 'string', 'max:255', new \App\Rules\ValidName],
             'email' => 'required|email|unique:users,email|max:255',
-            'password' => 'required|string|min:8|confirmed',
-            'phone' => 'nullable|string|max:20',
+            'password' => ['required', 'string', 'confirmed', new \App\Rules\StrongPassword],
+            'phone' => 'nullable|string|regex:/^01[0-9]{9}$/|size:11',
             'address' => 'nullable|string|max:500',
             'city' => 'nullable|string|max:100',
             'state_province' => 'nullable|string|max:100',
@@ -90,7 +91,7 @@ class UserController extends Controller
             'hospital_id' => 'nullable|exists:hospitals,id',
             'license_expiry_date' => 'nullable|date|after:today',
             'emergency_contact_name' => 'nullable|string|max:255',
-            'emergency_contact_phone' => 'nullable|string|max:20',
+            'emergency_contact_phone' => 'nullable|string|regex:/^01[0-9]{9}$/|size:11',
             'status' => 'required|string|in:active,inactive,suspended',
             'roles' => 'required|array|min:1',
             'roles.*' => 'exists:roles,id',
@@ -157,10 +158,10 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => ['required', 'string', 'max:255', new \App\Rules\ValidName],
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:8|confirmed',
-            'phone' => 'nullable|string|max:20',
+            'password' => ['nullable', 'string', 'confirmed', new \App\Rules\StrongPassword],
+            'phone' => 'nullable|string|regex:/^01[0-9]{9}$/|size:11',
             'address' => 'nullable|string|max:500',
             'city' => 'nullable|string|max:100',
             'state_province' => 'nullable|string|max:100',
@@ -169,7 +170,7 @@ class UserController extends Controller
             'hospital_id' => 'nullable|exists:hospitals,id',
             'license_expiry_date' => 'nullable|date',
             'emergency_contact_name' => 'nullable|string|max:255',
-            'emergency_contact_phone' => 'nullable|string|max:20',
+            'emergency_contact_phone' => 'nullable|string|regex:/^01[0-9]{9}$/|size:11',
             'status' => 'required|string|in:active,inactive,suspended',
             'roles' => 'required|array|min:1',
             'roles.*' => 'exists:roles,id',

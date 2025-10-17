@@ -191,9 +191,11 @@
                 </button>
             </div>
 
-            <nav class="mt-6 px-4 space-y-2 overflow-y-auto h-[calc(100vh-4rem)]">
-                @include('layouts.partials.sidebar')
-            </nav>
+            <div class="flex flex-col h-[calc(100vh-4rem)]">
+                <nav class="flex-1 mt-6 px-4 space-y-2 overflow-y-auto">
+                    @include('layouts.partials.sidebar')
+                </nav>
+            </div>
         </aside>
 
         <!-- Main Content -->

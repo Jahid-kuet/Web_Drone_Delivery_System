@@ -51,7 +51,20 @@ class Delivery extends Model
         'delivery_rating',
         'delivery_feedback',
         'delivery_cost',
-        'metadata'
+        'metadata',
+        // OTP fields
+        'delivery_otp',
+        'otp_generated_at',
+        'otp_expires_at',
+        'otp_verified_at',
+        'otp_verified_by',
+        // Delivery proof fields
+        'delivery_photo_path',
+        'recipient_name',
+        'recipient_phone',
+        'recipient_signature_path',
+        'is_verified',
+        'verified_at',
     ];
 
     protected $casts = [
@@ -70,6 +83,10 @@ class Delivery extends Model
         'estimated_arrival_time' => 'datetime',
         'actual_arrival_time' => 'datetime',
         'delivery_completed_time' => 'datetime',
+        'otp_generated_at' => 'datetime',
+        'otp_expires_at' => 'datetime',
+        'otp_verified_at' => 'datetime',
+        'verified_at' => 'datetime',
         'current_altitude_m' => 'decimal:2',
         'current_speed_kmh' => 'decimal:2',
         'distance_remaining_km' => 'decimal:3',
@@ -79,7 +96,8 @@ class Delivery extends Model
         'fuel_battery_level_end' => 'decimal:2',
         'total_cargo_weight_kg' => 'decimal:3',
         'delivery_cost' => 'decimal:2',
-        'requires_return_trip' => 'boolean'
+        'requires_return_trip' => 'boolean',
+        'is_verified' => 'boolean',
     ];
 
     protected $dates = ['deleted_at'];
@@ -441,4 +459,148 @@ class Delivery extends Model
     {
         return $this->delivery_completed_time;
     }
+
+    /**
+     * Generate OTP for delivery verification
+     */
+    public function generateOTP(): string
+    {
+        // Generate 6-digit OTP
+        $otp = str_pad(random_int(100000, 999999), 6, '0', STR_PAD_LEFT);
+        
+        // Store OTP with expiration (10 minutes)
+        $this->update([
+            'delivery_otp' => $otp,
+            'otp_generated_at' => now(),
+            'otp_expires_at' => now()->addMinutes(10),
+            'otp_verified_at' => null,
+            'otp_verified_by' => null,
+        ]);
+
+        \Illuminate\Support\Facades\Log::info("OTP generated for delivery #{$this->id}: {$otp}");
+
+        return $otp;
+    }
+
+    /**
+     * Verify OTP
+     */
+    public function verifyOTP(string $otp, string $verifiedBy = null): array
+    {
+        // Check if OTP exists
+        if (empty($this->delivery_otp)) {
+            return [
+                'success' => false,
+                'message' => 'No OTP has been generated for this delivery',
+            ];
+        }
+
+        // Check if already verified
+        if ($this->otp_verified_at) {
+            return [
+                'success' => false,
+                'message' => 'OTP has already been verified',
+            ];
+        }
+
+        // Check if OTP has expired
+        if ($this->otp_expires_at && now()->isAfter($this->otp_expires_at)) {
+            return [
+                'success' => false,
+                'message' => 'OTP has expired. Please request a new one.',
+            ];
+        }
+
+        // Verify OTP
+        if ($this->delivery_otp !== $otp) {
+            \Illuminate\Support\Facades\Log::warning("Invalid OTP attempt for delivery #{$this->id}: {$otp}");
+            return [
+                'success' => false,
+                'message' => 'Invalid OTP. Please check and try again.',
+            ];
+        }
+
+        // OTP is valid - mark as verified
+        $this->update([
+            'otp_verified_at' => now(),
+            'otp_verified_by' => $verifiedBy,
+            'is_verified' => true,
+            'verified_at' => now(),
+        ]);
+
+        \Illuminate\Support\Facades\Log::info("OTP verified successfully for delivery #{$this->id}");
+
+        return [
+            'success' => true,
+            'message' => 'OTP verified successfully',
+        ];
+    }
+
+    /**
+     * Check if OTP is valid (not expired)
+     */
+    public function isOTPValid(): bool
+    {
+        if (empty($this->delivery_otp)) {
+            return false;
+        }
+
+        if ($this->otp_verified_at) {
+            return false; // Already verified
+        }
+
+        if ($this->otp_expires_at && now()->isAfter($this->otp_expires_at)) {
+            return false; // Expired
+        }
+
+        return true;
+    }
+
+    /**
+     * Get OTP status
+     */
+    public function getOTPStatus(): array
+    {
+        if (empty($this->delivery_otp)) {
+            return [
+                'status' => 'not_generated',
+                'message' => 'No OTP generated',
+            ];
+        }
+
+        if ($this->otp_verified_at) {
+            return [
+                'status' => 'verified',
+                'message' => 'OTP verified',
+                'verified_at' => $this->otp_verified_at,
+                'verified_by' => $this->otp_verified_by,
+            ];
+        }
+
+        if ($this->otp_expires_at && now()->isAfter($this->otp_expires_at)) {
+            return [
+                'status' => 'expired',
+                'message' => 'OTP expired',
+                'expired_at' => $this->otp_expires_at,
+            ];
+        }
+
+        $expiresIn = $this->otp_expires_at ? now()->diffInMinutes($this->otp_expires_at) : 0;
+
+        return [
+            'status' => 'active',
+            'message' => 'OTP is valid',
+            'expires_at' => $this->otp_expires_at,
+            'expires_in_minutes' => $expiresIn,
+        ];
+    }
+
+    /**
+     * Resend OTP (regenerate with new expiration)
+     */
+    public function resendOTP(): string
+    {
+        return $this->generateOTP();
+    }
 }
+

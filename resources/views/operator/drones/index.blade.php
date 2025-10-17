@@ -13,7 +13,7 @@
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">My Drones</h1>
-                <p class="text-gray-600 mt-1">Drones currently assigned to you</p>
+                <p class="text-gray-600 mt-1">Drones currently assigned to you ({{ $stats['total_assigned'] }} total)</p>
             </div>
             
             <div class="flex gap-2">

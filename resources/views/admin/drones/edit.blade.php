@@ -124,6 +124,19 @@
                 </div>
 
                 <div>
+                    <label for="assigned_operator_id" class="block text-sm font-medium text-gray-700 mb-2">Assigned Operator</label>
+                    <select name="assigned_operator_id" id="assigned_operator_id" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                        <option value="">-- Not Assigned --</option>
+                        @foreach($operators as $operator)
+                            <option value="{{ $operator->id }}" {{ old('assigned_operator_id', $drone->assigned_operator_id) == $operator->id ? 'selected' : '' }}>
+                                {{ $operator->name }} ({{ $operator->email }})
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('assigned_operator_id')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                </div>
+
+                <div>
                     <label for="total_flight_time" class="block text-sm font-medium text-gray-700 mb-2">Total Flight Time (hours)</label>
                     <input type="number" name="total_flight_time" id="total_flight_time" value="{{ old('total_flight_time', $drone->total_flight_time) }}" min="0" step="0.01"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">

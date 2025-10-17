@@ -261,11 +261,7 @@
         <h3 class="text-lg font-semibold text-gray-900 mb-4">
             <i class="fas fa-bolt mr-2 text-yellow-500"></i>Quick Actions
         </h3>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <a href="{{ route('admin.delivery-requests.create') }}" class="flex flex-col items-center justify-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition">
-                <i class="fas fa-plus-circle text-3xl text-blue-600 mb-2"></i>
-                <span class="text-sm font-medium text-gray-700">New Request</span>
-            </a>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
             <a href="{{ route('admin.drones.create') }}" class="flex flex-col items-center justify-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition">
                 <i class="fas fa-drone text-3xl text-green-600 mb-2"></i>
                 <span class="text-sm font-medium text-gray-700">Add Drone</span>

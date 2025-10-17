@@ -13,6 +13,8 @@ class Notification extends Model
 
     protected $fillable = [
         'user_id',
+        'sender_id',
+        'recipient_id',
         'type',
         'title',
         'message',
@@ -71,6 +73,22 @@ class Notification extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the sender (admin) who sent this notification
+     */
+    public function sender(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'sender_id');
+    }
+
+    /**
+     * Get the recipient user who received this notification
+     */
+    public function recipient(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'recipient_id');
     }
 
     /**

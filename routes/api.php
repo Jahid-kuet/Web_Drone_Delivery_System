@@ -106,6 +106,76 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::delete('/{notificationId}', [NotificationController::class, 'destroy'])
             ->name('destroy');
     });
+
+    // ==================== DELIVERY CONFIRMATION (OTP & PHOTO) ====================
+    Route::prefix('deliveries')->name('api.deliveries.confirmation.')->group(function () {
+        
+        // Generate OTP for delivery
+        Route::post('/{deliveryId}/otp/generate', [\App\Http\Controllers\DeliveryConfirmationController::class, 'generateOTP'])
+            ->name('otp.generate');
+        
+        // Verify OTP
+        Route::post('/{deliveryId}/otp/verify', [\App\Http\Controllers\DeliveryConfirmationController::class, 'verifyOTP'])
+            ->name('otp.verify');
+        
+        // Get OTP status
+        Route::get('/{deliveryId}/otp/status', [\App\Http\Controllers\DeliveryConfirmationController::class, 'getOTPStatus'])
+            ->name('otp.status');
+        
+        // Resend OTP
+        Route::post('/{deliveryId}/otp/resend', [\App\Http\Controllers\DeliveryConfirmationController::class, 'resendOTP'])
+            ->name('otp.resend');
+        
+        // Upload delivery proof photo
+        Route::post('/{deliveryId}/photo', [\App\Http\Controllers\DeliveryConfirmationController::class, 'uploadPhoto'])
+            ->name('photo.upload');
+        
+        // Upload recipient signature
+        Route::post('/{deliveryId}/signature', [\App\Http\Controllers\DeliveryConfirmationController::class, 'uploadSignature'])
+            ->name('signature.upload');
+        
+        // Complete delivery confirmation (OTP + Photo + Signature)
+        Route::post('/{deliveryId}/confirm', [\App\Http\Controllers\DeliveryConfirmationController::class, 'completeConfirmation'])
+            ->name('complete');
+        
+        // Get confirmation details
+        Route::get('/{deliveryId}/confirmation', [\App\Http\Controllers\DeliveryConfirmationController::class, 'getConfirmationDetails'])
+            ->name('details');
+    });
+    Route::prefix('delivery-confirmation')->name('api.confirmation.')->group(function () {
+        
+        // Generate OTP for delivery
+        Route::post('/{deliveryId}/otp/generate', [\App\Http\Controllers\DeliveryConfirmationController::class, 'generateOTP'])
+            ->name('generate-otp');
+        
+        // Verify OTP
+        Route::post('/{deliveryId}/otp/verify', [\App\Http\Controllers\DeliveryConfirmationController::class, 'verifyOTP'])
+            ->name('verify-otp');
+        
+        // Get OTP status
+        Route::get('/{deliveryId}/otp/status', [\App\Http\Controllers\DeliveryConfirmationController::class, 'getOTPStatus'])
+            ->name('otp-status');
+        
+        // Resend OTP
+        Route::post('/{deliveryId}/otp/resend', [\App\Http\Controllers\DeliveryConfirmationController::class, 'resendOTP'])
+            ->name('resend-otp');
+        
+        // Upload delivery proof photo
+        Route::post('/{deliveryId}/photo', [\App\Http\Controllers\DeliveryConfirmationController::class, 'uploadPhoto'])
+            ->name('upload-photo');
+        
+        // Upload recipient signature
+        Route::post('/{deliveryId}/signature', [\App\Http\Controllers\DeliveryConfirmationController::class, 'uploadSignature'])
+            ->name('upload-signature');
+        
+        // Complete confirmation (OTP + Photo + Signature)
+        Route::post('/{deliveryId}/complete', [\App\Http\Controllers\DeliveryConfirmationController::class, 'completeConfirmation'])
+            ->name('complete');
+        
+        // Get confirmation details
+        Route::get('/{deliveryId}', [\App\Http\Controllers\DeliveryConfirmationController::class, 'getConfirmationDetails'])
+            ->name('details');
+    });
     
     // ==================== MEDICAL SUPPLIES ====================
     Route::prefix('supplies')->name('api.supplies.')->group(function () {

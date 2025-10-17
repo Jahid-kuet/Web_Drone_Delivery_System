@@ -14,7 +14,7 @@ class DroneController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Drone::query();
+        $query = Drone::with('assignedOperator');
         
         // Search filter
         if ($search = $request->input('search')) {
@@ -179,7 +179,11 @@ class DroneController extends Controller
      */
     public function edit(Drone $drone)
     {
-        return view('admin.drones.edit', compact('drone'));
+        // Get users with drone_operator role through the roles relationship
+        $operators = \App\Models\User::whereHas('roles', function($q) {
+            $q->where('slug', 'drone_operator');
+        })->get();
+        return view('admin.drones.edit', compact('drone', 'operators'));
     }
 
     /**
@@ -199,6 +203,7 @@ class DroneController extends Controller
             'battery_life_minutes' => 'required|integer|min:0',
             'current_battery_level' => 'required|numeric|min:0|max:100',
             'status' => 'required|string|in:available,assigned,in_flight,maintenance,charging,offline,emergency',
+            'assigned_operator_id' => 'nullable|exists:users,id',
             'last_maintenance_date' => 'nullable|date',
             'next_maintenance_date' => 'nullable|date|after:last_maintenance_date',
             'total_flight_hours' => 'nullable|numeric|min:0',

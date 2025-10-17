@@ -51,6 +51,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/reports/drone', [\App\Http\Controllers\Admin\ReportsController::class, 'droneReport'])->name('reports.drone');
         Route::get('/reports/hospital', [\App\Http\Controllers\Admin\ReportsController::class, 'hospitalReport'])->name('reports.hospital');
         
+        // ==================== NOTIFICATIONS ====================
+        Route::prefix('notifications')->name('notifications.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\NotificationController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\NotificationController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\NotificationController::class, 'store'])->name('store');
+            Route::get('/inbox', [\App\Http\Controllers\NotificationController::class, 'inbox'])->name('inbox');
+            Route::post('/inbox/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllRead'])->name('mark-all-read');
+            Route::post('/{notification}/mark-read', [\App\Http\Controllers\NotificationController::class, 'markRead'])->name('mark-read');
+        });
+        
         // ==================== USER MANAGEMENT ====================
         Route::prefix('users')->name('users.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\UserManagementController::class, 'index'])->name('index');
@@ -218,6 +228,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         
         // Track Deliveries
         Route::get('/deliveries', [HospitalPortalController::class, 'deliveriesIndex'])->name('deliveries.index');
+        Route::get('/deliveries/{delivery}', [HospitalPortalController::class, 'deliveriesShow'])->name('deliveries.show');
         
         // Delivery History
         Route::get('/history', [HospitalPortalController::class, 'deliveryHistory'])->name('history');
@@ -245,6 +256,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         
         // My Drones
         Route::get('/drones', [OperatorPortalController::class, 'dronesIndex'])->name('drones.index');
+        
+        // Notifications
+        Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'inbox'])->name('notifications.inbox');
+        Route::post('/notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
+        Route::post('/notifications/{notification}/mark-read', [\App\Http\Controllers\NotificationController::class, 'markRead'])->name('notifications.mark-read');
     });
     
     // ==================== USER PROFILE ====================

@@ -11,8 +11,8 @@
     <form method="POST" action="{{ route('password.store') }}">
         @csrf
 
-        <!-- Password Reset Token -->
-        <input type="hidden" name="token" value="{{ $request->route('token') }}">
+    <!-- Password Reset Token -->
+    <input type="hidden" name="token" value="{{ request()->route('token') }}">
 
         <!-- Email Address -->
         <div class="mb-4">
@@ -23,7 +23,7 @@
                 id="email" 
                 type="email" 
                 name="email" 
-                value="{{ old('email', $request->email) }}" 
+                value="{{ old('email', request()->email) }}" 
                 required 
                 autofocus 
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"

@@ -24,7 +24,7 @@
         }
         
         .hero-gradient {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background: linear-gradient(135deg, #06b6d4 0%, #10b981 50%, #3b82f6 100%);
             position: relative;
             overflow: hidden;
         }
@@ -178,12 +178,12 @@
         }
         
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #06b6d4 0%, #10b981 100%);
             border-radius: 5px;
         }
         
         ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
         }
         
         /* Glassmorphism Effect */
@@ -312,28 +312,28 @@
             <!-- Mobile Menu -->
             <div id="mobile-menu" class="mobile-menu lg:hidden">
                 <div class="px-2 pt-2 pb-6 space-y-3">
-                    <a href="{{ route('home') }}" class="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-gray-700 hover:text-purple-600 font-semibold transition-all">
+                    <a href="{{ route('home') }}" class="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-cyan-50 dark:hover:bg-gray-700 hover:text-cyan-600 font-semibold transition-all">
                         <i class="fas fa-home mr-3"></i>Home
                     </a>
-                    <a href="#features" class="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-gray-700 hover:text-purple-600 font-semibold transition-all">
+                    <a href="#features" class="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-cyan-50 dark:hover:bg-gray-700 hover:text-cyan-600 font-semibold transition-all">
                         <i class="fas fa-star mr-3"></i>Features
                     </a>
-                    <a href="#how-it-works" class="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-gray-700 hover:text-purple-600 font-semibold transition-all">
+                    <a href="#how-it-works" class="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-cyan-50 dark:hover:bg-gray-700 hover:text-cyan-600 font-semibold transition-all">
                         <i class="fas fa-cogs mr-3"></i>How It Works
                     </a>
-                    <a href="{{ route('tracking.public') }}" class="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-gray-700 hover:text-purple-600 font-semibold transition-all">
+                    <a href="{{ route('tracking.public') }}" class="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-cyan-50 dark:hover:bg-gray-700 hover:text-cyan-600 font-semibold transition-all">
                         <i class="fas fa-map-marker-alt mr-3"></i>Track Delivery
                     </a>
                     @auth
-                        <a href="{{ route('admin.dashboard') }}" class="block px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold rounded-lg text-center shadow-lg">
+                        <a href="{{ route('admin.dashboard') }}" class="block px-4 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 text-white font-bold rounded-lg text-center shadow-lg">
                             <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
                         </a>
                     @else
-                        <a href="{{ route('login') }}" class="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-gray-700 hover:text-purple-600 font-semibold transition-all">
+                        <a href="{{ route('login') }}" class="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-cyan-50 dark:hover:bg-gray-700 hover:text-cyan-600 font-semibold transition-all">
                             <i class="fas fa-sign-in-alt mr-3"></i>Login
                         </a>
                         @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="block px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold rounded-lg text-center shadow-lg">
+                            <a href="{{ route('register') }}" class="block px-4 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 text-white font-bold rounded-lg text-center shadow-lg">
                                 <i class="fas fa-rocket mr-2"></i>Get Started
                             </a>
                         @endif
@@ -409,24 +409,28 @@
                     </div>
                     <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight fade-in-up delay-100">
                         Fast & Reliable<br>
-                        <span class="bg-gradient-to-r from-yellow-300 to-pink-300 bg-clip-text text-transparent">
+                        <span class="bg-gradient-to-r from-cyan-300 via-teal-300 to-emerald-300 bg-clip-text text-transparent">
                             Medical Supply
                         </span><br>
                         Delivery
                     </h1>
-                    <p class="text-lg sm:text-xl md:text-2xl mb-8 text-purple-100 fade-in-up delay-200 max-w-2xl mx-auto lg:mx-0">
+                    <p class="text-lg sm:text-xl md:text-2xl mb-8 text-cyan-50 fade-in-up delay-200 max-w-2xl mx-auto lg:mx-0">
                         Revolutionizing healthcare logistics with autonomous drone delivery. 
                         Delivering critical medical supplies when every second counts.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start fade-in-up delay-300">
                         @guest
-                            <a href="{{ route('register') }}" class="btn-modern px-8 py-4 bg-white text-purple-600 font-bold rounded-xl hover:bg-gray-100 transition-all shadow-2xl hover:shadow-3xl transform hover:scale-105 text-center">
+                            <a href="{{ route('register') }}" class="btn-modern px-8 py-4 bg-white text-cyan-600 font-bold rounded-xl hover:bg-gray-100 transition-all shadow-2xl hover:shadow-3xl transform hover:scale-105 text-center">
                                 <i class="fas fa-rocket mr-2"></i>Get Started Free
                             </a>
                         @endguest
                         <a href="{{ route('tracking.public') }}" class="btn-modern px-8 py-4 glass-effect hover:bg-white/20 text-white font-bold rounded-xl transition-all shadow-xl border-2 border-white/50 text-center">
                             <i class="fas fa-map-marker-alt mr-2"></i>Track Delivery
                         </a>
+                        {{-- Video Button --}}
+                        <button onclick="openVideoModal()" class="btn-modern px-8 py-4 glass-effect hover:bg-white/30 text-white font-bold rounded-xl transition-all shadow-xl border-2 border-white/50 text-center">
+                            <i class="fas fa-play-circle mr-2"></i>Watch Demo
+                        </button>
                     </div>
                     
                     <!-- Trust Badges -->
@@ -517,7 +521,7 @@
     </style>
 
     <!-- Stats Section -->
-    <section class="py-20 bg-gradient-to-br from-gray-50 to-purple-50">
+    <section class="py-20 bg-gradient-to-br from-gray-50 via-cyan-50 to-teal-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
                 <!-- Total Drones -->
@@ -605,7 +609,7 @@
         
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="text-center mb-16 fade-in-up">
-                <div class="inline-block px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-bold mb-4">
+                <div class="inline-block px-4 py-2 bg-cyan-100 text-cyan-700 rounded-full text-sm font-bold mb-4">
                     <i class="fas fa-star mr-2"></i>FEATURES
                 </div>
                 <h2 class="text-4xl md:text-5xl font-black text-gray-900 mb-4">
@@ -791,25 +795,25 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="py-20 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+    <section class="py-20 bg-gradient-to-r from-cyan-600 via-teal-600 to-emerald-600 text-white">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 class="text-4xl font-bold mb-6">
                 Ready to Transform Healthcare Logistics?
             </h2>
-            <p class="text-xl mb-8 text-purple-100">
+            <p class="text-xl mb-8 text-cyan-50">
                 Join hospitals and healthcare facilities already using our drone delivery service
             </p>
             @guest
                 <div class="flex flex-wrap justify-center gap-4">
-                    <a href="{{ route('register') }}" class="px-8 py-4 bg-white text-purple-600 font-bold rounded-lg hover:bg-gray-100 transition shadow-lg">
+                    <a href="{{ route('register') }}" class="px-8 py-4 bg-white text-cyan-600 font-bold rounded-lg hover:bg-gray-100 transition shadow-lg">
                         <i class="fas fa-user-plus mr-2"></i>Register Now
                     </a>
-                    <a href="{{ route('login') }}" class="px-8 py-4 bg-purple-700 hover:bg-purple-800 text-white font-bold rounded-lg transition shadow-lg border-2 border-white">
+                    <a href="{{ route('login') }}" class="px-8 py-4 bg-cyan-700 hover:bg-cyan-800 text-white font-bold rounded-lg transition shadow-lg border-2 border-white">
                         <i class="fas fa-sign-in-alt mr-2"></i>Login
                     </a>
                 </div>
             @else
-                <a href="{{ route('admin.dashboard') }}" class="inline-block px-8 py-4 bg-white text-purple-600 font-bold rounded-lg hover:bg-gray-100 transition shadow-lg">
+                <a href="{{ route('admin.dashboard') }}" class="inline-block px-8 py-4 bg-white text-cyan-600 font-bold rounded-lg hover:bg-gray-100 transition shadow-lg">
                     <i class="fas fa-tachometer-alt mr-2"></i>Go to Dashboard
                 </a>
             @endguest
@@ -867,5 +871,80 @@
             </div>
         </div>
     </footer>
+
+    {{-- Video Modal --}}
+    <div id="videoModal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 hidden items-center justify-center p-4" onclick="closeVideoModal(event)">
+        <div class="relative max-w-5xl w-full bg-gray-900 rounded-2xl overflow-hidden shadow-2xl" onclick="event.stopPropagation()">
+            {{-- Close Button --}}
+            <button onclick="closeVideoModal()" class="absolute top-4 right-4 z-10 w-10 h-10 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white transition-all">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            
+            {{-- Video Container --}}
+            <div class="aspect-video bg-black">
+                {{-- YouTube Embed Example - Replace VIDEO_ID with your actual YouTube video ID --}}
+                <iframe id="videoIframe" class="w-full h-full" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                
+                {{-- For local video, use this instead: --}}
+                {{-- <video id="localVideo" class="w-full h-full" controls>
+                    <source src="{{ asset('videos/drone-delivery-demo.mp4') }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video> --}}
+            </div>
+            
+            {{-- Video Title --}}
+            <div class="p-6 border-t border-gray-800">
+                <h3 class="text-xl font-bold text-white mb-2">
+                    <i class="fas fa-drone text-cyan-400 mr-2"></i>
+                    Drone Delivery System in Action
+                </h3>
+                <p class="text-gray-400">
+                    Watch how our autonomous drones deliver medical supplies to hospitals in real-time.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    {{-- Video Modal JavaScript --}}
+    <script>
+        // Replace with your YouTube video ID
+        const YOUTUBE_VIDEO_ID = 'YOUR_VIDEO_ID_HERE'; // e.g., 'dQw4w9WgXcQ'
+        
+        function openVideoModal() {
+            const modal = document.getElementById('videoModal');
+            const iframe = document.getElementById('videoIframe');
+            
+            // Load YouTube video
+            iframe.src = `https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1`;
+            
+            // For Vimeo, use: iframe.src = `https://player.vimeo.com/video/${VIMEO_VIDEO_ID}?autoplay=1`;
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+        
+        function closeVideoModal(event) {
+            // Only close if clicking outside the video container or on close button
+            if (!event || event.target.id === 'videoModal' || event.currentTarget.tagName === 'BUTTON') {
+                const modal = document.getElementById('videoModal');
+                const iframe = document.getElementById('videoIframe');
+                
+                // Stop video playback
+                iframe.src = '';
+                
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = ''; // Restore scrolling
+            }
+        }
+        
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeVideoModal();
+            }
+        });
+    </script>
 </body>
 </html>

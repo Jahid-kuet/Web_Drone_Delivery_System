@@ -108,7 +108,7 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-900">
-                                    {{ number_format($supply->quantity) }} {{ $supply->unit }}
+                                    {{ number_format($supply->quantity_available) }} units
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-900">
                                     ${{ number_format($supply->unit_price, 2) }}

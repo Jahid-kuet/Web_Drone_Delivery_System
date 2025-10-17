@@ -79,8 +79,23 @@
                         <tr class="hover:bg-gray-50">
                             <td class="px-6 py-4">#{{ $request->id }}</td>
                             <td class="px-6 py-4">{{ $request->hospital->name ?? 'N/A' }}</td>
-                            <td class="px-6 py-4">{{ $request->medicalSupply->name ?? 'N/A' }}</td>
-                            <td class="px-6 py-4">{{ $request->quantity }}</td>
+                            <td class="px-6 py-4">
+                                @if(is_array($request->medical_supplies) && count($request->medical_supplies) > 0)
+                                    {{ count($request->medical_supplies) }} item(s)
+                                @else
+                                    {{ $request->medicalSupply->name ?? 'N/A' }}
+                                @endif
+                            </td>
+                            <td class="px-6 py-4">
+                                @if(is_array($request->medical_supplies) && count($request->medical_supplies) > 0)
+                                    @php
+                                        $totalQty = collect($request->medical_supplies)->sum('quantity');
+                                    @endphp
+                                    {{ $totalQty }} units
+                                @else
+                                    {{ $request->quantity ?? 'N/A' }}
+                                @endif
+                            </td>
                             <td class="px-6 py-4">
                                 <span class="px-3 py-1 rounded-full text-xs font-semibold
                                     {{ $request->urgency_level === 'emergency' ? 'bg-red-100 text-red-800' : '' }}

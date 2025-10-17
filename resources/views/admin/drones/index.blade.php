@@ -102,6 +102,7 @@
                             <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Battery</th>
                             <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                             <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Condition</th>
+                            <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Assigned Operator</th>
                             <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Total Flights</th>
                             <th class="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                         </tr>
@@ -141,9 +142,24 @@
                                     </span>
                                 </td>
                                 <td class="px-3 sm:px-6 py-4 hidden md:table-cell">
-                                    <span class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded whitespace-nowrap">
-                                        {{ ucfirst($drone->condition) }}
+                                    <span class="px-2 py-1 text-xs font-medium rounded whitespace-nowrap
+                                        {{ $drone->condition === 'excellent' ? 'bg-green-100 text-green-800' : '' }}
+                                        {{ $drone->condition === 'good' ? 'bg-blue-100 text-blue-800' : '' }}
+                                        {{ $drone->condition === 'fair' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                                        {{ $drone->condition === 'poor' ? 'bg-red-100 text-red-800' : '' }}
+                                        {{ !$drone->condition ? 'bg-gray-100 text-gray-800' : '' }}">
+                                        {{ $drone->condition ? ucfirst($drone->condition) : 'N/A' }}
                                     </span>
+                                </td>
+                                <td class="px-3 sm:px-6 py-4 text-xs sm:text-sm text-gray-900 hidden lg:table-cell">
+                                    @if($drone->assignedOperator)
+                                        <div class="flex items-center">
+                                            <i class="fas fa-user-circle text-indigo-600 mr-2"></i>
+                                            <span>{{ $drone->assignedOperator->name }}</span>
+                                        </div>
+                                    @else
+                                        <span class="text-gray-400 italic">Not assigned</span>
+                                    @endif
                                 </td>
                                 <td class="px-3 sm:px-6 py-4 text-xs sm:text-sm text-gray-900 hidden lg:table-cell">
                                     {{ number_format($drone->total_flight_time ?? 0) }} hrs

@@ -142,14 +142,14 @@
             <div class="bg-white rounded-lg shadow-lg p-6">
                 <h3 class="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
                 <div class="space-y-2">
-                    <a href="#" class="block w-full px-4 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg transition text-center">
-                        <i class="fas fa-plus-circle mr-2"></i>New Request
+                    <a href="{{ route('admin.delivery-requests.index', ['hospital_id' => $hospital->id]) }}" class="block w-full px-4 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg transition text-center">
+                        <i class="fas fa-clipboard-list mr-2"></i>View Requests
                     </a>
-                    <a href="#" class="block w-full px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg transition text-center">
-                        <i class="fas fa-history mr-2"></i>View History
+                    <a href="{{ route('admin.deliveries.index', ['hospital_id' => $hospital->id]) }}" class="block w-full px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg transition text-center">
+                        <i class="fas fa-history mr-2"></i>View Deliveries
                     </a>
-                    <a href="#" class="block w-full px-4 py-2 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg transition text-center">
-                        <i class="fas fa-file-export mr-2"></i>Export Report
+                    <a href="{{ route('admin.hospitals.edit', $hospital) }}" class="block w-full px-4 py-2 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg transition text-center">
+                        <i class="fas fa-edit mr-2"></i>Edit Hospital
                     </a>
                 </div>
             </div>

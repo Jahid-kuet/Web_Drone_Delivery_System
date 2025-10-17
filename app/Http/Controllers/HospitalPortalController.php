@@ -24,6 +24,9 @@ class HospitalPortalController extends Controller
             return redirect()->route('home')->with('error', 'You are not associated with any hospital.');
         }
 
+            // Dashboard does not need any request normalization; that logic belongs in
+            // the requestsStore() handler. Removed to avoid referencing an undefined $request.
+
         // Statistics
         $stats = [
             'pending_requests' => DeliveryRequest::where('hospital_id', $hospital->id)
@@ -120,7 +123,13 @@ class HospitalPortalController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('hospital.requests.create', compact('hospital', 'medicalSupplies'));
+        // Get all hospitals in Khulna district
+        $khulnaHospitals = Hospital::where('is_active', true)
+            ->where('city', 'Khulna')
+            ->orderBy('name')
+            ->get();
+
+        return view('hospital.requests.create', compact('hospital', 'medicalSupplies', 'khulnaHospitals'));
     }
 
     /**
@@ -135,17 +144,58 @@ class HospitalPortalController extends Controller
             return redirect()->route('home')->with('error', 'You are not associated with any hospital.');
         }
 
-        $validated = $request->validate([
+        // Normalize delivery hospital inputs so validation can run correctly even if
+        // the client-side JS did not populate hidden canonical fields.
+        // If delivery_hospital_id is non-numeric (user typed a name into the id field), null it.
+        $submittedHospitalId = $request->input('delivery_hospital_id');
+        if ($submittedHospitalId !== null && $submittedHospitalId !== '' && !is_numeric($submittedHospitalId)) {
+            $request->merge(['delivery_hospital_id' => null]);
+        }
+
+        // If the free-form input was used, copy it to the canonical name field for validation
+        if ($request->filled('delivery_hospital_input') && !$request->filled('delivery_hospital_name')) {
+            $request->merge(['delivery_hospital_name' => $request->input('delivery_hospital_input')]);
+        }
+
+        // If manual inputs were provided (from fallback fields), copy them to canonical names
+        if ($request->filled('delivery_hospital_name_manual')) {
+            $request->merge(['delivery_hospital_name' => $request->input('delivery_hospital_name_manual')]);
+        }
+        // Accept address from several possible inputs: the canonical hidden field,
+        // manual fields, or the visible input (if user typed address into it).
+        if (!$request->filled('delivery_hospital_address')) {
+            if ($request->filled('delivery_hospital_address_manual')) {
+                $request->merge(['delivery_hospital_address' => $request->input('delivery_hospital_address_manual')]);
+            } elseif ($request->filled('delivery_hospital_address_hidden')) {
+                $request->merge(['delivery_hospital_address' => $request->input('delivery_hospital_address_hidden')]);
+            } elseif ($request->filled('delivery_hospital_input')) {
+                // If user typed an address into the primary input (mistakenly), copy it as address
+                $maybe = $request->input('delivery_hospital_input');
+                // Heuristic: if the primary input contains numbers or commas it's likely an address
+                if (preg_match('/[0-9,]/', $maybe)) {
+                    $request->merge(['delivery_hospital_address' => $maybe]);
+                }
+            }
+        }
+
+        // Allow either selecting a Khulna hospital (by id) OR entering manual hospital name + address.
+        // Use required_without so manual fields are required only when id is not present.
+        $rules = [
+            'delivery_hospital_id' => 'nullable|exists:hospitals,id',
+            'delivery_hospital_name' => 'required_without:delivery_hospital_id|string|max:255',
+            'delivery_hospital_address' => 'required_without:delivery_hospital_id|string|max:1000',
             'priority' => 'required|in:emergency,high,medium,low',
             'description' => 'required|string',
             'requested_date' => 'required|date',
             'contact_person' => 'nullable|string|max:255',
-            'contact_phone' => 'nullable|string|max:20',
+            'contact_phone' => 'nullable|string|regex:/^01[0-9]{9}$/|size:11',
             'supplies' => 'required|array|min:1',
             'supplies.*.supply_id' => 'required|exists:medical_supplies,id',
             'supplies.*.quantity' => 'required|integer|min:1',
             'special_instructions' => 'nullable|string',
-        ]);
+        ];
+
+        $validated = $request->validate($rules);
 
         // Generate request number
         $requestNumber = 'REQ-' . date('Ymd') . '-' . strtoupper(Str::random(6));
@@ -170,7 +220,38 @@ class HospitalPortalController extends Controller
         ];
         $urgencyLevel = $urgencyMap[$validated['priority']] ?? 'routine';
 
+        // Determine delivery hospital: either selected hospital or manual entry
+        $deliveryHospital = null;
+        if (!empty($validated['delivery_hospital_id'])) {
+            $deliveryHospital = Hospital::findOrFail($validated['delivery_hospital_id']);
+            // Validate that the selected hospital is in Khulna
+            if ($deliveryHospital->city !== 'Khulna') {
+                return back()->withErrors(['delivery_hospital_id' => 'Selected hospital must be located in Khulna district.'])->withInput();
+            }
+        }
+
         // Create delivery request
+        $delivery_location_payload = [];
+        if ($deliveryHospital) {
+            $delivery_location_payload = [
+                'hospital_id' => $deliveryHospital->id,
+                'hospital_name' => $deliveryHospital->name,
+                'latitude' => $deliveryHospital->latitude,
+                'longitude' => $deliveryHospital->longitude,
+                'address' => $deliveryHospital->address,
+                'city' => $deliveryHospital->city,
+            ];
+        } else {
+            $delivery_location_payload = [
+                'hospital_id' => null,
+                'hospital_name' => $validated['delivery_hospital_name'] ?? null,
+                'latitude' => $validated['delivery_hospital_latitude'] ?? null,
+                'longitude' => $validated['delivery_hospital_longitude'] ?? null,
+                'address' => $validated['delivery_hospital_address'] ?? null,
+                'city' => $validated['delivery_hospital_city'] ?? null,
+            ];
+        }
+
         $deliveryRequest = DeliveryRequest::create([
             'request_number' => $requestNumber,
             'hospital_id' => $hospital->id,
@@ -183,11 +264,7 @@ class HospitalPortalController extends Controller
             'total_volume_ml' => $totalVolume > 0 ? $totalVolume : null,
             'status' => 'pending',
             'medical_supplies' => json_encode($validated['supplies']),
-            'delivery_location' => json_encode([
-                'latitude' => $hospital->latitude,
-                'longitude' => $hospital->longitude,
-                'address' => $hospital->address,
-            ]),
+            'delivery_location' => json_encode($delivery_location_payload),
             'special_instructions' => $validated['special_instructions'],
             'contact_person' => $validated['contact_person'] ?? $user->name,
             'contact_phone' => $validated['contact_phone'] ?? $user->phone,
@@ -226,6 +303,28 @@ class HospitalPortalController extends Controller
         $deliveries = $query->latest()->paginate(15);
 
         return view('hospital.deliveries.index', compact('deliveries', 'hospital'));
+    }
+
+    /**
+     * Display specific delivery details
+     */
+    public function deliveriesShow(Delivery $delivery)
+    {
+        $user = Auth::user();
+        $hospital = $user->hospital;
+
+        if (!$hospital) {
+            return redirect()->route('home')->with('error', 'You are not associated with any hospital.');
+        }
+
+        // Ensure the delivery belongs to this hospital
+        if ($delivery->deliveryRequest->hospital_id !== $hospital->id) {
+            abort(403, 'Unauthorized access to this delivery.');
+        }
+
+        $delivery->load(['deliveryRequest.hospital', 'drone', 'assignedPilot']);
+
+        return view('hospital.deliveries.show', compact('delivery', 'hospital'));
     }
 
     /**

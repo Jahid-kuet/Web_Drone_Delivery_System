@@ -66,16 +66,14 @@ class OperatorPortalController extends Controller
     {
         $user = Auth::user();
 
-        // Get drones through active assignments
-        $drones = Drone::whereHas('assignments', function($q) use ($user) {
-            $q->whereHas('delivery', function($d) use ($user) {
-                $d->where('assigned_pilot_id', $user->id)
-                  ->whereIn('status', ['pending', 'in_transit']);
-            });
-        })->with(['assignments.delivery'])->get();
+        // Get drones assigned to this operator
+        $drones = Drone::where('assigned_operator_id', $user->id)
+            ->with(['assignedOperator', 'currentDelivery'])
+            ->get();
 
         // Stats
         $stats = [
+            'total_assigned' => $drones->count(),
             'available' => $drones->where('status', 'available')->count(),
             'in_flight' => $drones->where('status', 'in_flight')->count(),
         ];

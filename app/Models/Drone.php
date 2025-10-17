@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Carbon\Carbon;
 
 class Drone extends Model
@@ -18,6 +19,7 @@ class Drone extends Model
         'serial_number',
         'registration_number',
         'status',
+        'assigned_operator_id',
         'type',
         'max_payload_kg',
         'max_range_km',
@@ -87,6 +89,14 @@ class Drone extends Model
     const TYPE_BLOOD_DELIVERY = 'blood_delivery';
     const TYPE_PHARMACEUTICAL = 'pharmaceutical';
     const TYPE_MULTI_PURPOSE = 'multi_purpose';
+
+    /**
+     * Get the operator assigned to this drone
+     */
+    public function assignedOperator()
+    {
+        return $this->belongsTo(User::class, 'assigned_operator_id');
+    }
 
     /**
      * Get all assignments for this drone
