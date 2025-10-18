@@ -15,12 +15,19 @@ use App\Http\Controllers\Api\NotificationController;
 | routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "api" middleware group. Make something great!
 |
+| Rate Limiting Strategy:
+| - Public endpoints: 60 requests per minute (moderate usage)
+| - Authenticated read: 100 requests per minute (higher for dashboards)
+| - Authenticated write: 30 requests per minute (prevent abuse)
+| - Real-time tracking: 120 requests per minute (frequent updates)
+|
 */
 
 // ==================== PUBLIC API ROUTES ====================
 
 // Public Delivery Tracking (no auth required)
-Route::prefix('v1/public')->name('api.public.')->group(function () {
+// Rate limit: 60 requests per minute per IP
+Route::prefix('v1/public')->middleware('throttle:60,1')->name('api.public.')->group(function () {
     
     // Track delivery by tracking number
     Route::get('/track/{trackingNumber}', [DeliveryTrackingController::class, 'track'])
@@ -33,7 +40,9 @@ Route::prefix('v1/public')->name('api.public.')->group(function () {
 
 // ==================== AUTHENTICATED API ROUTES ====================
 
-Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
+// Rate limit: 100 requests per minute for read operations (GET)
+// Rate limit: 30 requests per minute for write operations (POST/PUT/DELETE)
+Route::prefix('v1')->middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
     
     // ==================== USER INFO ====================
     Route::get('/user', function (Request $request) {
@@ -44,7 +53,8 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     })->name('api.user');
     
     // ==================== DELIVERY TRACKING ====================
-    Route::prefix('deliveries')->name('api.deliveries.')->group(function () {
+    // Higher rate limit for real-time tracking: 120 requests per minute
+    Route::prefix('deliveries')->middleware('throttle:120,1')->name('api.deliveries.')->group(function () {
         
         // Get all active deliveries
         Route::get('/active', [DeliveryTrackingController::class, 'activeDeliveries'])
@@ -64,7 +74,8 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     });
     
     // ==================== DRONE MANAGEMENT ====================
-    Route::prefix('drones')->name('api.drones.')->group(function () {
+    // Higher rate limit for real-time updates: 120 requests per minute
+    Route::prefix('drones')->middleware('throttle:120,1')->name('api.drones.')->group(function () {
         
         // Get available drones
         Route::get('/available', [ApiDroneController::class, 'available'])
@@ -108,7 +119,8 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     });
 
     // ==================== DELIVERY CONFIRMATION (OTP & PHOTO) ====================
-    Route::prefix('deliveries')->name('api.deliveries.confirmation.')->group(function () {
+    // Stricter rate limit for OTP and uploads: 30 requests per minute
+    Route::prefix('deliveries')->middleware('throttle:30,1')->name('api.deliveries.confirmation.')->group(function () {
         
         // Generate OTP for delivery
         Route::post('/{deliveryId}/otp/generate', [\App\Http\Controllers\DeliveryConfirmationController::class, 'generateOTP'])
@@ -142,7 +154,10 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::get('/{deliveryId}/confirmation', [\App\Http\Controllers\DeliveryConfirmationController::class, 'getConfirmationDetails'])
             ->name('details');
     });
-    Route::prefix('delivery-confirmation')->name('api.confirmation.')->group(function () {
+    
+    // Additional delivery confirmation routes (for backward compatibility)
+    // Stricter rate limit: 30 requests per minute
+    Route::prefix('delivery-confirmation')->middleware('throttle:30,1')->name('api.confirmation.')->group(function () {
         
         // Generate OTP for delivery
         Route::post('/{deliveryId}/otp/generate', [\App\Http\Controllers\DeliveryConfirmationController::class, 'generateOTP'])
@@ -414,7 +429,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 });
 
 // ==================== API VERSION 2 (Future) ====================
-Route::prefix('v2')->middleware('auth:sanctum')->group(function () {
+Route::prefix('v2')->middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
     // Future API endpoints
     Route::get('/status', function () {
         return response()->json([
@@ -425,10 +440,11 @@ Route::prefix('v2')->middleware('auth:sanctum')->group(function () {
 });
 
 // ==================== HEALTH CHECK ====================
+// Higher rate limit for monitoring: 180 requests per minute
 Route::get('/health', function () {
     return response()->json([
         'status' => 'ok',
         'timestamp' => now()->toIso8601String(),
         'version' => '1.0',
     ]);
-})->name('api.health');
+})->middleware('throttle:180,1')->name('api.health');
