@@ -9,6 +9,7 @@
         <p class="text-gray-600 mb-6">If you have questions about our drone delivery service or need support, please use the form below or email us at <a href="mailto:support@dronedelivery.local" class="text-purple-600">support@dronedelivery.local</a>.</p>
 
         <form action="#" method="POST" class="space-y-4">
+            @csrf
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Name</label>
