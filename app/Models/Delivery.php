@@ -167,21 +167,19 @@ class Delivery extends Model
 
     /**
      * Get tracking records
-     * TODO: Uncomment when delivery_trackings table is created
      */
-    // public function trackingRecords(): HasMany
-    // {
-    //     return $this->hasMany(DeliveryTracking::class)->orderBy('recorded_at', 'desc');
-    // }
+    public function trackingRecords(): HasMany
+    {
+        return $this->hasMany(DeliveryTracking::class)->orderBy('recorded_at', 'desc');
+    }
 
     /**
      * Get latest tracking record
-     * TODO: Uncomment when delivery_trackings table is created
      */
-    // public function latestTracking(): HasOne
-    // {
-    //     return $this->hasOne(DeliveryTracking::class)->latestOfMany('recorded_at');
-    // }
+    public function latestTracking(): HasOne
+    {
+        return $this->hasOne(DeliveryTracking::class)->latestOfMany('recorded_at');
+    }
 
     /**
      * Get delivery confirmation

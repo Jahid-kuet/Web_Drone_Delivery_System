@@ -152,10 +152,9 @@ class DeliveryController extends Controller
             'request.supply',
             'drone',
             'assignedPilot',
-            // TODO: Uncomment when delivery_trackings table is created
-            // 'trackingRecords' => function ($query) {
-            //     $query->latest();
-            // },
+            'trackingRecords' => function ($query) {
+                $query->latest();
+            },
             'confirmation',
         ]);
         

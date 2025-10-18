@@ -151,10 +151,9 @@ class DroneController extends Controller
             'deliveries' => function ($query) {
                 $query->latest()->limit(10);
             },
-            // TODO: Uncomment when delivery_trackings table exists
-            // 'trackingRecords' => function ($query) {
-            //     $query->latest()->limit(20);
-            // },
+            'trackingRecords' => function ($query) {
+                $query->latest()->limit(20);
+            },
         ]);
         
         // Maintenance history not available without audit logs
