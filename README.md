@@ -1,4 +1,4 @@
-# 🚁 Drone Delivery System
+# Drone Delivery System
 
 [![Laravel](https://img.shields.io/badge/Laravel-12.x-red.svg)](https://laravel.com)
 [![PHP](https://img.shields.io/badge/PHP-8.2+-blue.svg)](https://www.php.net)
@@ -6,88 +6,80 @@
 
 A comprehensive web-based drone delivery management system for medical supply delivery in Bangladesh, with a focus on emergency priority handling, real-time GPS tracking, and secure delivery verification.
 
----
+## Table of Contents
 
-## 📋 Table of Contents
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [System Requirements](#system-requirements)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Database Setup](#database-setup)
+- [Running the Application](#running-the-application)
+- [Testing](#testing)
+- [User Roles & Credentials](#user-roles--credentials)
+- [API Documentation](#api-documentation)
+- [Project Structure](#project-structure)
+- [Key Features Details](#key-features-details)
+- [Scheduled Tasks](#scheduled-tasks)
+- [Deployment](#deployment)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [License](#license)
 
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [System Requirements](#-system-requirements)
-- [Installation](#-installation)
-- [Configuration](#-configuration)
-- [Database Setup](#-database-setup)
-- [Running the Application](#-running-the-application)
-- [Testing](#-testing)
-- [User Roles & Credentials](#-user-roles--credentials)
-- [API Documentation](#-api-documentation)
-- [Project Structure](#-project-structure)
-- [Key Features Details](#-key-features-details)
-- [Scheduled Tasks](#-scheduled-tasks)
-- [Deployment](#-deployment)
-- [Troubleshooting](#-troubleshooting)
-- [Contributing](#-contributing)
-- [License](#-license)
-
----
-
-## ✨ Features
+## Features
 
 ### Core Functionality
-- 🏥 **Multi-Role System**: Admin, Hospital Admin, Hospital Staff, Drone Operator
-- 🚨 **Emergency Priority Queue**: Automatic delivery assignment based on urgency
-- 📍 **Real-Time GPS Tracking**: Live drone position monitoring with altitude, speed, and heading
-- 🔐 **OTP Verification**: Secure 6-digit one-time password for delivery confirmation
-- 📸 **Digital Proof of Delivery**: Photo upload and digital signature capture
-- 🔋 **Battery Management**: Automatic battery monitoring and low-battery alerts
-- 🛠️ **Maintenance Scheduling**: Drone maintenance tracking and scheduling
-- 📊 **Comprehensive Dashboard**: Role-based dashboards with real-time statistics
-- 🔔 **Notification System**: Multi-user notification system with read/unread status
-- 📱 **Public Tracking**: Track deliveries via tracking number without login
-- 🇧🇩 **Bangladesh Localization**: Khulna-specific hub system and phone validation
+- Multi-Role System: Admin, Hospital Admin, Hospital Staff, Drone Operator
+- Emergency Priority Queue: Automatic delivery assignment based on urgency
+- Real-Time GPS Tracking: Live drone position monitoring with altitude, speed, and heading
+- OTP Verification: Secure 6-digit one-time password for delivery confirmation
+- Digital Proof of Delivery: Photo upload and digital signature capture
+- Battery Management: Automatic battery monitoring and low-battery alerts
+- Maintenance Scheduling: Drone maintenance tracking and scheduling
+- Comprehensive Dashboard: Role-based dashboards with real-time statistics
+- Notification System: Multi-user notification system with read/unread status
+- Public Tracking: Track deliveries via tracking number without login
+- Bangladesh Localization: Khulna-specific hub system and phone validation
 
 ### Advanced Features
-- ⚡ **Auto-Assignment**: Deliveries automatically assigned every 5 minutes
-- 🎯 **Smart Priority Scoring**: Emergency=100, Urgent=50, Normal=10
-- 🏢 **Hub-Based Operations**: 3 operational hubs in Khulna (Central, Daulatpur, Khalishpur)
-- 📦 **Inventory Management**: Hub-based medical supply inventory tracking
-- 🔒 **Strong Validation**: Password strength, name validation, Bangladesh phone format
-- 📜 **Audit Trail**: Complete tracking of who did what and when
-- 🌐 **RESTful API**: Comprehensive API with 8+ endpoints for mobile integration
+- Auto-Assignment: Deliveries automatically assigned every 5 minutes
+- Smart Priority Scoring: Emergency=100, Urgent=50, Normal=10
+- Hub-Based Operations: 3 operational hubs in Khulna (Central, Daulatpur, Khalishpur)
+- Inventory Management: Hub-based medical supply inventory tracking
+- Strong Validation: Password strength, name validation, Bangladesh phone format
+- Audit Trail: Complete tracking of who did what and when
+- RESTful API: Comprehensive API with 8+ endpoints for mobile integration
 
----
-
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Backend
-- **Framework**: Laravel 12.x
-- **Language**: PHP 8.2+
-- **Database**: SQLite (development) / MySQL (production)
-- **Queue**: Laravel Queue with database driver
-- **Scheduler**: Laravel Task Scheduler
+- Framework: Laravel 12.x
+- Language: PHP 8.2+
+- Database: SQLite (development) / MySQL (production)
+- Queue: Laravel Queue with database driver
+- Scheduler: Laravel Task Scheduler
 
 ### Frontend
-- **CSS Framework**: Tailwind CSS 3.x
-- **JavaScript**: Alpine.js, Vanilla JS
-- **Icons**: Font Awesome 6.x
-- **Charts**: Chart.js
-- **Build Tool**: Vite
+- CSS Framework: Tailwind CSS 3.x
+- JavaScript: Alpine.js, Vanilla JS
+- Icons: Font Awesome 6.x
+- Charts: Chart.js
+- Build Tool: Vite
 
 ### Additional Libraries
-- **Pusher PHP Server**: Real-time broadcasting support
-- **Laravel Tinker**: Interactive REPL
-- **Faker**: Test data generation
+- Pusher PHP Server: Real-time broadcasting support
+- Laravel Tinker: Interactive REPL
+- Faker: Test data generation
 
----
+## System Requirements
 
-## 💻 System Requirements
-
-- **PHP**: 8.2 or higher
-- **Composer**: 2.x
-- **Node.js**: 18.x or higher
-- **NPM**: 9.x or higher
-- **Web Server**: Apache/Nginx (or PHP built-in server for development)
-- **Database**: SQLite (dev) / MySQL 8.0+ (production)
-- **Extensions**: 
+- PHP: 8.2 or higher
+- Composer: 2.x
+- Node.js: 18.x or higher
+- NPM: 9.x or higher
+- Web Server: Apache/Nginx (or PHP built-in server for development)
+- Database: SQLite (dev) / MySQL 8.0+ (production)
+- Extensions:
   - BCMath
   - Ctype
   - Fileinfo
@@ -98,9 +90,7 @@ A comprehensive web-based drone delivery management system for medical supply de
   - Tokenizer
   - XML
 
----
-
-## 📦 Installation
+## Installation
 
 ### 1. Clone the Repository
 ```bash
@@ -136,9 +126,7 @@ npm run dev
 npm run build
 ```
 
----
-
-## ⚙️ Configuration
+## Configuration
 
 ### 1. Edit `.env` File
 
@@ -196,9 +184,7 @@ mkdir storage\logs
 php artisan storage:link
 ```
 
----
-
-## 🗄️ Database Setup
+## Database Setup
 
 ### 1. Create Database File (SQLite)
 ```bash
@@ -230,11 +216,9 @@ php artisan db:seed --class=DatabaseSeeder
 - **delivery_tracking**: Real-time GPS tracking data
 - **hubs**: Operational hubs in Khulna
 - **hub_inventories**: Medical supply inventory per hub
-- **notifications**: User notification system
+- notifications: User notification system
 
----
-
-## 🚀 Running the Application
+## Running the Application
 
 ### Quick Start (Windows)
 ```bash
@@ -269,13 +253,11 @@ php artisan schedule:work
 ```
 
 ### Access the Application
-- **Main URL**: http://127.0.0.1:8000
-- **Login Page**: http://127.0.0.1:8000/login
-- **Public Tracking**: http://127.0.0.1:8000/track
+- Main URL: http://127.0.0.1:8000
+- Login Page: http://127.0.0.1:8000/login
+- Public Tracking: http://127.0.0.1:8000/track
 
----
-
-## 🧪 Testing
+## Testing
 
 ### Quick Test Script
 ```bash
@@ -331,17 +313,15 @@ curl -X POST http://127.0.0.1:8000/api/v1/deliveries/1/photo ^
 curl -X GET http://127.0.0.1:8000/api/v1/public/track/TRK-2025-001
 ```
 
----
-
-## 👥 User Roles & Credentials
+## User Roles & Credentials
 
 ### Default Test Accounts (After Seeding)
 
 | Role | Email | Password | Access Level |
 |------|-------|----------|--------------|
-| **System Admin** | admin@drone.com | password123 | Full system access, user management, all operations |
-| **Hospital Admin** | hospital@drone.com | password123 | Hospital operations, delivery requests, tracking |
-| **Drone Operator** | operator@drone.com | password123 | Drone operations, delivery execution, status updates |
+| System Admin | admin@drone.com | password123 | Full system access, user management, all operations |
+| Hospital Admin | hospital@drone.com | password123 | Hospital operations, delivery requests, tracking |
+| Drone Operator | operator@drone.com | password123 | Drone operations, delivery execution, status updates |
 
 ### Role Permissions
 
@@ -366,9 +346,7 @@ curl -X GET http://127.0.0.1:8000/api/v1/public/track/TRK-2025-001
 - Update GPS positions
 - Complete deliveries with OTP/photo
 
----
-
-## 📚 API Documentation
+## API Documentation
 
 ### Base URL
 ```
@@ -412,11 +390,9 @@ POST   /drones/{id}/battery              # Update battery level
 POST   /drones/{id}/position             # Update GPS position
 ```
 
-**Full API Documentation**: See [API_DOCUMENTATION.md](API_DOCUMENTATION.md)
+Full API Documentation: See [API_DOCUMENTATION.md](API_DOCUMENTATION.md)
 
----
-
-## 📁 Project Structure
+## Project Structure
 
 ```
 Drone_Delivery_System/
@@ -484,21 +460,19 @@ Drone_Delivery_System/
 └── README.md                               # This file
 ```
 
----
-
-## 🎯 Key Features Details
+## Key Features Details
 
 ### 1. Emergency Priority Queue System
 
-**Automatic Assignment Every 5 Minutes**
+Automatic Assignment Every 5 Minutes
 
 The system automatically assigns pending deliveries to available drones based on:
-- **Priority Score**: Emergency=100, Urgent=50, Normal=10
-- **Supply Type Weight**: Blood/Plasma gets 2.0x multiplier
-- **Wait Time**: Older requests get priority boost
-- **Drone Selection**: Best battery level, payload capacity, closest distance
+- Priority Score: Emergency=100, Urgent=50, Normal=10
+- Supply Type Weight: Blood/Plasma gets 2.0x multiplier
+- Wait Time: Older requests get priority boost
+- Drone Selection: Best battery level, payload capacity, closest distance
 
-**Emergency Alerts**: If an emergency delivery waits >15 minutes, alerts are logged.
+Emergency Alerts: If an emergency delivery waits >15 minutes, alerts are logged.
 
 ```bash
 # Manual trigger
@@ -510,16 +484,16 @@ php artisan deliveries:auto-assign --check-alerts
 
 ### 2. OTP Verification System
 
-**Secure 6-digit one-time passwords for delivery confirmation**
+Secure 6-digit one-time passwords for delivery confirmation
 
-- **Generation**: Random 6-digit code
-- **Expiration**: 10 minutes
-- **Resend**: Can request new OTP if expired
-- **Audit**: Tracks who verified and when
+- Generation: Random 6-digit code
+- Expiration: 10 minutes
+- Resend: Can request new OTP if expired
+- Audit: Tracks who verified and when
 
 ### 3. Digital Proof of Delivery
 
-**Photo + Signature + Recipient Info**
+Photo + Signature + Recipient Info
 
 - Photo upload (JPEG/PNG, max 5MB)
 - Digital signature capture (base64)
@@ -529,7 +503,7 @@ php artisan deliveries:auto-assign --check-alerts
 
 ### 4. Real-Time GPS Tracking
 
-**Comprehensive flight data tracking**
+Comprehensive flight data tracking
 
 - Latitude/Longitude (8-11 decimal precision)
 - Altitude, speed, heading
@@ -541,9 +515,9 @@ php artisan deliveries:auto-assign --check-alerts
 
 ### 5. Hub-Based Operations
 
-**3 Operational Hubs in Khulna**
+3 Operational Hubs in Khulna
 
-1. **Khulna Central Hub** (KHN-CENTRAL)
+1. Khulna Central Hub (KHN-CENTRAL)
    - City: Khulna
    - Location: 22.8456, 89.5403
    
@@ -557,9 +531,7 @@ php artisan deliveries:auto-assign --check-alerts
 
 Each hub maintains medical supply inventory and serves specific zones.
 
----
-
-## ⏰ Scheduled Tasks
+## Scheduled Tasks
 
 The system runs automatic tasks via Laravel Scheduler:
 
@@ -589,9 +561,7 @@ Add this to your crontab:
 php artisan schedule:work
 ```
 
----
-
-## 🚢 Deployment
+## Deployment
 
 ### Production Checklist
 
@@ -711,9 +681,7 @@ certbot --nginx -d yourproductiondomain.com
 * * * * * cd /var/www/drone-delivery && php artisan schedule:run >> /dev/null 2>&1
 ```
 
----
-
-## 🔧 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -775,20 +743,16 @@ type storage\logs\laravel.log
 tail -f storage/logs/laravel.log
 ```
 
----
+## Additional Documentation
 
-## 📖 Additional Documentation
+- [API_DOCUMENTATION.md](API_DOCUMENTATION.md): Complete API reference
+- [TESTING_NEW_FEATURES.md](TESTING_NEW_FEATURES.md): Comprehensive testing guide
+- [NEW_FEATURES_QUICK_START.md](NEW_FEATURES_QUICK_START.md): Quick start guide
+- [HOW_TO_LOGIN_AND_TEST.md](HOW_TO_LOGIN_AND_TEST.md): Login credentials and testing
+- [OPTION_A_COMPLETE.md](OPTION_A_COMPLETE.md): Implementation details
+- [IMPLEMENTATION_SUMMARY_OCT_16.md](IMPLEMENTATION_SUMMARY_OCT_16.md): Recent changes
 
-- **[API_DOCUMENTATION.md](API_DOCUMENTATION.md)**: Complete API reference
-- **[TESTING_NEW_FEATURES.md](TESTING_NEW_FEATURES.md)**: Comprehensive testing guide
-- **[NEW_FEATURES_QUICK_START.md](NEW_FEATURES_QUICK_START.md)**: Quick start guide
-- **[HOW_TO_LOGIN_AND_TEST.md](HOW_TO_LOGIN_AND_TEST.md)**: Login credentials and testing
-- **[OPTION_A_COMPLETE.md](OPTION_A_COMPLETE.md)**: Implementation details
-- **[IMPLEMENTATION_SUMMARY_OCT_16.md](IMPLEMENTATION_SUMMARY_OCT_16.md)**: Recent changes
-
----
-
-## 🤝 Contributing
+## Contributing
 
 ### Development Workflow
 
@@ -811,23 +775,17 @@ tail -f storage/logs/laravel.log
 ./vendor/bin/pint
 ```
 
----
-
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
+## Author
 
-## 👨‍💻 Author
-
-**Jahid-kuet**
+Jahid-kuet
 - GitHub: [@Jahid-kuet](https://github.com/Jahid-kuet)
 - Repository: [Web_Drone_Delivery_System](https://github.com/Jahid-kuet/Web_Drone_Delivery_System)
 
----
-
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Laravel Framework
 - Tailwind CSS
@@ -836,57 +794,45 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Chart.js
 - All contributors and testers
 
----
-
-## 📞 Support
+## Support
 
 For issues, questions, or suggestions:
 1. Check the [documentation files](.)
-2. Review [troubleshooting section](#-troubleshooting)
+2. Review [troubleshooting section](#troubleshooting)
 3. Open an issue on GitHub
 4. Check existing issues for solutions
 
----
-
-## 🗺️ Roadmap
+## Roadmap
 
 ### Phase 2 (Planned)
-- [ ] Real-time WebSocket updates
-- [ ] Live map view with drone positions
-- [ ] SMS integration for OTP delivery
-- [ ] Email notifications
-- [ ] QR code scanning for deliveries
-- [ ] Multi-language support (Bengali + English)
+- Real-time WebSocket updates
+- Live map view with drone positions
+- SMS integration for OTP delivery
+- Email notifications
+- QR code scanning for deliveries
+- Multi-language support (Bengali + English)
 
 ### Phase 3 (Future)
-- [ ] Progressive Web App (PWA)
-- [ ] Mobile app (React Native/Flutter)
-- [ ] Push notifications
-- [ ] Voice commands
-- [ ] AI-powered route optimization
-- [ ] Predictive maintenance
-- [ ] AR delivery preview
+- Progressive Web App (PWA)
+- Mobile app (React Native/Flutter)
+- Push notifications
+- Voice commands
+- AI-powered route optimization
+- Predictive maintenance
+- AR delivery preview
+
+## Project Statistics
+
+- Total Files Created: 20+
+- Total Lines of Code: 11,500+
+- Production Code: 3,000+ lines
+- Documentation: 8,500+ lines
+- API Endpoints: 8 delivery confirmation + 15+ management
+- Database Tables: 12 main tables
+- Roles: 4 (Admin, Hospital Admin, Hospital Staff, Operator)
+- Test Accounts: 3 default accounts
+- Hubs: 3 operational in Khulna
 
 ---
 
-## 📊 Project Statistics
-
-- **Total Files Created**: 20+
-- **Total Lines of Code**: 11,500+
-- **Production Code**: 3,000+ lines
-- **Documentation**: 8,500+ lines
-- **API Endpoints**: 8 delivery confirmation + 15+ management
-- **Database Tables**: 12 main tables
-- **Roles**: 4 (Admin, Hospital Admin, Hospital Staff, Operator)
-- **Test Accounts**: 3 default accounts
-- **Hubs**: 3 operational in Khulna
-
----
-
-<div align="center">
-
-**Built with ❤️ for better healthcare delivery in Bangladesh**
-
-⭐ Star this repository if you find it helpful!
-
-</div>
+Built with care for better healthcare delivery in Bangladesh
