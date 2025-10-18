@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Delivery;
+use App\Services\SmsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -10,6 +11,13 @@ use Illuminate\Support\Str;
 
 class DeliveryConfirmationController extends Controller
 {
+    protected SmsService $smsService;
+
+    public function __construct(SmsService $smsService)
+    {
+        $this->smsService = $smsService;
+    }
+
     /**
      * Generate OTP for delivery
      */
@@ -28,16 +36,32 @@ class DeliveryConfirmationController extends Controller
         try {
             $otp = $delivery->generateOTP();
 
-            // TODO: Send OTP via SMS to recipient
-            // $this->sendOTPSMS($delivery->recipient_phone, $otp);
+            // Send OTP via SMS to recipient
+            $smsResult = $this->smsService->sendOTP(
+                $delivery->delivery_hospital_phone ?? $delivery->hospital->phone ?? '',
+                $otp,
+                [
+                    'tracking_number' => $delivery->tracking_number,
+                    'hospital_name' => $delivery->hospital->name ?? 'N/A',
+                ]
+            );
 
-            return response()->json([
+            // Determine response based on SMS send status
+            $responseData = [
                 'success' => true,
                 'message' => 'OTP generated successfully',
-                'otp' => $otp, // In production, don't return OTP in response - only send via SMS
+                'sms_sent' => $smsResult['success'],
                 'expires_at' => $delivery->otp_expires_at,
                 'expires_in_minutes' => now()->diffInMinutes($delivery->otp_expires_at),
-            ]);
+            ];
+
+            // Only include OTP in response if SMS failed (fallback) or in development
+            if (!$smsResult['success'] || !config('sms.enabled', false)) {
+                $responseData['otp'] = $otp;
+                $responseData['note'] = 'SMS delivery failed. OTP included in response for fallback.';
+            }
+
+            return response()->json($responseData);
 
         } catch (\Exception $e) {
             return response()->json([
@@ -105,15 +129,30 @@ class DeliveryConfirmationController extends Controller
         try {
             $otp = $delivery->resendOTP();
 
-            // TODO: Send OTP via SMS
-            // $this->sendOTPSMS($delivery->recipient_phone, $otp);
+            // Send OTP via SMS
+            $smsResult = $this->smsService->sendOTP(
+                $delivery->delivery_hospital_phone ?? $delivery->hospital->phone ?? '',
+                $otp,
+                [
+                    'tracking_number' => $delivery->tracking_number,
+                    'hospital_name' => $delivery->hospital->name ?? 'N/A',
+                ]
+            );
 
-            return response()->json([
+            $responseData = [
                 'success' => true,
                 'message' => 'OTP resent successfully',
-                'otp' => $otp, // Remove in production
+                'sms_sent' => $smsResult['success'],
                 'expires_at' => $delivery->otp_expires_at,
-            ]);
+            ];
+
+            // Fallback: Include OTP if SMS failed
+            if (!$smsResult['success'] || !config('sms.enabled', false)) {
+                $responseData['otp'] = $otp;
+                $responseData['note'] = 'SMS delivery failed. OTP included in response for fallback.';
+            }
+
+            return response()->json($responseData);
 
         } catch (\Exception $e) {
             return response()->json([

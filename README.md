@@ -32,7 +32,7 @@ A comprehensive web-based drone delivery management system for medical supply de
 - Multi-Role System: Admin, Hospital Admin, Hospital Staff, Drone Operator
 - Emergency Priority Queue: Automatic delivery assignment based on urgency
 - Real-Time GPS Tracking: Live drone position monitoring with altitude, speed, and heading
-- OTP Verification: Secure 6-digit one-time password for delivery confirmation
+- SMS OTP Verification: Secure 6-digit OTP delivery via SMS for verification
 - Digital Proof of Delivery: Photo upload and digital signature capture
 - Battery Management: Automatic battery monitoring and low-battery alerts
 - Maintenance Scheduling: Drone maintenance tracking and scheduling
@@ -42,6 +42,7 @@ A comprehensive web-based drone delivery management system for medical supply de
 - Bangladesh Localization: Khulna-specific hub system and phone validation
 
 ### Advanced Features
+- SMS Integration: OTP and status notifications via SMS (SSL Wireless, BulkSMS BD, etc.)
 - Auto-Assignment: Deliveries automatically assigned every 5 minutes
 - Smart Priority Scoring: Emergency=100, Urgent=50, Normal=10
 - Hub-Based Operations: 3 operational hubs in Khulna (Central, Daulatpur, Khalishpur)
@@ -49,6 +50,7 @@ A comprehensive web-based drone delivery management system for medical supply de
 - Strong Validation: Password strength, name validation, Bangladesh phone format
 - Audit Trail: Complete tracking of who did what and when
 - RESTful API: Comprehensive API with 8+ endpoints for mobile integration
+- API Rate Limiting: Multi-tier rate limiting (60-180 req/min based on endpoint)
 
 ## Tech Stack
 
