@@ -4,15 +4,18 @@ namespace App\Observers;
 
 use App\Models\Delivery;
 use App\Services\SmsService;
+use App\Services\CacheService;
 use Illuminate\Support\Facades\Log;
 
 class DeliveryObserver
 {
     protected SmsService $smsService;
+    protected CacheService $cacheService;
 
-    public function __construct(SmsService $smsService)
+    public function __construct(SmsService $smsService, CacheService $cacheService)
     {
         $this->smsService = $smsService;
+        $this->cacheService = $cacheService;
     }
 
     /**
@@ -21,10 +24,31 @@ class DeliveryObserver
      */
     public function updated(Delivery $delivery): void
     {
+        // Invalidate cache
+        $this->cacheService->invalidateDeliveryCache($delivery);
+
         // Check if status has changed
         if ($delivery->isDirty('status') && config('sms.notifications.delivery_status_updates', true)) {
             $this->sendStatusNotification($delivery);
         }
+    }
+
+    /**
+     * Handle the Delivery "created" event.
+     */
+    public function created(Delivery $delivery): void
+    {
+        // Invalidate cache when new delivery is created
+        $this->cacheService->invalidateDeliveryCache($delivery);
+    }
+
+    /**
+     * Handle the Delivery "deleted" event.
+     */
+    public function deleted(Delivery $delivery): void
+    {
+        // Invalidate cache when delivery is deleted
+        $this->cacheService->invalidateDeliveryCache($delivery);
     }
 
     /**
