@@ -439,6 +439,23 @@ Route::prefix('v2')->middleware(['auth:sanctum', 'throttle:100,1'])->group(funct
     });
 });
 
+// ==================== SMS MANAGEMENT API ====================
+// Admin only - for SMS testing and monitoring
+Route::prefix('v1/sms')->middleware(['auth:sanctum', 'throttle:30,1'])->name('api.sms.')->group(function () {
+    
+    // Get SMS service status
+    Route::get('/status', [\App\Http\Controllers\Api\SmsApiController::class, 'status'])
+        ->name('status');
+    
+    // Test SMS sending (admin only)
+    Route::post('/test', [\App\Http\Controllers\Api\SmsApiController::class, 'test'])
+        ->name('test');
+    
+    // Send custom SMS (admin only)
+    Route::post('/send', [\App\Http\Controllers\Api\SmsApiController::class, 'send'])
+        ->name('send');
+});
+
 // ==================== HEALTH CHECK ====================
 // Higher rate limit for monitoring: 180 requests per minute
 Route::get('/health', function () {

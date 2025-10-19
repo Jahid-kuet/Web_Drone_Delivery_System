@@ -51,6 +51,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/reports/drone', [\App\Http\Controllers\Admin\ReportsController::class, 'droneReport'])->name('reports.drone');
         Route::get('/reports/hospital', [\App\Http\Controllers\Admin\ReportsController::class, 'hospitalReport'])->name('reports.hospital');
         
+        // ==================== SMS MANAGEMENT ====================
+        Route::prefix('sms')->name('sms.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\SmsManagementController::class, 'index'])->name('index');
+            Route::post('/test', [\App\Http\Controllers\Admin\SmsManagementController::class, 'test'])->name('test');
+            Route::post('/send-bulk', [\App\Http\Controllers\Admin\SmsManagementController::class, 'sendBulk'])->name('send-bulk');
+            Route::get('/status', [\App\Http\Controllers\Admin\SmsManagementController::class, 'status'])->name('status');
+            Route::get('/configuration', [\App\Http\Controllers\Admin\SmsManagementController::class, 'configuration'])->name('configuration');
+        });
+        
         // ==================== NOTIFICATIONS ====================
         Route::prefix('notifications')->name('notifications.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\NotificationController::class, 'index'])->name('index');
