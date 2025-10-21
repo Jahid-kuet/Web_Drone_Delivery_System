@@ -607,21 +607,21 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        $this->command->info('✅ Database seeded successfully with comprehensive test data!');
+        $this->command->info('[OK] Database seeded successfully with comprehensive test data!');
         $this->command->info('');
-        $this->command->info('📧 Default Users:');
+        $this->command->info('[USERS] Default Users:');
         $this->command->info('   Admin: admin@drone.com / password123');
         $this->command->info('   Operator: operator@drone.com / password123');
         $this->command->info('   Hospital: hospital@drone.com / password123');
         $this->command->info('');
-        $this->command->info('📊 Test Data Created:');
+        $this->command->info('[DATA] Test Data Created:');
         $this->command->info('   • 8 Medical Supplies');
         $this->command->info('   • 4 Drones (various statuses)');
         $this->command->info('   • 3 Hospitals (Bangladesh locations)');
         $this->command->info('   • 2 Delivery Requests');
         $this->command->info('   • 2 Active Deliveries (in_transit, completed)');
         $this->command->info('');
-        $this->command->info('🚁 Delivery Status:');
+        $this->command->info('[DRONE] Delivery Status:');
         $this->command->info('   • DEL-' . date('Ymd') . '-001: In Transit (Drone Alpha)');
         $this->command->info('   • DEL-' . date('Ymd') . '-002: Completed (Drone Beta)');
     }

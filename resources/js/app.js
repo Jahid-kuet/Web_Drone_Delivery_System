@@ -17,7 +17,7 @@ import { initNotifications, showToast } from './modules/notifications';
  * =========================================
  */
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚁 Drone Delivery System - Frontend Initialized');
+    console.log('[DRONE] Drone Delivery System - Frontend Initialized');
 
     // Initialize core features
     initNotifications();

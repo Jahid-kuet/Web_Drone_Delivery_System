@@ -177,7 +177,7 @@
             {{-- Drone Delivery Settings --}}
             <div class="bg-green-50 border border-green-200 p-4 rounded-lg">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4">
-                    <i class="fas fa-helicopter text-green-600 mr-2"></i>Drone Delivery Settings
+                    <i class="fas fa-drone text-green-600 mr-2"></i>Drone Delivery Settings
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>

@@ -45,22 +45,22 @@ class SmsStatus extends Command
                 [
                     'SMS Enabled',
                     config('sms.enabled') ? 'Yes' : 'No',
-                    config('sms.enabled') ? '✅' : '⚠️'
+                    config('sms.enabled') ? '[OK]' : '[WARNING]'
                 ],
                 [
                     'Default Gateway',
                     config('sms.default_gateway'),
-                    $status['gateway'] === 'log' ? '⚠️  (Development Mode)' : '✅'
+                    $status['gateway'] === 'log' ? '[WARNING] (Development Mode)' : '[OK]'
                 ],
                 [
                     'Gateway Configured',
                     $status['configured'] ? 'Yes' : 'No',
-                    $status['configured'] ? '✅' : '❌'
+                    $status['configured'] ? '[OK]' : '[NO]'
                 ],
                 [
                     'Has Credentials',
                     $status['has_credentials'] ? 'Yes' : 'No',
-                    $status['has_credentials'] ? '✅' : '❌'
+                    $status['has_credentials'] ? '[OK]' : '[NO]'
                 ],
             ]
         );
@@ -88,11 +88,11 @@ class SmsStatus extends Command
             [
                 [
                     'Delivery Status Updates',
-                    config('sms.notifications.delivery_status_updates') ? '✅ Yes' : '❌ No'
+                    config('sms.notifications.delivery_status_updates') ? '[OK] Yes' : '[NO] No'
                 ],
                 [
                     'OTP Generation',
-                    config('sms.notifications.otp_generation') ? '✅ Yes' : '❌ No'
+                    config('sms.notifications.otp_generation') ? '[OK] Yes' : '[NO] No'
                 ],
             ]
         );
@@ -110,8 +110,8 @@ class SmsStatus extends Command
             
             $gatewayInfo[] = [
                 $name,
-                $isCurrent ? '✅ Current' : '-',
-                $hasCredentials ? '✅ Configured' : '❌ Not Configured',
+                $isCurrent ? '[OK] Current' : '-',
+                $hasCredentials ? '[OK] Configured' : '[NO] Not Configured',
             ];
         }
         
@@ -137,11 +137,11 @@ class SmsStatus extends Command
         }
         
         if (config('app.env') === 'production' && !config('sms.enabled')) {
-            $recommendations[] = '🚨 PRODUCTION environment with SMS DISABLED! Enable SMS for production use.';
+            $recommendations[] = '[ALERT] PRODUCTION environment with SMS DISABLED! Enable SMS for production use.';
         }
         
         if (empty($recommendations)) {
-            $this->info('✅ All systems operational!');
+            $this->info('[OK] All systems operational!');
         } else {
             foreach ($recommendations as $recommendation) {
                 $this->line($recommendation);

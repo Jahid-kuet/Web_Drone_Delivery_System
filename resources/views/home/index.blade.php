@@ -428,9 +428,9 @@
                             <i class="fas fa-map-marker-alt mr-2"></i>Track Delivery
                         </a>
                         {{-- Video Button --}}
-                        <button onclick="openVideoModal()" class="btn-modern px-8 py-4 glass-effect hover:bg-white/30 text-white font-bold rounded-xl transition-all shadow-xl border-2 border-white/50 text-center">
+                        <a href="#demo" class="btn-modern px-8 py-4 glass-effect hover:bg-white/30 text-white font-bold rounded-xl transition-all shadow-xl border-2 border-white/50 text-center">
                             <i class="fas fa-play-circle mr-2"></i>Watch Demo
-                        </button>
+                        </a>
                     </div>
                     
                     <!-- Trust Badges -->
@@ -520,6 +520,139 @@
         }
     </style>
 
+    <!-- Watch Demo Video Section -->
+    <section id="demo" class="py-24 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 relative overflow-hidden">
+        <!-- Background Decoration -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-full blur-3xl"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <!-- Section Header -->
+            <div class="text-center mb-16 fade-in-up">
+                <div class="inline-block px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-bold mb-4">
+                    <i class="fas fa-play-circle mr-2"></i>WATCH DEMO
+                </div>
+                <h2 class="text-4xl md:text-5xl font-black text-gray-900 mb-4">
+                    See Our System in Action
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Experience how our drone delivery system revolutionizes medical supply logistics with speed, precision, and reliability.
+                </p>
+            </div>
+
+            <!-- Video Container -->
+            <div class="max-w-5xl mx-auto">
+                <div class="relative group">
+                    <!-- Video Player with Modern Styling -->
+                    <div class="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-black">
+                        <!-- Video Element -->
+                        <video 
+                            id="demoVideo" 
+                            class="w-full aspect-video object-cover"
+                            controls
+                            poster="/storage/demo/thumbnail.jpg"
+                        >
+                            <source src="/storage/demo/drone-delivery-demo.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+
+                        <!-- Custom Play Overlay (shows before video plays) -->
+                        <div id="videoOverlay" class="absolute inset-0 bg-gradient-to-br from-purple-900/80 to-blue-900/80 flex items-center justify-center cursor-pointer transition-opacity duration-300 hover:bg-gradient-to-br hover:from-purple-900/90 hover:to-blue-900/90">
+                            <div class="text-center">
+                                <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center mb-6 mx-auto shadow-2xl transform group-hover:scale-110 transition-transform duration-300">
+                                    <i class="fas fa-play text-4xl text-purple-600 ml-1"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-white mb-2">Watch Demo Video</h3>
+                                <p class="text-gray-200">See how we deliver medical supplies in minutes</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Decorative Elements -->
+                    <div class="absolute -top-4 -left-4 w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full blur-2xl opacity-50 group-hover:opacity-75 transition-opacity"></div>
+                    <div class="absolute -bottom-4 -right-4 w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full blur-2xl opacity-50 group-hover:opacity-75 transition-opacity"></div>
+                </div>
+
+                <!-- Video Features Grid -->
+                <div class="grid md:grid-cols-3 gap-6 mt-12">
+                    <!-- Feature 1 -->
+                    <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
+                        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-4">
+                            <i class="fas fa-stopwatch text-xl text-white"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-900 mb-2">Lightning Fast</h4>
+                        <p class="text-gray-600 text-sm">Watch deliveries complete in under 30 minutes</p>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-4">
+                            <i class="fas fa-route text-xl text-white"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-900 mb-2">Real-Time Tracking</h4>
+                        <p class="text-gray-600 text-sm">Monitor every delivery from takeoff to landing</p>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
+                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mb-4">
+                            <i class="fas fa-shield-check text-xl text-white"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-900 mb-2">100% Secure</h4>
+                        <p class="text-gray-600 text-sm">Temperature-controlled and monitored delivery</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Video player interaction
+        document.addEventListener('DOMContentLoaded', function() {
+            const video = document.getElementById('demoVideo');
+            const overlay = document.getElementById('videoOverlay');
+
+            if (overlay && video) {
+                // Hide overlay when clicking on it
+                overlay.addEventListener('click', function() {
+                    overlay.style.opacity = '0';
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                    }, 300);
+                    video.play();
+                });
+
+                // Show overlay when video ends
+                video.addEventListener('ended', function() {
+                    overlay.style.display = 'flex';
+                    setTimeout(() => {
+                        overlay.style.opacity = '1';
+                    }, 10);
+                });
+
+                // Hide overlay when video starts playing
+                video.addEventListener('play', function() {
+                    overlay.style.opacity = '0';
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                    }, 300);
+                });
+
+                // Show overlay when video is paused
+                video.addEventListener('pause', function() {
+                    if (video.currentTime < video.duration - 0.1) {
+                        overlay.style.display = 'flex';
+                        setTimeout(() => {
+                            overlay.style.opacity = '1';
+                        }, 10);
+                    }
+                });
+            }
+        });
+    </script>
+
     <!-- Stats Section -->
     <section class="py-20 bg-gradient-to-br from-gray-50 via-cyan-50 to-teal-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -527,7 +660,7 @@
                 <!-- Total Drones -->
                 <div class="stat-card glass-effect bg-white/80 backdrop-blur-sm rounded-2xl p-6 text-center shadow-xl hover:shadow-2xl fade-in-up delay-100">
                     <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl mb-4 shadow-lg">
-                        <i class="fas fa-helicopter text-3xl text-white"></i>
+                        <i class="fas fa-drone text-3xl text-white"></i>
                     </div>
                     <div class="font-black text-4xl text-gray-800 mb-2 number-animate">{{ $stats['total_drones'] }}</div>
                     <div class="text-sm font-semibold text-gray-600">Total Drones</div>

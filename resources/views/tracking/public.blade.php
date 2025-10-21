@@ -26,7 +26,7 @@
         <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="bg-white rounded-lg shadow-sm p-6 text-center">
                 <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-helicopter text-blue-600 text-2xl"></i>
+                    <i class="fas fa-drone text-blue-600 text-2xl"></i>
                 </div>
                 <h3 class="text-lg font-semibold text-gray-900 mb-2">Fast Delivery</h3>
                 <p class="text-gray-600 text-sm">Medical supplies delivered by drone in minutes</p>

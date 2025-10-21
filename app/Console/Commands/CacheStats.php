@@ -82,7 +82,7 @@ class CacheStats extends Command
             $this->line('   - Memcached');
             $this->newLine();
         } else {
-            $this->info('✅ Using ' . strtoupper($driver) . ' cache driver (good for production)');
+            $this->info('[OK] Using ' . strtoupper($driver) . ' cache driver (good for production)');
             $this->newLine();
         }
 

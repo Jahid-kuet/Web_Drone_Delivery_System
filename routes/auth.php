@@ -66,17 +66,25 @@ Route::middleware('guest')->group(function () {
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
-        // Create user
+        // Create user with pending approval status
         $user = \App\Models\User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
+            'status' => 'pending_approval',
         ]);
+
+        // Assign default role (Hospital Staff)
+        $hospitalStaffRole = \App\Models\Role::where('slug', 'hospital_staff')->first();
+        if ($hospitalStaffRole) {
+            $user->roles()->attach($hospitalStaffRole->id);
+        }
 
         // Log the user in
         Auth::login($user);
 
-        return redirect('/admin/dashboard');
+        // Redirect to home with pending approval message (since user has no hospital assigned yet)
+        return redirect()->route('home')->with('info', 'Registration successful! Your account is pending approval. An administrator will review and activate your account shortly.');
     })->name('register.post');
     
     // Password Reset Routes

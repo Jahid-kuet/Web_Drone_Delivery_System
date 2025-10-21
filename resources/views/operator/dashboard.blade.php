@@ -3,14 +3,14 @@
 @section('title', 'Operator Dashboard')
 
 @section('breadcrumb')
-    <i class="fas fa-helicopter mr-2"></i> Operator Dashboard
+    <i class="fas fa-drone mr-2"></i> Operator Dashboard
 @endsection
 
 @section('content')
 <div class="space-y-6">
     {{-- Welcome header --}}
     <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg shadow-lg p-6 text-white">
-        <h1 class="text-3xl font-bold mb-2">Welcome, {{ Auth::user()->name }}! 🚁</h1>
+        <h1 class="text-3xl font-bold mb-2">Welcome, {{ Auth::user()->name }}!</h1>
         <p class="text-indigo-100">Drone Operator - Manage your flight assignments and deliveries</p>
     </div>
 
@@ -37,7 +37,7 @@
                     <p class="text-sm text-gray-600 mb-1">In Flight</p>
                     <h3 class="text-3xl font-bold text-gray-900">{{ $stats['in_flight'] }}</h3>
                     <p class="text-xs text-green-600 mt-2">
-                        <i class="fas fa-helicopter"></i> Active now
+                        <i class="fas fa-drone"></i> Active now
                     </p>
                 </div>
                 <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">

@@ -446,7 +446,7 @@
          */
         
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚁 Drone Delivery System - Ready!');
+            console.log('[DRONE] Drone Delivery System - Ready!');
             
             // Initialize features
             initDeleteConfirmation();

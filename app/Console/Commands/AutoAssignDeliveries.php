@@ -26,14 +26,14 @@ class AutoAssignDeliveries extends Command
      */
     public function handle()
     {
-        $this->info('🚁 Starting automatic delivery assignment...');
+        $this->info('[DRONE] Starting automatic delivery assignment...');
         $this->newLine();
 
         // Check for emergency alerts
         $alerts = DeliveryPriorityQueue::checkEmergencyAlerts();
         
         if (!empty($alerts)) {
-            $this->error('⚠️  EMERGENCY ALERTS:');
+            $this->error('[WARNING] EMERGENCY ALERTS:');
             foreach ($alerts as $alert) {
                 $this->error("  • {$alert['message']}");
             }
@@ -47,7 +47,7 @@ class AutoAssignDeliveries extends Command
 
         // Show current queue status
         $status = DeliveryPriorityQueue::getQueueStatus();
-        $this->info("📊 Queue Status:");
+        $this->info("[STATS] Queue Status:");
         $this->line("  • Total Pending: {$status['total_pending']}");
         $this->line("  • Emergency: {$status['by_priority']['emergency']}");
         $this->line("  • Critical: {$status['by_priority']['critical']}");
@@ -60,12 +60,12 @@ class AutoAssignDeliveries extends Command
 
         // Perform auto-assignment
         if ($status['total_pending'] > 0) {
-            $this->info('🔄 Processing assignments...');
+            $this->info('[PROCESSING] Processing assignments...');
             
             $results = DeliveryPriorityQueue::autoAssignDeliveries();
             
             $this->newLine();
-            $this->info("✅ Assignment Results:");
+            $this->info("[OK] Assignment Results:");
             $this->line("  • Assigned: {$results['assigned']}");
             $this->line("  • Failed: {$results['failed']}");
             $this->line("  • Skipped: {$results['skipped']}");
@@ -107,11 +107,11 @@ class AutoAssignDeliveries extends Command
             }
             
         } else {
-            $this->info('✅ No pending deliveries to assign');
+            $this->info('[OK] No pending deliveries to assign');
         }
 
         $this->newLine();
-        $this->info('🎯 Auto-assignment completed!');
+        $this->info('[DONE] Auto-assignment completed!');
 
         return 0;
     }

@@ -6,7 +6,7 @@
  */
 
 export function initDeliveries() {
-    console.log('📦 Deliveries module initialized');
+    console.log('[DELIVERIES] Deliveries module initialized');
     
     // Initialize delivery assignment
     initDeliveryAssignment();

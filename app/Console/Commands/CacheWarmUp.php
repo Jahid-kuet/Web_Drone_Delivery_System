@@ -36,12 +36,12 @@ class CacheWarmUp extends Command
         $result = $this->cacheService->warmUp();
 
         if ($result['success']) {
-            $this->info('✅ Cache warmed up successfully!');
+            $this->info('[OK] Cache warmed up successfully!');
             $this->newLine();
             
             $this->table(
                 ['Cache Key', 'Status'],
-                array_map(fn($key) => [$key, '✅ Cached'], $result['warmed'])
+                array_map(fn($key) => [$key, '[OK] Cached'], $result['warmed'])
             );
 
             $this->newLine();

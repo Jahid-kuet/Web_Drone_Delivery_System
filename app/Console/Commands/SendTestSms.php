@@ -41,10 +41,10 @@ class SendTestSms extends Command
         $this->table(
             ['Setting', 'Value'],
             [
-                ['Enabled', $status['enabled'] ? '✅ Yes' : '❌ No'],
+                ['Enabled', $status['enabled'] ? '[OK] Yes' : '[NO] No'],
                 ['Gateway', $status['gateway']],
-                ['Configured', $status['configured'] ? '✅ Yes' : '❌ No'],
-                ['Has Credentials', $status['has_credentials'] ? '✅ Yes' : '❌ No'],
+                ['Configured', $status['configured'] ? '[OK] Yes' : '[NO] No'],
+                ['Has Credentials', $status['has_credentials'] ? '[OK] Yes' : '[NO] No'],
             ]
         );
 
@@ -75,11 +75,11 @@ class SendTestSms extends Command
 
             if ($result['success']) {
                 $this->newLine();
-                $this->info('✅ SMS sent successfully!');
+                $this->info('[OK] SMS sent successfully!');
                 $this->line('Message ID: ' . $result['message_id']);
                 
                 if (!config('sms.enabled')) {
-                    $this->warn('⚠️  SMS service is DISABLED. Check storage/logs/laravel.log for the message.');
+                    $this->warn('[WARNING] SMS service is DISABLED. Check storage/logs/laravel.log for the message.');
                 }
                 
                 return Command::SUCCESS;

@@ -33,7 +33,7 @@
                 @endif
                 @if($deliveryRequest->status == 'approved')
                 <a href="{{ route('admin.deliveries.create', ['request_id' => $deliveryRequest->id]) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
-                    <i class="fas fa-helicopter mr-2"></i>Create Delivery
+                    <i class="fas fa-drone mr-2"></i>Create Delivery
                 </a>
                 @endif
                 <a href="{{ route('admin.delivery-requests.edit', $deliveryRequest) }}" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg">

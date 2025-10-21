@@ -11,7 +11,7 @@
     <div class="max-w-2xl w-full text-center">
         <div class="mb-8 relative">
             <div class="inline-block animate-bounce">
-                <i class="fas fa-helicopter text-9xl text-indigo-600"></i>
+                <i class="fas fa-drone text-9xl text-indigo-600"></i>
             </div>
         </div>
 

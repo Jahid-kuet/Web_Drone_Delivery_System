@@ -179,7 +179,7 @@
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div class="flex items-center mb-4">
                 <div class="bg-green-100 p-3 rounded-lg">
-                    <i class="fas fa-helicopter text-green-600 text-2xl"></i>
+                    <i class="fas fa-drone text-green-600 text-2xl"></i>
                 </div>
                 <h3 class="ml-4 text-lg font-semibold text-gray-900">Drone Performance</h3>
             </div>

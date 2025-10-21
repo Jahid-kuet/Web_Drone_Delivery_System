@@ -18,10 +18,16 @@ class HospitalPortalController extends Controller
     public function dashboard()
     {
         $user = Auth::user();
+        
+        // Check if user account is pending approval
+        if ($user->status === 'pending_approval') {
+            return redirect()->route('home')->with('info', 'Your account is pending approval by an administrator. You will be notified once your account is activated.');
+        }
+        
         $hospital = $user->hospital;
 
         if (!$hospital) {
-            return redirect()->route('home')->with('error', 'You are not associated with any hospital.');
+            return redirect()->route('home')->with('error', 'You are not associated with any hospital. Please contact an administrator.');
         }
 
             // Dashboard does not need any request normalization; that logic belongs in

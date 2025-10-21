@@ -51,7 +51,7 @@
         <!-- Drone Assignment -->
         <div class="bg-white rounded-lg shadow-sm p-6">
             <h2 class="text-xl font-semibold text-gray-900 mb-4">
-                <i class="fas fa-helicopter text-blue-600 mr-2"></i>
+                <i class="fas fa-drone text-blue-600 mr-2"></i>
                 Drone Assignment
             </h2>
 
