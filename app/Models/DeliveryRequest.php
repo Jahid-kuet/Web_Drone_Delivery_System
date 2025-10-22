@@ -173,6 +173,27 @@ class DeliveryRequest extends Model
     }
 
     /**
+     * Get the destination hospital name from delivery location payload.
+     */
+    public function getDestinationHospitalNameAttribute(): ?string
+    {
+        $location = $this->delivery_location;
+
+        if (is_string($location)) {
+            $decoded = json_decode($location, true);
+            $location = json_last_error() === JSON_ERROR_NONE ? $decoded : null;
+        }
+
+        if (is_array($location)) {
+            return $location['hospital_name']
+                ?? $location['name']
+                ?? null;
+        }
+
+        return null;
+    }
+
+    /**
      * Scope for overdue requests
      */
     public function scopeOverdue($query)

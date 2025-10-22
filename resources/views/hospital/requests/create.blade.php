@@ -409,7 +409,10 @@
                                     hiddenName.value = val;
                                     hiddenAddress.value = '';
                                     updateHospitalPreview(null);
-                                    // keep manual block hidden until user requests it
+                                    setManualBlockVisible(true);
+                                    manualName.value = val;
+                                    manualAddress.value = '';
+                                    manualAddress.focus();
                                 }
                             });
 

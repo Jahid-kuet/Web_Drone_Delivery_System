@@ -87,7 +87,7 @@
                     </div>
                     <div>
                         <p class="text-sm text-gray-600">Required By</p>
-                        <p class="text-gray-900">{{ $deliveryRequest->required_by_date ? $deliveryRequest->required_by_date->format('M d, Y H:i') : 'ASAP' }}</p>
+                        <p class="text-gray-900">{{ $deliveryRequest->requested_delivery_time ? $deliveryRequest->requested_delivery_time->format('M d, Y H:i') : 'ASAP' }}</p>
                     </div>
                     <div>
                         <p class="text-sm text-gray-600">Created Date</p>

@@ -78,7 +78,7 @@
                     @forelse($requests as $request)
                         <tr class="hover:bg-gray-50">
                             <td class="px-6 py-4">#{{ $request->id }}</td>
-                            <td class="px-6 py-4">{{ $request->hospital->name ?? 'N/A' }}</td>
+                            <td class="px-6 py-4">{{ $request->destination_hospital_name ?? ($request->hospital->name ?? 'N/A') }}</td>
                             <td class="px-6 py-4">
                                 @if(is_array($request->medical_supplies) && count($request->medical_supplies) > 0)
                                     {{ count($request->medical_supplies) }} item(s)
@@ -109,7 +109,7 @@
                                     {{ ucfirst($request->urgency_level) }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4">{{ \Carbon\Carbon::parse($request->required_by)->format('M d, Y') }}</td>
+                            <td class="px-6 py-4">{{ $request->requested_delivery_time ? \Carbon\Carbon::parse($request->requested_delivery_time)->format('M d, Y') : 'N/A' }}</td>
                             <td class="px-6 py-4">
                                 <span class="px-3 py-1 rounded-full text-xs font-semibold
                                     {{ $request->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}

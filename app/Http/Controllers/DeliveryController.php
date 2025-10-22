@@ -80,7 +80,12 @@ class DeliveryController extends Controller
             ->where('current_battery_level', '>=', 30)
             ->get();
         
-        return view('admin.deliveries.create', compact('pendingRequests', 'availableDrones'));
+        // Get available drone operators
+        $pilots = \App\Models\User::whereHas('roles', function($q) {
+            $q->where('slug', 'drone_operator');
+        })->where('status', 'active')->get();
+        
+        return view('admin.deliveries.create', compact('pendingRequests', 'availableDrones', 'pilots'));
     }
 
     /**
